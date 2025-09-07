@@ -3,132 +3,226 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController">
-   <children>
-      <!-- Header -->
-      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #2c3e50; -fx-background-radius: 10;">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../styles/application.css">
+   <top>
+      <!-- Menu Bar -->
+      <VBox>
          <children>
-            <Label fx:id="welcomeLabel" style="-fx-text-fill: white;" text="Dashboard">
-               <font>
-                  <Font name="System Bold" size="28.0" />
-               </font>
-            </Label>
-         </children>
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-      </HBox>
-      
-      <!-- Statistics Cards -->
-      <HBox alignment="CENTER" spacing="20.0">
-         <children>
-            <!-- Total Sales Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #3498db; -fx-background-radius: 10; -fx-padding: 20;">
+            <MenuBar styleClass="menu-bar">
+               <menus>
+                  <Menu text="File">
+                     <items>
+                        <MenuItem text="New..." />
+                        <MenuItem text="Open..." />
+                        <Separator />
+                        <MenuItem text="Exit" onAction="#handleLogout" />
+                     </items>
+                  </Menu>
+                  <Menu text="Inventory">
+                     <items>
+                        <MenuItem text="Manage Products" onAction="#handleInventario" />
+                        <MenuItem text="Stock Report" />
+                        <MenuItem text="Low Stock Alert" />
+                     </items>
+                  </Menu>
+                  <Menu text="Sales">
+                     <items>
+                        <MenuItem text="New Sale" onAction="#handleVentas" />
+                        <MenuItem text="Sales History" />
+                        <MenuItem text="Customer Management" />
+                     </items>
+                  </Menu>
+                  <Menu text="Orders">
+                     <items>
+                        <MenuItem text="Manage Orders" onAction="#handlePedidos" />
+                        <MenuItem text="Order Status" />
+                        <MenuItem text="Shipping" />
+                     </items>
+                  </Menu>
+                  <Menu text="Reports">
+                     <items>
+                        <MenuItem text="Generate Reports" onAction="#handleReportes" />
+                        <MenuItem text="Analytics" />
+                        <MenuItem text="Export Data" />
+                     </items>
+                  </Menu>
+                  <Menu text="Help">
+                     <items>
+                        <MenuItem text="User Guide" />
+                        <MenuItem text="About" />
+                     </items>
+                  </Menu>
+               </menus>
+            </MenuBar>
+            
+            <!-- Navigation Bar -->
+            <HBox styleClass="nav-bar">
                <children>
-                  <Label style="-fx-text-fill: white;" text="Total Sales">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalSalesLabel" style="-fx-text-fill: white;" text="12.00">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
+                  <Label fx:id="welcomeLabel" text="📦 Inventory Manager" styleClass="nav-title" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                     <children>
+                        <Button text="🏠 Dashboard" styleClass="nav-button, active" />
+                        <Button text="📦 Inventory" onAction="#handleInventario" styleClass="nav-button" />
+                        <Button text="💰 Sales" onAction="#handleVentas" styleClass="nav-button" />
+                        <Button text="📋 Orders" onAction="#handlePedidos" styleClass="nav-button" />
+                        <Button text="📊 Reports" onAction="#handleReportes" styleClass="nav-button" />
+                        <Separator orientation="VERTICAL" />
+                        <Button fx:id="logoutButton" text="🚪 Logout" onAction="#handleLogout" styleClass="nav-button" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   
+   <center>
+      <VBox spacing="30.0" styleClass="padding-xl">
+         <children>
+            <!-- Welcome Section -->
+            <VBox spacing="10.0" alignment="CENTER">
+               <children>
+                  <Label text="Welcome to Your Dashboard" styleClass="title" />
+                  <Label text="Monitor your business performance and manage operations" style="-fx-text-fill: #7f8c8d; -fx-font-size: 16px;" />
                </children>
             </VBox>
             
-            <!-- Total Products Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #27ae60; -fx-background-radius: 10; -fx-padding: 20;">
+            <!-- Statistics Cards -->
+            <HBox spacing="20.0" alignment="CENTER">
                <children>
-                  <Label style="-fx-text-fill: white;" text="Total Products">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalProductsLabel" style="-fx-text-fill: white;" text="0">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
+                  <!-- Total Sales Card -->
+                  <VBox styleClass="stats-card, primary" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="💰" style="-fx-font-size: 32px;" />
+                        <Label text="Total Sales" styleClass="title" />
+                        <Label fx:id="totalSalesLabel" text="$12,450.00" styleClass="value" />
+                        <Label text="This month" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Total Products Card -->
+                  <VBox styleClass="stats-card, success" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="📦" style="-fx-font-size: 32px;" />
+                        <Label text="Total Products" styleClass="title" />
+                        <Label fx:id="totalProductsLabel" text="156" styleClass="value" />
+                        <Label text="In inventory" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Pending Orders Card -->
+                  <VBox styleClass="stats-card, warning" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="📋" style="-fx-font-size: 32px;" />
+                        <Label text="Pending Orders" styleClass="title" />
+                        <Label fx:id="pendingOrdersLabel" text="23" styleClass="value" />
+                        <Label text="Awaiting processing" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Low Stock Alert Card -->
+                  <VBox styleClass="stats-card, danger" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="⚠️" style="-fx-font-size: 32px;" />
+                        <Label text="Low Stock Items" styleClass="title" />
+                        <Label text="8" styleClass="value" />
+                        <Label text="Need restocking" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            
+            <!-- Quick Actions -->
+            <VBox spacing="20.0" styleClass="card">
+               <children>
+                  <Label text="Quick Actions" styleClass="section-header" />
+                  <HBox spacing="15.0" alignment="CENTER">
+                     <children>
+                        <Button fx:id="inventarioButton" onAction="#handleInventario" prefWidth="180.0" prefHeight="60.0" styleClass="btn, btn-primary">
+                           <graphic>
+                              <VBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Label text="📦" style="-fx-font-size: 24px;" />
+                                    <Label text="Manage Inventory" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Button>
+                        
+                        <Button fx:id="ventasButton" onAction="#handleVentas" prefWidth="180.0" prefHeight="60.0" styleClass="btn, btn-success">
+                           <graphic>
+                              <VBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Label text="💰" style="-fx-font-size: 24px;" />
+                                    <Label text="Process Sales" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Button>
+                        
+                        <Button fx:id="pedidosButton" onAction="#handlePedidos" prefWidth="180.0" prefHeight="60.0" styleClass="btn, btn-warning">
+                           <graphic>
+                              <VBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Label text="📋" style="-fx-font-size: 24px;" />
+                                    <Label text="Manage Orders" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Button>
+                        
+                        <Button fx:id="reportesButton" onAction="#handleReportes" prefWidth="180.0" prefHeight="60.0" styleClass="btn, btn-secondary">
+                           <graphic>
+                              <VBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Label text="📊" style="-fx-font-size: 24px;" />
+                                    <Label text="View Reports" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             
-            <!-- Pending Orders Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #e74c3c; -fx-background-radius: 10; -fx-padding: 20;">
+            <!-- Recent Activity Placeholder -->
+            <HBox spacing="20.0">
                <children>
-                  <Label style="-fx-text-fill: white;" text="Pending Orders">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="pendingOrdersLabel" style="-fx-text-fill: white;" text="0">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
+                  <VBox styleClass="card" spacing="15.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="📈 Sales Overview" styleClass="section-header" />
+                        <Label text="Sales chart and analytics will be displayed here" style="-fx-text-fill: #7f8c8d;" />
+                        <Label text="• Today's sales: $1,234.56" style="-fx-text-fill: #27ae60;" />
+                        <Label text="• This week: $8,901.23" style="-fx-text-fill: #3498db;" />
+                        <Label text="• This month: $12,450.00" style="-fx-text-fill: #9b59b6;" />
+                     </children>
+                  </VBox>
+                  
+                  <VBox styleClass="card" spacing="15.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="📦 Inventory Status" styleClass="section-header" />
+                        <Label text="Inventory overview and alerts" style="-fx-text-fill: #7f8c8d;" />
+                        <Label text="• Total items: 156" style="-fx-text-fill: #27ae60;" />
+                        <Label text="• Low stock: 8 items" style="-fx-text-fill: #f39c12;" />
+                        <Label text="• Out of stock: 2 items" style="-fx-text-fill: #e74c3c;" />
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
          </children>
-      </HBox>
-      
-      <!-- Chart Placeholders -->
-      <HBox alignment="CENTER" spacing="20.0">
-         <children>
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 10; -fx-padding: 20;" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label text="📊 Sales Chart">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label style="-fx-text-fill: #6c757d;" text="Chart implementation pending">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-            
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 10; -fx-padding: 20;" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label text="📈 Inventory Overview">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label style="-fx-text-fill: #6c757d;" text="Chart implementation pending">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-      
-      <!-- Navigation Buttons -->
-      <HBox alignment="CENTER" spacing="15.0">
-         <children>
-            <Button fx:id="inventarioButton" onAction="#handleInventario" prefWidth="150.0" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;" text="Inventory" />
-            <Button fx:id="ventasButton" onAction="#handleVentas" prefWidth="150.0" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;" text="Sales" />
-            <Button fx:id="pedidosButton" onAction="#handlePedidos" prefWidth="150.0" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-font-weight: bold;" text="Orders" />
-            <Button fx:id="reportesButton" onAction="#handleReportes" prefWidth="150.0" style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold;" text="Reports" />
-         </children>
-      </HBox>
-      
-      <!-- Footer -->
-      <HBox alignment="CENTER_RIGHT">
-         <children>
-            <Button fx:id="logoutButton" onAction="#handleLogout" style="-fx-background-color: #dc3545; -fx-text-fill: white;" text="Logout" />
-         </children>
-      </HBox>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
-</VBox>
+      </VBox>
+   </center>
+</BorderPane>

@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -111,6 +112,45 @@ public class PedidosController extends BaseController implements Initializable {
                 cellData.getValue().calculateTotal()
             ).asObject()
         );
+        
+        // Add custom cell factory for status column with colored labels
+        estadoColumn.setCellFactory(column -> {
+            return new TableCell<Pedido, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        
+                        // Apply color based on status
+                        switch (item) {
+                            case "ENTREGADO":
+                                setStyle("-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-font-weight: bold; -fx-background-radius: 4;");
+                                break;
+                            case "PENDIENTE":
+                                setStyle("-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-font-weight: bold; -fx-background-radius: 4;");
+                                break;
+                            case "PROCESANDO":
+                                setStyle("-fx-background-color: #fff3cd; -fx-text-fill: #856404; -fx-font-weight: bold; -fx-background-radius: 4;");
+                                break;
+                            case "ENVIADO":
+                                setStyle("-fx-background-color: #cce5ff; -fx-text-fill: #004085; -fx-font-weight: bold; -fx-background-radius: 4;");
+                                break;
+                            case "CANCELADO":
+                                setStyle("-fx-background-color: #f5c6cb; -fx-text-fill: #721c24; -fx-font-weight: bold; -fx-background-radius: 4;");
+                                break;
+                            default:
+                                setStyle("-fx-background-color: #e2e3e5; -fx-text-fill: #383d41; -fx-font-weight: bold; -fx-background-radius: 4;");
+                                break;
+                        }
+                    }
+                }
+            };
+        });
 
         pedidosTable.setItems(pedidos);
     }

@@ -12,54 +12,89 @@
 
 <StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.LoginController" styleClass="login-container" stylesheets="@../styles/application.css">
    <children>
-      <VBox styleClass="login-card" spacing="25.0" alignment="CENTER" maxWidth="400.0">
+      <VBox styleClass="login-card" spacing="30.0" alignment="CENTER" maxWidth="450.0">
          <children>
-            <!-- Logo/Icon placeholder -->
-            <Label text="📦" style="-fx-font-size: 48px;" />
-            
-            <!-- Title -->
-            <VBox alignment="CENTER" spacing="5.0">
+            <!-- Logo Placeholder -->
+            <VBox alignment="CENTER" spacing="10.0">
                <children>
-                  <Label text="Inventory Manager" styleClass="login-title" />
-                  <Label text="Sign in to your account" styleClass="login-subtitle" />
+                  <Label text="📦" style="-fx-font-size: 64px;" />
+                  <Label text="INVENTORY" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-letter-spacing: 2px;" />
+                  <Label text="MANAGER" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3498db; -fx-letter-spacing: 2px;" />
+               </children>
+            </VBox>
+            
+            <!-- Welcome Message -->
+            <VBox alignment="CENTER" spacing="8.0">
+               <children>
+                  <Label text="Bienvenido de vuelta" styleClass="login-title" />
+                  <Label text="Ingresa tus credenciales para continuar" styleClass="login-subtitle" />
                </children>
             </VBox>
             
             <!-- Login Form -->
-            <VBox spacing="20.0" alignment="CENTER">
+            <VBox spacing="25.0" alignment="CENTER" styleClass="login-form">
                <children>
                   <!-- Username Field -->
-                  <VBox spacing="8.0">
+                  <VBox spacing="10.0">
                      <children>
-                        <Label text="Username" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50;" />
-                        <TextField fx:id="usernameField" prefWidth="300.0" promptText="Enter your username" styleClass="text-field" />
+                        <Label text="👤 Usuario" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50; -fx-font-size: 14px;" />
+                        <TextField fx:id="usernameField" prefWidth="350.0" prefHeight="45.0" promptText="Ingresa tu nombre de usuario" styleClass="login-field">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </TextField>
                      </children>
                   </VBox>
                   
                   <!-- Password Field -->
-                  <VBox spacing="8.0">
+                  <VBox spacing="10.0">
                      <children>
-                        <Label text="Password" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50;" />
-                        <PasswordField fx:id="passwordField" prefWidth="300.0" promptText="Enter your password" styleClass="password-field" />
+                        <Label text="🔒 Contraseña" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50; -fx-font-size: 14px;" />
+                        <PasswordField fx:id="passwordField" prefWidth="350.0" prefHeight="45.0" promptText="Ingresa tu contraseña" styleClass="login-field">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </PasswordField>
                      </children>
                   </VBox>
                   
-                  <!-- Button Container -->
+                  <!-- Login Button -->
                   <VBox spacing="15.0" alignment="CENTER">
                      <children>
-                        <Button fx:id="loginButton" onAction="#handleLogin" prefWidth="300.0" prefHeight="45.0" text="Sign In" styleClass="btn, btn-primary">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
+                        <Button fx:id="loginButton" onAction="#handleLogin" prefWidth="350.0" prefHeight="50.0" styleClass="login-btn">
+                           <graphic>
+                              <HBox spacing="10.0" alignment="CENTER">
+                                 <children>
+                                    <Label text="🚀" style="-fx-text-fill: white; -fx-font-size: 18px;" />
+                                    <Label text="Iniciar Sesión" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;" />
+                                 </children>
+                              </HBox>
+                           </graphic>
                         </Button>
-                        <Button fx:id="cancelButton" onAction="#handleCancel" prefWidth="300.0" prefHeight="40.0" text="Cancel" styleClass="btn, btn-outline, btn-secondary" />
+                        
+                        <Button fx:id="cancelButton" onAction="#handleCancel" prefWidth="350.0" prefHeight="40.0" styleClass="cancel-login-btn">
+                           <graphic>
+                              <HBox spacing="8.0" alignment="CENTER">
+                                 <children>
+                                    <Label text="❌" style="-fx-text-fill: #e74c3c;" />
+                                    <Label text="Cancelar" style="-fx-text-fill: #e74c3c; -fx-font-weight: 500;" />
+                                 </children>
+                              </HBox>
+                           </graphic>
+                        </Button>
                      </children>
                   </VBox>
                </children>
             </VBox>
             
-            <!-- Footer -->
-            <Label text="Demo: Use any username/password to login" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
+            <!-- Demo Information -->
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-background-color: rgba(52, 152, 219, 0.1); -fx-padding: 15; -fx-background-radius: 8;">
+               <children>
+                  <Label text="💡 Modo Demo" style="-fx-font-weight: bold; -fx-text-fill: #3498db;" />
+                  <Label text="Usa cualquier usuario y contraseña para ingresar" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                  <Label text="Ejemplo: admin / admin123" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-style: italic;" />
+               </children>
+            </VBox>
          </children>
       </VBox>
    </children>

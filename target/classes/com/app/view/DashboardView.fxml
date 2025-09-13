@@ -3,132 +3,194 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController">
-   <children>
-      <!-- Header -->
-      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #2c3e50; -fx-background-radius: 10;">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../styles/application.css">
+   <left>
+      <!-- Sidebar Navigation -->
+      <VBox styleClass="sidebar" prefWidth="250.0" spacing="10.0">
          <children>
-            <Label fx:id="welcomeLabel" style="-fx-text-fill: white;" text="Dashboard">
-               <font>
-                  <Font name="System Bold" size="28.0" />
-               </font>
-            </Label>
-         </children>
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-      </HBox>
-      
-      <!-- Statistics Cards -->
-      <HBox alignment="CENTER" spacing="20.0">
-         <children>
-            <!-- Total Sales Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #3498db; -fx-background-radius: 10; -fx-padding: 20;">
+            <!-- Logo/Brand -->
+            <VBox alignment="CENTER" spacing="10.0" styleClass="sidebar-header">
                <children>
-                  <Label style="-fx-text-fill: white;" text="Total Sales">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalSalesLabel" style="-fx-text-fill: white;" text="12.00">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
+                  <Label text="📦" style="-fx-font-size: 48px;" />
+                  <Label text="Inventory Manager" styleClass="sidebar-title" />
+                  <Label text="Dashboard" styleClass="sidebar-subtitle" />
                </children>
             </VBox>
             
-            <!-- Total Products Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #27ae60; -fx-background-radius: 10; -fx-padding: 20;">
-               <children>
-                  <Label style="-fx-text-fill: white;" text="Total Products">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalProductsLabel" style="-fx-text-fill: white;" text="0">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
+            <Separator />
             
-            <!-- Pending Orders Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #e74c3c; -fx-background-radius: 10; -fx-padding: 20;">
+            <!-- Navigation Menu -->
+            <VBox spacing="5.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label style="-fx-text-fill: white;" text="Pending Orders">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="pendingOrdersLabel" style="-fx-text-fill: white;" text="0">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
+                  <Button fx:id="dashboardButton" text="🏠 Dashboard" styleClass="sidebar-button, active" prefWidth="220.0" />
+                  
+                  <Button fx:id="inventarioButton" onAction="#handleInventario" text="📦 Inventario" styleClass="sidebar-button" prefWidth="220.0" />
+                  
+                  <Button fx:id="ventasButton" onAction="#handleVentas" text="💰 Ventas" styleClass="sidebar-button" prefWidth="220.0" />
+                  
+                  <Button fx:id="pedidosButton" onAction="#handlePedidos" text="📋 Pedidos" styleClass="sidebar-button" prefWidth="220.0" />
+                  
+                  <Button fx:id="reportesButton" onAction="#handleReportes" text="📊 Reportes" styleClass="sidebar-button" prefWidth="220.0" />
+                  
+                  <Separator />
+                  
+                  <Button text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="220.0" />
+                  
+                  <Region VBox.vgrow="ALWAYS" />
+                  
+                  <Button fx:id="logoutButton" onAction="#handleLogout" text="🚪 Cerrar Sesión" styleClass="sidebar-button, logout" prefWidth="220.0" />
                </children>
             </VBox>
          </children>
-      </HBox>
-      
-      <!-- Chart Placeholders -->
-      <HBox alignment="CENTER" spacing="20.0">
+      </VBox>
+   </left>
+   
+   <top>
+      <!-- Top Header Bar -->
+      <HBox styleClass="top-header" alignment="CENTER_LEFT" spacing="20.0">
          <children>
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 10; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+            <Label fx:id="welcomeLabel" text="Panel de Control" styleClass="page-title" />
+            <Region HBox.hgrow="ALWAYS" />
+            <HBox spacing="15.0" alignment="CENTER_RIGHT">
                <children>
-                  <Label text="📊 Sales Chart">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label style="-fx-text-fill: #6c757d;" text="Chart implementation pending">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <Label text="Usuario: Admin" style="-fx-text-fill: #7f8c8d;" />
+                  <Label text="|" style="-fx-text-fill: #bdc3c7;" />
+                  <Label text="Hoy: 15 Dic 2024" style="-fx-text-fill: #7f8c8d;" />
                </children>
-            </VBox>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   
+   <center>
+      <VBox spacing="25.0" styleClass="main-content">
+         <children>
+            <!-- Dashboard Cards -->
+            <GridPane hgap="20.0" vgap="20.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+               </rowConstraints>
+               <children>
+                  <!-- Total Ventas Hoy Card -->
+                  <VBox styleClass="dashboard-card, sales-card" spacing="15.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="💰" styleClass="card-icon" />
+                              <VBox>
+                                 <children>
+                                    <Label text="Total Ventas Hoy" styleClass="card-title" />
+                                    <Label fx:id="totalSalesLabel" text="$12,450.00" styleClass="card-value" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Label text="↗️ +15% vs ayer" styleClass="card-trend, positive" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Pedidos Pendientes Card -->
+                  <VBox styleClass="dashboard-card, orders-card" spacing="15.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="📋" styleClass="card-icon" />
+                              <VBox>
+                                 <children>
+                                    <Label text="Pedidos Pendientes" styleClass="card-title" />
+                                    <Label fx:id="pendingOrdersLabel" text="23" styleClass="card-value" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Label text="⚠️ Requieren atención" styleClass="card-trend, warning" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Productos en Bajo Stock Card -->
+                  <VBox styleClass="dashboard-card, stock-card" spacing="15.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Label text="⚠️" styleClass="card-icon" />
+                              <VBox>
+                                 <children>
+                                    <Label text="Productos Bajo Stock" styleClass="card-title" />
+                                    <Label fx:id="lowStockLabel" text="8" styleClass="card-value" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Label text="🔄 Necesitan reposición" styleClass="card-trend, danger" />
+                     </children>
+                  </VBox>
+               </children>
+            </GridPane>
             
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 10; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+            <!-- Charts Section -->
+            <HBox spacing="25.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label text="📈 Inventory Overview">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label style="-fx-text-fill: #6c757d;" text="Chart implementation pending">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <!-- Bar Chart Card -->
+                  <VBox styleClass="chart-card" spacing="15.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="📊 Ventas por Mes" styleClass="chart-title" />
+                        <BarChart fx:id="salesBarChart" VBox.vgrow="ALWAYS" styleClass="bar-chart">
+                           <xAxis>
+                              <CategoryAxis side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis side="LEFT" />
+                           </yAxis>
+                        </BarChart>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Pie Chart Card -->
+                  <VBox styleClass="chart-card" spacing="15.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="🥧 Distribución por Categoría" styleClass="chart-title" />
+                        <PieChart fx:id="categoryPieChart" VBox.vgrow="ALWAYS" styleClass="pie-chart" />
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
+            
+            <!-- Quick Actions -->
+            <VBox styleClass="quick-actions-card" spacing="20.0">
+               <children>
+                  <Label text="⚡ Acciones Rápidas" styleClass="section-title" />
+                  
+                  <HBox spacing="15.0" alignment="CENTER">
+                     <children>
+                        <Button text="➕ Nueva Venta" onAction="#handleVentas" styleClass="quick-action-btn, primary" prefWidth="180.0" prefHeight="50.0" />
+                        <Button text="📦 Gestionar Inventario" onAction="#handleInventario" styleClass="quick-action-btn, secondary" prefWidth="180.0" prefHeight="50.0" />
+                        <Button text="📋 Ver Pedidos" onAction="#handlePedidos" styleClass="quick-action-btn, warning" prefWidth="180.0" prefHeight="50.0" />
+                        <Button text="📊 Generar Reporte" onAction="#handleReportes" styleClass="quick-action-btn, info" prefWidth="180.0" prefHeight="50.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
          </children>
-      </HBox>
-      
-      <!-- Navigation Buttons -->
-      <HBox alignment="CENTER" spacing="15.0">
-         <children>
-            <Button fx:id="inventarioButton" onAction="#handleInventario" prefWidth="150.0" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;" text="Inventory" />
-            <Button fx:id="ventasButton" onAction="#handleVentas" prefWidth="150.0" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;" text="Sales" />
-            <Button fx:id="pedidosButton" onAction="#handlePedidos" prefWidth="150.0" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-font-weight: bold;" text="Orders" />
-            <Button fx:id="reportesButton" onAction="#handleReportes" prefWidth="150.0" style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold;" text="Reports" />
-         </children>
-      </HBox>
-      
-      <!-- Footer -->
-      <HBox alignment="CENTER_RIGHT">
-         <children>
-            <Button fx:id="logoutButton" onAction="#handleLogout" style="-fx-background-color: #dc3545; -fx-text-fill: white;" text="Logout" />
-         </children>
-      </HBox>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
-</VBox>
+      </VBox>
+   </center>
+</BorderPane>

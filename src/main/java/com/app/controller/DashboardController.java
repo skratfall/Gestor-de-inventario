@@ -71,17 +71,17 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void handleVentas(ActionEvent event) {
-        navigateToView("/com/app/view/VentasView.fxml", "Sales Management", 900, 600);
+        navigateToView("/com/app/view/VentasView.fxml", "Sales Management", 900, 800);
     }
 
     @FXML
     private void handlePedidos(ActionEvent event) {
-        navigateToView("/com/app/view/PedidosView.fxml", "Orders Management", 1000, 700);
+        navigateToView("/com/app/view/PedidosView.fxml", "Orders Management", 1000, 800);
     }
 
     @FXML
     private void handleReportes(ActionEvent event) {
-        navigateToView("/com/app/view/ReportesView.fxml", "Reports", 1000, 700);
+        navigateToView("/com/app/view/ReportesView.fxml", "Reports", 1000, 800);
     }
 
     @FXML
@@ -91,7 +91,7 @@ public class DashboardController extends BaseController implements Initializable
             Parent root = loader.load();
             
             Stage stage = (Stage) logoutButton.getScene().getWindow();
-            Scene scene = new Scene(root, 400, 300);
+            Scene scene = new Scene(root, 1000, 700);
             stage.setTitle("Login - JavaFX Application");
             stage.setScene(scene);
             stage.setResizable(false);

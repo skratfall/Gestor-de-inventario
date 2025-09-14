@@ -100,7 +100,7 @@
                               <VBox>
                                  <children>
                                     <Label text="Total Ventas Hoy" styleClass="card-title" />
-                                    <Label fx:id="totalSalesLabel" text="$12,450.00" styleClass="card-value" />
+                                    <Label fx:id="totalSalesLabel" text="" styleClass="card-value" />
                                  </children>
                               </VBox>
                            </children>
@@ -187,10 +187,10 @@
                         <Button text="📋 Ver Pedidos" onAction="#handlePedidos" styleClass="quick-action-btn, warning" prefWidth="180.0" prefHeight="50.0" />
                         <Button text="📊 Generar Reporte" onAction="#handleReportes" styleClass="quick-action-btn, info" prefWidth="180.0" prefHeight="50.0" />
                      </children>
-                  </VBox>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
       </VBox>
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../../css/style.css">
+   </center>
 </BorderPane>

@@ -1,102 +1,124 @@
 package com.app.model;
 
+import javafx.beans.property.*;
+
 /**
  * Producto entity class representing a product in the system
  */
 public class Producto {
-    private Long id;
-    private String nombre;
-    private String categoria;
-    private double precio;
-    private int stock;
 
-    // Default constructor
+    private final LongProperty id;
+    private final StringProperty nombre;
+    private final StringProperty categoria;
+    private final DoubleProperty precio;
+    private final IntegerProperty stock;
+
+    // Constructor por defecto
     public Producto() {
+        this.id = new SimpleLongProperty();
+        this.nombre = new SimpleStringProperty();
+        this.categoria = new SimpleStringProperty();
+        this.precio = new SimpleDoubleProperty();
+        this.stock = new SimpleIntegerProperty();
     }
 
-    // Constructor with parameters
+    // Constructor con parámetros (sin ID)
     public Producto(String nombre, String categoria, double precio, int stock) {
-        this.nombre = nombre;
-        this.categoria = categoria;
-        this.precio = precio;
-        this.stock = stock;
+        this();
+        this.nombre.set(nombre);
+        this.categoria.set(categoria);
+        this.precio.set(precio);
+        this.stock.set(stock);
     }
 
-    // Constructor with all parameters including ID
+    // Constructor con parámetros (incluyendo ID)
     public Producto(Long id, String nombre, String categoria, double precio, int stock) {
-        this.id = id;
-        this.nombre = nombre;
-        this.categoria = categoria;
-        this.precio = precio;
-        this.stock = stock;
+        this(nombre, categoria, precio, stock);
+        this.id.set(id);
     }
 
-    // Getters and Setters
+    // 🔹 Getters y Setters estilo JavaFX Properties
     public Long getId() {
+        return id.get();
+    }
+    public void setId(Long id) {
+        this.id.set(id);
+    }
+    public LongProperty idProperty() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getNombre() {
+        return nombre.get();
+    }
+    public void setNombre(String nombre) {
+        this.nombre.set(nombre);
+    }
+    public StringProperty nombreProperty() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public String getCategoria() {
+        return categoria.get();
+    }
+    public void setCategoria(String categoria) {
+        this.categoria.set(categoria);
+    }
+    public StringProperty categoriaProperty() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
     public double getPrecio() {
+        return precio.get();
+    }
+    public void setPrecio(double precio) {
+        this.precio.set(precio);
+    }
+    public DoubleProperty precioProperty() {
         return precio;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
     public int getStock() {
+        return stock.get();
+    }
+    public void setStock(int stock) {
+        this.stock.set(stock);
+    }
+    public IntegerProperty stockProperty() {
         return stock;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    // 🔹 Status dinámico (para la columna "Estado")
+    public String getStatus() {
+        return getStock() > 0 ? "Disponible" : "Agotado";
     }
 
-    // Business methods
+    // Métodos de negocio
     public boolean isAvailable() {
-        return stock > 0;
+        return getStock() > 0;
     }
 
     public void decreaseStock(int quantity) {
-        if (quantity <= stock) {
-            this.stock -= quantity;
+        if (quantity <= getStock()) {
+            setStock(getStock() - quantity);
         } else {
-            throw new IllegalArgumentException("Insufficient stock. Available: " + stock + ", Requested: " + quantity);
+            throw new IllegalArgumentException("Stock insuficiente. Disponible: " + getStock() + ", Solicitado: " + quantity);
         }
     }
 
     public void increaseStock(int quantity) {
-        this.stock += quantity;
+        setStock(getStock() + quantity);
     }
 
     @Override
     public String toString() {
         return "Producto{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", categoria='" + categoria + '\'' +
-                ", precio=" + precio +
-                ", stock=" + stock +
+                "id=" + getId() +
+                ", nombre='" + getNombre() + '\'' +
+                ", categoria='" + getCategoria() + '\'' +
+                ", precio=" + getPrecio() +
+                ", stock=" + getStock() +
+                ", status=" + getStatus() +
                 '}';
     }
 }

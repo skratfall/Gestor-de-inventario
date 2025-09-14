@@ -24,8 +24,7 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private Label totalSalesLabel;
 
-    @FXML
-    private Label totalProductsLabel;
+    
 
     @FXML
     private Label pendingOrdersLabel;
@@ -61,7 +60,7 @@ public class DashboardController extends BaseController implements Initializable
     private void loadDashboardData() {
         // TODO: Load actual data from services
         totalSalesLabel.setText("$12,450.00");
-        totalProductsLabel.setText("156");
+        
         pendingOrdersLabel.setText("23");
     }
 

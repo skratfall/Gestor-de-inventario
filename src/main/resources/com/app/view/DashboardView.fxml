@@ -192,5 +192,5 @@
             </HBox>
          </children>
       </VBox>
-   </center>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../../css/style.css">
 </BorderPane>

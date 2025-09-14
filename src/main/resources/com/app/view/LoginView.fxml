@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.LoginController" styleClass="login-container" stylesheets="@../styles/application.css">
+<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.LoginController" styleClass="login-container" stylesheets="@../../css/style.css">
    <children>
       <VBox styleClass="login-card" spacing="30.0" alignment="CENTER" maxWidth="450.0">
          <children>

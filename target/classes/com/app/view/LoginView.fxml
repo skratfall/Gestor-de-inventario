@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.LoginController" styleClass="login-container" stylesheets="@../styles/application.css">
+<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.LoginController" styleClass="login-container" stylesheets="@../../css/style.css">
    <children>
       <VBox styleClass="login-card" spacing="30.0" alignment="CENTER" maxWidth="450.0">
          <children>
@@ -18,8 +18,8 @@
             <VBox alignment="CENTER" spacing="10.0">
                <children>
                   <Label text="📦" style="-fx-font-size: 64px;" />
-                  <Label text="ALMACEN" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-letter-spacing: 2px;" />
-                  <Label text="ACTIVO" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3cdb34ff; -fx-letter-spacing: 2px;" />
+                  <Label text="INVENTORY" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-letter-spacing: 2px;" />
+                  <Label text="MANAGER" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3498db; -fx-letter-spacing: 2px;" />
                </children>
             </VBox>
             

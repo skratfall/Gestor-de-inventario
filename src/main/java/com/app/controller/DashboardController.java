@@ -57,7 +57,7 @@ public class DashboardController extends BaseController implements Initializable
         welcomeLabel.setText("Bienvenido al Panel de Control");
         loadDashboardData();
     }
-
+    
     private void loadDashboardData() {
         // TODO: Load actual data from services
         totalSalesLabel.setText("$12,450.00");

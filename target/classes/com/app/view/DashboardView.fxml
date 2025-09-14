@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../styles/application.css">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@/com/app/styles/application.css">
    <left>
       <!-- Sidebar Navigation -->
       <VBox styleClass="sidebar" prefWidth="250.0" spacing="10.0">

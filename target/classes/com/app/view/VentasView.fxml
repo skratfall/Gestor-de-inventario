@@ -222,7 +222,7 @@
       <HBox alignment="CENTER_RIGHT" styleClass="padding-medium footer">
          <children>
             <Button fx:id="backButton" onAction="#handleBack" 
-                    prefWidth="150.0" prefHeight="35.0" styleClass="btn btn-secondary">
+                    prefWidth="200.0" prefHeight="35.0" styleClass="btn btn-secondary">
                <graphic>
                   <HBox spacing="8.0" alignment="CENTER">
                      <children>

@@ -46,6 +46,12 @@ public class ReportesController extends BaseController implements Initializable 
     private Button exportReportButton;
     @FXML
     private Button backButton;
+    @FXML
+    private Button inventarioButton;
+    @FXML
+    private Button ventasButton;
+    @FXML
+    private Button pedidosButton;
 
     // Text Area
     @FXML
@@ -423,7 +429,72 @@ public class ReportesController extends BaseController implements Initializable 
         }
     }
 
+    @FXML
+    private void handleInventario(ActionEvent event) {
+        navigateToInventario();
+    }
+
+    @FXML
+    private void handleVentas(ActionEvent event) {
+        navigateToVentas();
+    }
+
+    @FXML
+    private void handlePedidos(ActionEvent event) {
+        navigateToPedidos();
+    }
+
     // Inner class for report data (if you decide to use TableView)
+    private void navigateToInventario() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/InventarioView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) inventarioButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Inventario - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            showErrorAlert("Navigation Error", "Could not load Inventario: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void navigateToVentas() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/VentasView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) ventasButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Ventas - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            showErrorAlert("Navigation Error", "Could not load Ventas: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void navigateToPedidos() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/PedidosView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) pedidosButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Pedidos - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            showErrorAlert("Navigation Error", "Could not load Pedidos: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     public static class ReportData {
         private final SimpleStringProperty category;
         private final SimpleDoubleProperty value;

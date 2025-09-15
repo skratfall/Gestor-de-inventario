@@ -17,10 +17,10 @@
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                <children>
                   <Button text="🏠 Dashboard" onAction="#handleBack" styleClass="nav-button" />
-                  <Button text="📦 Inventory" styleClass="nav-button" />
+                  <Button fx:id="inventarioButton" onAction="#handleInventario" text="📦 Inventory" styleClass="nav-button" />
                   <Button text="💰 Sales" styleClass="nav-button, active" />
-                  <Button text="📋 Orders" styleClass="nav-button" />
-                  <Button text="📊 Reports" styleClass="nav-button" />
+                  <Button fx:id="pedidosButton" onAction="#handlePedidos" text="📋 Orders" styleClass="nav-button" />
+                  <Button fx:id="reportesButton" onAction="#handleReportes" text="📊 Reports" styleClass="nav-button" />
                </children>
             </HBox>
          </children>

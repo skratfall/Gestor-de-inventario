@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.model.Cliente;
 import com.app.model.Producto;
 import com.app.model.Venta;
+import com.app.model.CarritoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,9 +15,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -31,16 +38,22 @@ public class VentasController extends BaseController implements Initializable {
     private ComboBox<Producto> productoComboBox;
 
     @FXML
-    private TableView<Producto> carritoTable;
+    private TableView<CarritoItem> carritoTable;
 
     @FXML
-    private TableColumn<Producto, String> nombreColumn;
+    private TableColumn<CarritoItem, String> nombreColumn;
 
     @FXML
-    private TableColumn<Producto, String> categoriaColumn;
+    private TableColumn<CarritoItem, String> categoriaColumn;
 
     @FXML
-    private TableColumn<Producto, Double> precioColumn;
+    private TableColumn<CarritoItem, Double> precioColumn;
+
+    @FXML
+    private TableColumn<CarritoItem, Integer> cantidadColumn;
+
+    @FXML
+    private TableColumn<CarritoItem, Double> subtotalColumn;
 
     @FXML
     private Button addToCartButton;
@@ -52,6 +65,18 @@ public class VentasController extends BaseController implements Initializable {
     private Label totalLabel;
 
     @FXML
+    private Label todaySalesLabel;
+
+    @FXML
+    private Label todaySummaryLabel;
+
+    @FXML
+    private Label weekSummaryLabel;
+
+    @FXML
+    private Label monthSummaryLabel;
+
+    @FXML
     private Button processSaleButton;
 
     @FXML
@@ -61,13 +86,22 @@ public class VentasController extends BaseController implements Initializable {
     private Button backButton;
 
     @FXML
+    private Button inventarioButton;
+
+    @FXML
+    private Button pedidosButton;
+
+    @FXML
+    private Button reportesButton;
+
+    @FXML
     private TableView<Venta> ventasTable;
 
     @FXML
     private TableColumn<Venta, Long> ventaIdColumn;
 
     @FXML
-    private TableColumn<Venta, LocalDateTime> fechaColumn;
+    private TableColumn<Venta, String> fechaColumn;
 
     @FXML
     private TableColumn<Venta, String> clienteColumn;
@@ -75,10 +109,15 @@ public class VentasController extends BaseController implements Initializable {
     @FXML
     private TableColumn<Venta, Double> ventaTotalColumn;
 
+    @FXML
+    private TableColumn<Venta, Void> accionesColumn;
+
     private ObservableList<Cliente> clientes = FXCollections.observableArrayList();
     private ObservableList<Producto> productos = FXCollections.observableArrayList();
-    private ObservableList<Producto> carrito = FXCollections.observableArrayList();
+    private ObservableList<CarritoItem> carrito = FXCollections.observableArrayList();
     private ObservableList<Venta> ventas = FXCollections.observableArrayList();
+    
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -86,6 +125,7 @@ public class VentasController extends BaseController implements Initializable {
         setupTableColumns();
         loadSampleData();
         setupEventHandlers();
+        updateSalesSummary();
     }
 
     @Override
@@ -96,21 +136,53 @@ public class VentasController extends BaseController implements Initializable {
     }
 
     private void setupTableColumns() {
-        // Cart table
-        nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        categoriaColumn.setCellValueFactory(new PropertyValueFactory<>("categoria"));
-        precioColumn.setCellValueFactory(new PropertyValueFactory<>("precio"));
+        // Cart table columns
+        nombreColumn.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getProducto().getNombre()));
+        categoriaColumn.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getProducto().getCategoria()));
+        precioColumn.setCellValueFactory(cellData -> 
+            new SimpleDoubleProperty(cellData.getValue().getProducto().getPrecio()).asObject());
+        cantidadColumn.setCellValueFactory(cellData -> 
+            new SimpleIntegerProperty(cellData.getValue().getCantidad()).asObject());
+        subtotalColumn.setCellValueFactory(cellData -> 
+            new SimpleDoubleProperty(cellData.getValue().getSubtotal()).asObject());
+        
         carritoTable.setItems(carrito);
 
-        // Sales table
+        // Sales table columns
         ventaIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        fechaColumn.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+        fechaColumn.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getFecha().format(dateFormatter)));
         clienteColumn.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getCliente().getNombre()
-            )
-        );
+            new SimpleStringProperty(cellData.getValue().getCliente().getNombre()));
         ventaTotalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
+        
+        // Actions column
+        accionesColumn.setCellFactory(param -> new TableCell<Venta, Void>() {
+            private final Button detailsButton = new Button("View");
+            
+            {
+                detailsButton.getStyleClass().add("btn");
+                detailsButton.getStyleClass().add("btn-primary");
+                detailsButton.setPrefWidth(70);
+                detailsButton.setOnAction(event -> {
+                    Venta venta = getTableView().getItems().get(getIndex());
+                    showVentaDetails(venta);
+                });
+            }
+            
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(detailsButton);
+                }
+            }
+        });
+        
         ventasTable.setItems(ventas);
     }
 
@@ -119,7 +191,7 @@ public class VentasController extends BaseController implements Initializable {
             removeFromCartButton.setDisable(newSelection == null);
         });
 
-        carrito.addListener((javafx.collections.ListChangeListener<Producto>) change -> {
+        carrito.addListener((javafx.collections.ListChangeListener<CarritoItem>) change -> {
             updateTotal();
             processSaleButton.setDisable(carrito.isEmpty() || clienteComboBox.getValue() == null);
         });
@@ -150,9 +222,19 @@ public class VentasController extends BaseController implements Initializable {
         productoComboBox.setItems(productos);
 
         // Load sample sales
+        List<Producto> productosVenta1 = new ArrayList<>(productos.subList(0, 2));
         Venta sampleVenta = new Venta(1L, LocalDateTime.now().minusDays(1), 
-            clientes.get(0), productos.subList(0, 2), 929.98);
+            clientes.get(0), productosVenta1, 929.98);
         ventas.add(sampleVenta);
+        
+        // Add more sample sales for better visualization
+        List<Producto> productosVenta2 = new ArrayList<>(productos.subList(1, 3));
+        ventas.add(new Venta(2L, LocalDateTime.now().minusHours(3), 
+            clientes.get(1), productosVenta2, 109.98));
+            
+        List<Producto> productosVenta3 = new ArrayList<>(productos.subList(3, 5));
+        ventas.add(new Venta(3L, LocalDateTime.now().minusHours(1), 
+            clientes.get(2), productosVenta3, 249.98));
     }
 
     @FXML
@@ -160,8 +242,26 @@ public class VentasController extends BaseController implements Initializable {
         Producto selected = productoComboBox.getValue();
         if (selected != null) {
             if (selected.isAvailable()) {
-                carrito.add(selected);
-                showInfoAlert("Success", "Product added to cart!");
+                // Check if product already exists in cart
+                CarritoItem existingItem = carrito.stream()
+                    .filter(item -> item.getProducto().getId().equals(selected.getId()))
+                    .findFirst()
+                    .orElse(null);
+                
+                if (existingItem != null) {
+                    // Increase quantity if product already in cart
+                    if (existingItem.getCantidad() < selected.getStock()) {
+                        existingItem.incrementarCantidad();
+                        carritoTable.refresh();
+                        showInfoAlert("Cart Updated", "Product quantity increased!");
+                    } else {
+                        showWarningAlert("Stock Limit", "Cannot add more of this product. Stock limit reached.");
+                    }
+                } else {
+                    // Add new item to cart
+                    carrito.add(new CarritoItem(selected, 1));
+                    showInfoAlert("Success", "Product added to cart!");
+                }
             } else {
                 showWarningAlert("Stock Warning", "Product is out of stock!");
             }
@@ -172,10 +272,18 @@ public class VentasController extends BaseController implements Initializable {
 
     @FXML
     private void handleRemoveFromCart(ActionEvent event) {
-        Producto selected = carritoTable.getSelectionModel().getSelectedItem();
+        CarritoItem selected = carritoTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            carrito.remove(selected);
-            showInfoAlert("Success", "Product removed from cart!");
+            if (selected.getCantidad() > 1) {
+                // Decrease quantity if more than 1
+                selected.decrementarCantidad();
+                carritoTable.refresh();
+                showInfoAlert("Cart Updated", "Product quantity decreased!");
+            } else {
+                // Remove item if quantity is 1
+                carrito.remove(selected);
+                showInfoAlert("Success", "Product removed from cart!");
+            }
         }
     }
 
@@ -184,29 +292,43 @@ public class VentasController extends BaseController implements Initializable {
         Cliente selectedCliente = clienteComboBox.getValue();
         if (selectedCliente != null && !carrito.isEmpty()) {
             try {
+                // Create sale items list
+                List<Producto> productosVenta = new ArrayList<>();
+                for (CarritoItem item : carrito) {
+                    for (int i = 0; i < item.getCantidad(); i++) {
+                        productosVenta.add(item.getProducto());
+                    }
+                }
+                
                 Venta newVenta = new Venta(
                     (long) (ventas.size() + 1),
                     LocalDateTime.now(),
                     selectedCliente,
-                    FXCollections.observableArrayList(carrito),
+                    productosVenta,
                     calculateTotal()
                 );
                 
                 ventas.add(newVenta);
                 
-                // Update product stock (simulation)
-                for (Producto producto : carrito) {
-                    if (producto.getStock() > 0) {
-                        producto.decreaseStock(1);
+                // Update product stock
+                for (CarritoItem item : carrito) {
+                    Producto producto = item.getProducto();
+                    if (producto.getStock() >= item.getCantidad()) {
+                        producto.decreaseStock(item.getCantidad());
+                    } else {
+                        showErrorAlert("Stock Error", "Not enough stock for: " + producto.getNombre());
+                        return;
                     }
                 }
                 
                 clearCart();
+                updateSalesSummary();
                 showInfoAlert("Success", "Sale processed successfully!\nTotal: $" + 
                     String.format("%.2f", newVenta.getTotal()));
                 
             } catch (Exception e) {
                 showErrorAlert("Processing Error", "Could not process sale: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -219,7 +341,7 @@ public class VentasController extends BaseController implements Initializable {
             confirmAlert.setHeaderText(null);
             confirmAlert.setContentText("Are you sure you want to clear the cart?");
             
-            if (confirmAlert.showAndWait().get() == ButtonType.OK) {
+            if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 clearCart();
             }
         }
@@ -238,10 +360,76 @@ public class VentasController extends BaseController implements Initializable {
             stage.centerOnScreen();
             
         } catch (Exception e) {
-            e.printStackTrace();
             showErrorAlert("Navigation Error", "Could not load dashboard: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
+     @FXML
+    private void handleInventario(ActionEvent event) {
+        navigateToInventario();
+    }
+
+    @FXML
+    private void handlePedidos(ActionEvent event) {
+        navigateToPedidos();
+    }
+
+    @FXML
+    private void handleReportes(ActionEvent event) {
+        navigateToReportes();
+    }
+
+    private void navigateToInventario() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/InventarioView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) inventarioButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Inventario - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            showErrorAlert("Navigation Error", "Could not load Inventario: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private void navigateToPedidos() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/PedidosView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) pedidosButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Pedidos - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            showErrorAlert("Navigation Error", "Could not load Pedidos: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void navigateToReportes() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/ReportesView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) reportesButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Reportes - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            showErrorAlert("Navigation Error", "Could not load Reportes: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     private void clearCart() {
         carrito.clear();
@@ -250,11 +438,58 @@ public class VentasController extends BaseController implements Initializable {
     }
 
     private double calculateTotal() {
-        return carrito.stream().mapToDouble(Producto::getPrecio).sum();
+        return carrito.stream().mapToDouble(CarritoItem::getSubtotal).sum();
     }
 
     private void updateTotal() {
         double total = calculateTotal();
         totalLabel.setText(String.format("Total: $%.2f", total));
     }
+    
+    private void updateSalesSummary() {
+        // Calculate today's sales
+        double todaySales = ventas.stream()
+            .filter(venta -> venta.getFecha().toLocalDate().equals(LocalDateTime.now().toLocalDate()))
+            .mapToDouble(Venta::getTotal)
+            .sum();
+        
+        todaySalesLabel.setText(String.format("Today's Sales: $%.2f", todaySales));
+        todaySummaryLabel.setText(String.format("$%.2f", todaySales));
+        
+        // Calculate weekly and monthly sales (simplified for demo)
+        double weeklySales = ventas.stream()
+            .mapToDouble(Venta::getTotal)
+            .sum() * 1.5; // Simulated data
+        
+        double monthlySales = ventas.stream()
+            .mapToDouble(Venta::getTotal)
+            .sum() * 5; // Simulated data
+            
+        weekSummaryLabel.setText(String.format("$%.2f", weeklySales));
+        monthSummaryLabel.setText(String.format("$%.2f", monthlySales));
+    }
+    
+    private void showVentaDetails(Venta venta) {
+        StringBuilder details = new StringBuilder();
+        details.append("Sale ID: ").append(venta.getId()).append("\n");
+        details.append("Date: ").append(venta.getFecha().format(dateFormatter)).append("\n");
+        details.append("Customer: ").append(venta.getCliente().getNombre()).append("\n");
+        details.append("Total: $").append(String.format("%.2f", venta.getTotal())).append("\n");
+        details.append("Items: ").append(venta.getTotalItems()).append("\n\n");
+        details.append("Products:\n");
+        
+        // Usamos getListaProductos() en lugar de getProductos()
+        for (Producto producto : venta.getListaProductos()) {
+            details.append("- ").append(producto.getNombre())
+                  .append(" ($").append(String.format("%.2f", producto.getPrecio())).append(")\n");
+        }
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sale Details");
+        alert.setHeaderText("Sale Information");
+        alert.setContentText(details.toString());
+        alert.showAndWait();
+    }
+
+
 }

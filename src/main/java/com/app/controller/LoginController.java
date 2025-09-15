@@ -37,6 +37,15 @@ public class LoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Initialize any required components here
         setupValidation();
+        // Establecer tamaño de la ventana de login
+        javafx.application.Platform.runLater(() -> {
+            if (loginButton != null && loginButton.getScene() != null) {
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.setWidth(900);
+                stage.setHeight(800);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     private void setupValidation() {
@@ -92,9 +101,11 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/DashboardView.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) loginButton.getScene().getWindow();
-            Scene scene = new Scene(root, 1000, 700);
+            Scene scene = new Scene(root, 1000, 900);
             stage.setTitle("Dashboard - JavaFX Application");
             stage.setScene(scene);
+            stage.setWidth(1200);
+            stage.setHeight(800);
             stage.setResizable(true);
             stage.centerOnScreen();
         } catch (Exception e) {

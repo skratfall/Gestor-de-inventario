@@ -1,221 +1,189 @@
 package com.app.controller;
 
+import javafx.beans.property.SimpleStringProperty;
 import com.app.model.Producto;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+public class InventarioController {
 
-/**
- * Controller class for the Inventory view
- */
-public class InventarioController extends BaseController implements Initializable {
+    @FXML private TableView<Producto> productosTable;
+    @FXML private TableColumn<Producto, Long> idColumn;
+    @FXML private TableColumn<Producto, String> nombreColumn;
+    @FXML private TableColumn<Producto, String> categoriaColumn;
+    @FXML private TableColumn<Producto, Double> precioColumn;
+    @FXML private TableColumn<Producto, Integer> stockColumn;
+    @FXML private TableColumn<Producto, String> statusColumn;
 
-    @FXML
-    private TableView<Producto> productosTable;
+    @FXML private TextField searchField;
+    @FXML private TextField nombreField;
+    @FXML private TextField categoriaField;
+    @FXML private TextField precioField;
+    @FXML private TextField stockField;
 
-    @FXML
-    private TableColumn<Producto, Long> idColumn;
+    @FXML private VBox productFormCard;
+    @FXML private Label formTitleLabel;
+    @FXML private Button saveButton;
+    @FXML private Button clearFormButton;
+    @FXML private Button cancelFormButton;
+    @FXML private Button backButton;
 
-    @FXML
-    private TableColumn<Producto, String> nombreColumn;
+    private final ObservableList<Producto> productos = FXCollections.observableArrayList();
+    private FilteredList<Producto> filteredProductos;
 
-    @FXML
-    private TableColumn<Producto, String> categoriaColumn;
-
-    @FXML
-    private TableColumn<Producto, Double> precioColumn;
-
-    @FXML
-    private TableColumn<Producto, Integer> stockColumn;
-
-    @FXML
-    private TextField nombreField;
-
-    @FXML
-    private TextField categoriaField;
+    private Producto productoEditando = null;
 
     @FXML
-    private TextField precioField;
+    public void initialize() {
+        // Vincular columnas
+        idColumn.setCellValueFactory(cell -> cell.getValue().idProperty().asObject());
+        nombreColumn.setCellValueFactory(cell -> cell.getValue().nombreProperty());
+        categoriaColumn.setCellValueFactory(cell -> cell.getValue().categoriaProperty());
+        precioColumn.setCellValueFactory(cell -> cell.getValue().precioProperty().asObject());
+        stockColumn.setCellValueFactory(cell -> cell.getValue().stockProperty().asObject());
+        statusColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus()));
 
-    @FXML
-    private TextField stockField;
-
-    @FXML
-    private Button addButton;
-
-    @FXML
-    private Button updateButton;
-
-    @FXML
-    private Button deleteButton;
-
-    @FXML
-    private Button backButton;
-
-    private ObservableList<Producto> productos = FXCollections.observableArrayList();
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        initializeController();
-        setupTableColumns();
-        loadSampleData();
-        setupTableSelection();
-    }
-
-    @Override
-    public void initializeController() {
-        // Initialize form validation
-        updateButton.setDisable(true);
-        deleteButton.setDisable(true);
-    }
-
-    private void setupTableColumns() {
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        categoriaColumn.setCellValueFactory(new PropertyValueFactory<>("categoria"));
-        precioColumn.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        productosTable.setItems(productos);
-    }
-
-    private void setupTableSelection() {
-        productosTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                populateForm(newSelection);
-                updateButton.setDisable(false);
-                deleteButton.setDisable(false);
-            } else {
-                clearForm();
-                updateButton.setDisable(true);
-                deleteButton.setDisable(true);
-            }
-        });
-    }
-
-    private void loadSampleData() {
-        // TODO: Replace with actual data from DAO
+        // Datos iniciales
         productos.addAll(
-            new Producto(1L, "Laptop Dell", "Electronics", 899.99, 15),
-            new Producto(2L, "Mouse Logitech", "Electronics", 29.99, 50),
-            new Producto(3L, "Keyboard Mechanical", "Electronics", 79.99, 25),
-            new Producto(4L, "Monitor 24\"", "Electronics", 199.99, 12),
-            new Producto(5L, "Webcam HD", "Electronics", 49.99, 30)
+                new Producto(1L, "Laptop Lenovo", "Electrónica", 2500.0, 10),
+                new Producto(2L, "Teclado Mecánico", "Accesorios", 120.0, 25),
+                new Producto(3L, "Silla Gamer", "Muebles", 600.0, 5)
         );
+
+        // Filtro de búsqueda
+        filteredProductos = new FilteredList<>(productos, p -> true);
+        productosTable.setItems(filteredProductos);
+
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            String filtro = newVal.toLowerCase().trim();
+            filteredProductos.setPredicate(producto ->
+                    producto.getNombre().toLowerCase().contains(filtro) ||
+                    producto.getCategoria().toLowerCase().contains(filtro) ||
+                    String.valueOf(producto.getId()).contains(filtro)
+            );
+        });
+
+        // Botones del formulario
+        saveButton.setOnAction(e -> handleSave());
+        clearFormButton.setOnAction(e -> clearForm());
+        cancelFormButton.setOnAction(e -> toggleForm(false));
+
+        toggleForm(false); // Form oculto al inicio
     }
 
+    // ➕ Mostrar formulario para agregar
     @FXML
     private void handleAdd(ActionEvent event) {
-        if (validateForm()) {
-            try {
-                Producto newProducto = new Producto(
-                    (long) (productos.size() + 1),
-                    nombreField.getText().trim(),
-                    categoriaField.getText().trim(),
-                    Double.parseDouble(precioField.getText().trim()),
-                    Integer.parseInt(stockField.getText().trim())
-                );
-                
-                productos.add(newProducto);
-                clearForm();
-                showInfoAlert("Success", "Product added successfully!");
-                
-            } catch (NumberFormatException e) {
-                showErrorAlert("Input Error", "Please enter valid numbers for price and stock.");
-            }
-        }
+        productoEditando = null;
+        formTitleLabel.setText("Agregar Nuevo Producto");
+        toggleForm(true);
+        clearForm();
     }
 
+    // ✏️ Mostrar formulario con datos para editar
     @FXML
     private void handleUpdate(ActionEvent event) {
         Producto selected = productosTable.getSelectionModel().getSelectedItem();
-        if (selected != null && validateForm()) {
-            try {
-                selected.setNombre(nombreField.getText().trim());
-                selected.setCategoria(categoriaField.getText().trim());
-                selected.setPrecio(Double.parseDouble(precioField.getText().trim()));
-                selected.setStock(Integer.parseInt(stockField.getText().trim()));
-                
-                productosTable.refresh();
-                showInfoAlert("Success", "Product updated successfully!");
-                
-            } catch (NumberFormatException e) {
-                showErrorAlert("Input Error", "Please enter valid numbers for price and stock.");
-            }
+        if (selected != null) {
+            productoEditando = selected;
+            formTitleLabel.setText("Editar Producto");
+
+            nombreField.setText(selected.getNombre());
+            categoriaField.setText(selected.getCategoria());
+            precioField.setText(String.valueOf(selected.getPrecio()));
+            stockField.setText(String.valueOf(selected.getStock()));
+
+            toggleForm(true);
+        } else {
+            showWarning("Seleccione un producto para editar.");
         }
     }
 
+    // 🗑️ Eliminar producto
     @FXML
     private void handleDelete(ActionEvent event) {
         Producto selected = productosTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmAlert.setTitle("Confirm Delete");
-            confirmAlert.setHeaderText(null);
-            confirmAlert.setContentText("Are you sure you want to delete this product?");
-            
-            if (confirmAlert.showAndWait().get() == ButtonType.OK) {
-                productos.remove(selected);
-                clearForm();
-                showInfoAlert("Success", "Product deleted successfully!");
-            }
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Eliminar este producto?", ButtonType.YES, ButtonType.NO);
+            confirm.showAndWait().ifPresent(btn -> {
+                if (btn == ButtonType.YES) {
+                    productos.remove(selected);
+                }
+            });
+        } else {
+            showWarning("Seleccione un producto para eliminar.");
         }
     }
 
+    @FXML
+    private void handleCancelForm(ActionEvent event) {
+        clearForm();
+        toggleForm(false);
+    }
+
+    // Guardar (Agregar o Editar)
+    private void handleSave() {
+        if (!validateForm()) return;
+
+        try {
+            String nombre = nombreField.getText().trim();
+            String categoria = categoriaField.getText().trim();
+            double precio = Double.parseDouble(precioField.getText().trim());
+            int stock = Integer.parseInt(stockField.getText().trim());
+
+            if (productoEditando == null) {
+                // Nuevo
+                Producto nuevo = new Producto((long) (productos.size() + 1), nombre, categoria, precio, stock);
+                productos.add(nuevo);
+                showInfo("Producto agregado con éxito.");
+            } else {
+                // Editar
+                productoEditando.setNombre(nombre);
+                productoEditando.setCategoria(categoria);
+                productoEditando.setPrecio(precio);
+                productoEditando.setStock(stock);
+                productosTable.refresh();
+                showInfo("Producto actualizado con éxito.");
+            }
+
+            clearForm();
+            toggleForm(false);
+
+        } catch (NumberFormatException e) {
+            showError("Ingrese valores válidos para precio y stock.");
+        }
+    }
+
+    // 🔙 Método que faltaba
     @FXML
     private void handleBack(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/DashboardView.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) backButton.getScene().getWindow();
-            Scene scene = new Scene(root, 1000, 700);
+            stage.setScene(new Scene(root, 1000, 700));
             stage.setTitle("Dashboard - JavaFX Application");
-            stage.setScene(scene);
             stage.centerOnScreen();
-            
         } catch (Exception e) {
             e.printStackTrace();
-            showErrorAlert("Navigation Error", "Could not load dashboard: " + e.getMessage());
+            showError("No se pudo cargar el Dashboard: " + e.getMessage());
         }
     }
 
-    private boolean validateForm() {
-        if (nombreField.getText().trim().isEmpty()) {
-            showWarningAlert("Validation Error", "Product name is required.");
-            return false;
-        }
-        if (categoriaField.getText().trim().isEmpty()) {
-            showWarningAlert("Validation Error", "Category is required.");
-            return false;
-        }
-        if (precioField.getText().trim().isEmpty()) {
-            showWarningAlert("Validation Error", "Price is required.");
-            return false;
-        }
-        if (stockField.getText().trim().isEmpty()) {
-            showWarningAlert("Validation Error", "Stock is required.");
-            return false;
-        }
-        return true;
-    }
-
-    private void populateForm(Producto producto) {
-        nombreField.setText(producto.getNombre());
-        categoriaField.setText(producto.getCategoria());
-        precioField.setText(String.valueOf(producto.getPrecio()));
-        stockField.setText(String.valueOf(producto.getStock()));
+    // Helpers
+    private void toggleForm(boolean show) {
+        productFormCard.setVisible(show);
+        productFormCard.setManaged(show);
     }
 
     private void clearForm() {
@@ -223,6 +191,24 @@ public class InventarioController extends BaseController implements Initializabl
         categoriaField.clear();
         precioField.clear();
         stockField.clear();
-        productosTable.getSelectionModel().clearSelection();
+    }
+
+    private boolean validateForm() {
+        return !nombreField.getText().isEmpty()
+                && !categoriaField.getText().isEmpty()
+                && !precioField.getText().isEmpty()
+                && !stockField.getText().isEmpty();
+    }
+
+    private void showInfo(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).show();
+    }
+
+    private void showWarning(String msg) {
+        new Alert(Alert.AlertType.WARNING, msg, ButtonType.OK).show();
+    }
+
+    private void showError(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).show();
     }
 }

@@ -4,198 +4,410 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.ReportesController">
-   <children>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.ReportesController" stylesheets="@../../css/style.css">
+   <top>
       <!-- Header -->
-      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #2c3e50; -fx-background-radius: 10;">
+      <HBox styleClass="nav-bar">
          <children>
-            <Label style="-fx-text-fill: white;" text="Reports">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-         </children>
-         <padding>
-            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
-         </padding>
-      </HBox>
-      
-      <!-- Statistics Cards -->
-      <HBox alignment="CENTER" spacing="20.0">
-         <children>
-            <!-- Total Sales Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #3498db; -fx-background-radius: 10; -fx-padding: 15;">
+            <Label text="📊 Reports & Analytics" styleClass="nav-title" />
+            <Region HBox.hgrow="ALWAYS" />
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
                <children>
-                  <Label style="-fx-text-fill: white;" text="Total Sales">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalSalesLabel" style="-fx-text-fill: white;" text="0.00">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </Label>
+                  <Button text="🏠 Dashboard" onAction="#handleBack" styleClass="nav-button" />
+                  <Button text="📦 Inventory" styleClass="nav-button" />
+                  <Button text="💰 Sales" styleClass="nav-button" />
+                  <Button text="📋 Orders" styleClass="nav-button" />
+                  <Button text="📊 Reports" styleClass="nav-button, active" />
                </children>
-            </VBox>
-            
-            <!-- Total Orders Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #27ae60; -fx-background-radius: 10; -fx-padding: 15;">
-               <children>
-                  <Label style="-fx-text-fill: white;" text="Total Orders">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalOrdersLabel" style="-fx-text-fill: white;" text="0">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-            
-            <!-- Low Stock Items Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #e74c3c; -fx-background-radius: 10; -fx-padding: 15;">
-               <children>
-                  <Label style="-fx-text-fill: white;" text="Low Stock Items">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="lowStockItemsLabel" style="-fx-text-fill: white;" text="0">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-            
-            <!-- Top Product Card -->
-            <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #f39c12; -fx-background-radius: 10; -fx-padding: 15;">
-               <children>
-                  <Label style="-fx-text-fill: white;" text="Top Product">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="topProductLabel" style="-fx-text-fill: white;" text="None">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
+            </HBox>
          </children>
       </HBox>
-      
-      <!-- Chart Placeholders -->
-      <HBox alignment="CENTER" spacing="20.0">
+   </top>
+   
+   <center>
+      <VBox spacing="25.0" styleClass="padding-large">
          <children>
-            <Label fx:id="salesChartPlaceholder" alignment="CENTER" prefHeight="150.0" text="📊 Sales Chart" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            
-            <Label fx:id="inventoryChartPlaceholder" alignment="CENTER" prefHeight="150.0" text="📈 Inventory Chart" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            
-            <Label fx:id="ordersChartPlaceholder" alignment="CENTER" prefHeight="150.0" text="📉 Orders Chart" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      
-      <!-- Report Generation Section -->
-      <HBox spacing="20.0" VBox.vgrow="ALWAYS">
-         <children>
-            <!-- Left Panel - Report Controls -->
-            <VBox spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10; -fx-border-color: #dee2e6; -fx-border-radius: 10;">
+            <!-- Statistics Cards -->
+            <HBox spacing="20.0" alignment="CENTER">
                <children>
-                  <Label text="Generate Reports">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  
-                  <!-- Date Range Selection -->
-                  <VBox spacing="10.0">
+                  <!-- Total Sales Card -->
+                  <VBox styleClass="stats-card, primary" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Date Range:">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        
-                        <HBox spacing="10.0">
+                        <Label text="💰" style="-fx-font-size: 32px;" />
+                        <Label text="Total Sales" styleClass="title" />
+                        <Label fx:id="totalSalesLabel" text="$45,230.50" styleClass="value" />
+                        <Label text="All time revenue" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Total Orders Card -->
+                  <VBox styleClass="stats-card, success" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="📋" style="-fx-font-size: 32px;" />
+                        <Label text="Total Orders" styleClass="title" />
+                        <Label fx:id="totalOrdersLabel" text="127" styleClass="value" />
+                        <Label text="Orders processed" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Low Stock Items Card -->
+                  <VBox styleClass="stats-card, danger" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="⚠️" style="-fx-font-size: 32px;" />
+                        <Label text="Low Stock Items" styleClass="title" />
+                        <Label fx:id="lowStockItemsLabel" text="8" styleClass="value" />
+                        <Label text="Need attention" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Top Product Card -->
+                  <VBox styleClass="stats-card, warning" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="🏆" style="-fx-font-size: 32px;" />
+                        <Label text="Top Product" styleClass="title" />
+                        <Label fx:id="topProductLabel" text="Laptop Dell" styleClass="value" style="-fx-font-size: 20px;" />
+                        <Label text="Best seller" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            
+            <!-- TabPane for Multiple Reports -->
+            <TabPane VBox.vgrow="ALWAYS" styleClass="tab-pane">
+               <tabs>
+                  <!-- Sales Report Tab -->
+                  <Tab text="📊 Sales Reports" closable="false">
+                     <content>
+                        <HBox spacing="25.0" styleClass="padding-medium">
                            <children>
-                              <VBox spacing="5.0">
+                              <!-- Left Panel - Report Controls -->
+                              <VBox spacing="20.0" styleClass="card" HBox.hgrow="NEVER" prefWidth="350.0">
                                  <children>
-                                    <Label text="From:" />
-                                    <DatePicker fx:id="startDatePicker" />
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Label text="⚙️" style="-fx-font-size: 24px;" />
+                                          <Label text="Generate Sales Report" styleClass="section-header" />
+                                       </children>
+                                    </HBox>
+                                    
+                                    <!-- Date Range Selection -->
+                                    <VBox spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8;">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="📅" style="-fx-font-size: 18px;" />
+                                                <Label text="Date Range" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                                             </children>
+                                          </HBox>
+                                          
+                                          <GridPane hgap="15.0" vgap="10.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints />
+                                             </rowConstraints>
+                                             <children>
+                                                <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                                   <children>
+                                                      <Label text="From:" style="-fx-font-weight: 600;" />
+                                                      <DatePicker fx:id="startDatePicker" styleClass="date-picker" />
+                                                   </children>
+                                                </VBox>
+                                                
+                                                <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                                   <children>
+                                                      <Label text="To:" style="-fx-font-weight: 600;" />
+                                                      <DatePicker fx:id="endDatePicker" styleClass="date-picker" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <Separator />
+                                    
+                                    <!-- Report Generation Buttons -->
+                                    <VBox spacing="15.0">
+                                       <children>
+                                          <Button fx:id="generateSalesReportButton" onAction="#handleGenerateSalesReport" prefWidth="300.0" prefHeight="45.0" styleClass="btn, btn-primary">
+                                             <graphic>
+                                                <HBox spacing="10.0" alignment="CENTER">
+                                                   <children>
+                                                      <Label text="💰" style="-fx-text-fill: white;" />
+                                                      <Label text="Generate Sales Report" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </HBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <Button fx:id="exportReportButton" onAction="#handleExportReport" prefWidth="300.0" prefHeight="45.0" styleClass="btn, btn-secondary">
+                                             <graphic>
+                                                <HBox spacing="10.0" alignment="CENTER">
+                                                   <children>
+                                                      <Label text="📄" style="-fx-text-fill: white;" />
+                                                      <Label text="Export Report" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </HBox>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                               
-                              <VBox spacing="5.0">
+                              <!-- Right Panel - Sales Trends Chart -->
+                              <VBox spacing="20.0" styleClass="card" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label text="To:" />
-                                    <DatePicker fx:id="endDatePicker" />
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Label text="📈" style="-fx-font-size: 24px;" />
+                                          <Label text="Sales Trends" styleClass="section-header" />
+                                          <Region HBox.hgrow="ALWAYS" />
+                                          <Label text="Last 12 months" style="-fx-text-fill: #7f8c8d;" />
+                                       </children>
+                                    </HBox>
+                                    
+                                    <!-- Sales Trends Chart -->
+                                    <BarChart fx:id="salesTrendsChart" VBox.vgrow="ALWAYS" styleClass="bar-chart" prefHeight="400.0">
+                                       <xAxis>
+                                          <CategoryAxis side="BOTTOM" label="Month" />
+                                       </xAxis>
+                                       <yAxis>
+                                          <NumberAxis side="LEFT" label="Sales ($)" />
+                                       </yAxis>
+                                    </BarChart>
+                                    
+                                    <!-- Sales Summary -->
+                                    <VBox spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
+                                       <children>
+                                          <Label text="📈 Sales Summary" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                                          <HBox spacing="20.0">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label text="This Month" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+                                                      <Label text="$12,450.00" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </VBox>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label text="Last Month" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+                                                      <Label text="$10,230.50" style="-fx-text-fill: #3498db; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </VBox>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label text="Growth" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+                                                      <Label text="+21.7%" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
                         </HBox>
-                     </children>
-                  </VBox>
+                     </content>
+                  </Tab>
                   
-                  <!-- Report Generation Buttons -->
-                  <VBox spacing="10.0">
-                     <children>
-                        <Button fx:id="generateSalesReportButton" onAction="#handleGenerateSalesReport" prefWidth="200.0" style="-fx-background-color: #007bff; -fx-text-fill: white;" text="Generate Sales Report" />
-                        <Button fx:id="generateInventoryReportButton" onAction="#handleGenerateInventoryReport" prefWidth="200.0" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="Generate Inventory Report" />
-                        <Button fx:id="generateOrdersReportButton" onAction="#handleGenerateOrdersReport" prefWidth="200.0" style="-fx-background-color: #ffc107; -fx-text-fill: black;" text="Generate Orders Report" />
-                        <Button fx:id="exportReportButton" onAction="#handleExportReport" prefWidth="200.0" style="-fx-background-color: #17a2b8; -fx-text-fill: white;" text="Export Report" />
-                     </children>
-                  </VBox>
-               </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
-            </VBox>
-            
-            <!-- Right Panel - Report Display -->
-            <VBox spacing="15.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label text="Report Output">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
+                  <!-- Products Report Tab -->
+                  <Tab text="📦 Product Reports" closable="false">
+                     <content>
+                        <HBox spacing="25.0" styleClass="padding-medium">
+                           <children>
+                              <!-- Left Panel - Product Controls -->
+                              <VBox spacing="20.0" styleClass="card" HBox.hgrow="NEVER" prefWidth="350.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Label text="⚙️" style="-fx-font-size: 24px;" />
+                                          <Label text="Product Analysis" styleClass="section-header" />
+                                       </children>
+                                    </HBox>
+                                    
+                                    <!-- Product Report Buttons -->
+                                    <VBox spacing="15.0">
+                                       <children>
+                                          <Button fx:id="generateInventoryReportButton" onAction="#handleGenerateInventoryReport" prefWidth="300.0" prefHeight="45.0" styleClass="btn, btn-success">
+                                             <graphic>
+                                                <HBox spacing="10.0" alignment="CENTER">
+                                                   <children>
+                                                      <Label text="📦" style="-fx-text-fill: white;" />
+                                                      <Label text="Generate Inventory Report" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </HBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <Button fx:id="generateOrdersReportButton" onAction="#handleGenerateOrdersReport" prefWidth="300.0" prefHeight="45.0" styleClass="btn, btn-warning">
+                                             <graphic>
+                                                <HBox spacing="10.0" alignment="CENTER">
+                                                   <children>
+                                                      <Label text="📋" style="-fx-text-fill: white;" />
+                                                      <Label text="Generate Orders Report" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </HBox>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </VBox>
+                                    
+                                    <!-- Top Products Summary -->
+                                    <VBox spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8;">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="🏆" style="-fx-font-size: 18px;" />
+                                                <Label text="Top Selling Products" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                                             </children>
+                                          </HBox>
+                                          
+                                          <VBox spacing="10.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                   <children>
+                                                      <Label text="1." style="-fx-font-weight: bold; -fx-text-fill: #f39c12;" />
+                                                      <Label text="Laptop Dell" style="-fx-font-weight: bold;" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Label text="45 units" style="-fx-text-fill: #27ae60;" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                   <children>
+                                                      <Label text="2." style="-fx-font-weight: bold; -fx-text-fill: #95a5a6;" />
+                                                      <Label text="Monitor 24\"" style="-fx-font-weight: bold;" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Label text="32 units" style="-fx-text-fill: #27ae60;" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                   <children>
+                                                      <Label text="3." style="-fx-font-weight: bold; -fx-text-fill: #cd7f32;" />
+                                                      <Label text="Mouse Logitech" style="-fx-font-weight: bold;" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Label text="28 units" style="-fx-text-fill: #27ae60;" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              
+                              <!-- Right Panel - Top-Selling Products Chart -->
+                              <VBox spacing="20.0" styleClass="card" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Label text="🥧" style="-fx-font-size: 24px;" />
+                                          <Label text="Top-Selling Products" styleClass="section-header" />
+                                          <Region HBox.hgrow="ALWAYS" />
+                                          <Label text="By units sold" style="-fx-text-fill: #7f8c8d;" />
+                                       </children>
+                                    </HBox>
+                                    
+                                    <!-- Top Products Pie Chart -->
+                                    <PieChart fx:id="topProductsChart" VBox.vgrow="ALWAYS" styleClass="pie-chart" prefHeight="400.0" />
+                                    
+                                    <!-- Product Performance Summary -->
+                                    <VBox spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
+                                       <children>
+                                          <Label text="📊 Product Performance" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                                          <HBox spacing="20.0">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label text="Total Products" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+                                                      <Label text="156" style="-fx-text-fill: #3498db; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </VBox>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label text="Active Products" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+                                                      <Label text="148" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </VBox>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label text="Low Stock" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+                                                      <Label text="8" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </content>
+                  </Tab>
                   
-                  <TextArea fx:id="reportTextArea" editable="false" prefHeight="400.0" wrapText="true" VBox.vgrow="ALWAYS" />
-               </children>
-            </VBox>
+                  <!-- Report Output Tab -->
+                  <Tab text="📄 Report Output" closable="false">
+                     <content>
+                        <VBox spacing="20.0" styleClass="card, padding-large">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Label text="📄" style="-fx-font-size: 24px;" />
+                                    <Label text="Generated Reports" styleClass="section-header" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label text="Ready to generate reports" style="-fx-text-fill: #7f8c8d;" />
+                                 </children>
+                              </HBox>
+                              
+                              <TextArea fx:id="reportTextArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" styleClass="text-area" style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 13px;" promptText="Generated reports will appear here..." />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
          </children>
-      </HBox>
-      
+      </VBox>
+   </center>
+   
+   <bottom>
       <!-- Footer -->
-      <HBox alignment="CENTER_RIGHT">
+      <HBox alignment="CENTER_RIGHT" styleClass="padding-medium" style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;">
          <children>
-            <Button fx:id="backButton" onAction="#handleBack" style="-fx-background-color: #6c757d; -fx-text-fill: white;" text="Back to Dashboard" />
+            <Button fx:id="backButton" onAction="#handleBack" prefWidth="150.0" prefHeight="35.0" styleClass="btn, btn-secondary">
+               <graphic>
+                  <HBox spacing="8.0" alignment="CENTER">
+                     <children>
+                        <Label text="🏠" style="-fx-text-fill: white;" />
+                        <Label text="Back to Dashboard" style="-fx-text-fill: white;" />
+                     </children>
+                  </HBox>
+               </graphic>
+            </Button>
          </children>
       </HBox>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
-</VBox>
+   </bottom>
+</BorderPane>

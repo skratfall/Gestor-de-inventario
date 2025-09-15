@@ -38,7 +38,7 @@ public abstract class BaseController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
+    //klok manito
     /**
      * Method to be implemented by child controllers for initialization logic
      */

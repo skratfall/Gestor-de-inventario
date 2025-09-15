@@ -63,6 +63,15 @@ public class PedidosController extends BaseController implements Initializable {
     private Button backButton;
 
     @FXML
+    private Button inventarioButton;
+
+    @FXML
+    private Button ventasButton;
+
+    @FXML
+    private Button reportesButton;
+
+    @FXML
     private TextArea detailsTextArea;
 
     @FXML
@@ -230,6 +239,60 @@ public class PedidosController extends BaseController implements Initializable {
         // TODO: Reload data from database
         pedidosTable.refresh();
         showInfoAlert("Refreshed", "Orders data has been refreshed.");
+    }
+
+    @FXML
+    private void handleInventario(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/InventarioView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) inventarioButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Inventory - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Navigation Error", "Could not load inventory: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleVentas(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/VentasView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) ventasButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Sales - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Navigation Error", "Could not load sales: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleReportes(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/ReportesView.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) reportesButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setTitle("Reports - JavaFX Application");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Navigation Error", "Could not load reports: " + e.getMessage());
+        }
     }
 
     @FXML

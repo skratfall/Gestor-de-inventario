@@ -51,7 +51,7 @@
 }
 
 .icon-white {
-    -fx-text-fill: white;
+    -fx-text-fill: #0997d4;
 }
 
 /* Textos */
@@ -112,7 +112,7 @@
 }
 
 .button-text-white {
-    -fx-text-fill: white;
+    -fx-text-fill: #0997d4;
     -fx-font-weight: bold;
 }
 

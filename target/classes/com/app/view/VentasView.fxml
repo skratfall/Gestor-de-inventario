@@ -40,7 +40,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label text="🛒" styleClass="icon-large" />
-                        <Label text="New Sale" styleClass="section-header" />
+                        <Label text="Nueva Venta" styleClass="section-header" />
                      </children>
                   </HBox>
                   
@@ -50,18 +50,18 @@
                         <!-- Client Selection -->
                         <VBox spacing="8.0">
                            <children>
-                              <Label text="Select Customer *" styleClass="input-label" />
+                              <Label text="Seleccione un Cliente *" styleClass="input-label" />
                               <ComboBox fx:id="clienteComboBox" prefWidth="280.0" 
-                                        promptText="Choose a customer" styleClass="combo-box" />
+                                        promptText="Elija un Cliente" styleClass="combo-box" />
                            </children>
                         </VBox>
                         
                         <!-- Product Selection -->
                         <VBox spacing="8.0">
                            <children>
-                              <Label text="Select Product *" styleClass="input-label" />
+                              <Label text="Seleccionar Producto *" styleClass="input-label" />
                               <ComboBox fx:id="productoComboBox" prefWidth="280.0" 
-                                        promptText="Choose a product" styleClass="combo-box" />
+                                        promptText="Elija un Producto" styleClass="combo-box" />
                            </children>
                         </VBox>
                         
@@ -72,7 +72,7 @@
                               <HBox spacing="8.0" alignment="CENTER">
                                  <children>
                                     <Label text="🛒" styleClass="icon-white" />
-                                    <Label text="Add to Cart" styleClass="button-text-white" />
+                                    <Label text="Agregar al carrito" styleClass="button-text-white" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -88,16 +88,16 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="🛍️" styleClass="icon-medium" />
-                              <Label text="Shopping Cart" styleClass="subtitle" />
+                              <Label text="Carrito de Compra" styleClass="subtitle" />
                            </children>
                         </HBox>
                         
                         <TableView fx:id="carritoTable" prefHeight="250.0" styleClass="table-view">
                            <columns>
-                              <TableColumn fx:id="nombreColumn" prefWidth="140.0" text="Product" />
-                              <TableColumn fx:id="categoriaColumn" prefWidth="100.0" text="Category" />
-                              <TableColumn fx:id="precioColumn" prefWidth="80.0" text="Price" />
-                              <TableColumn fx:id="cantidadColumn" prefWidth="70.0" text="Qty" />
+                              <TableColumn fx:id="nombreColumn" prefWidth="140.0" text="Producto" />
+                              <TableColumn fx:id="categoriaColumn" prefWidth="100.0" text="Categoria" />
+                              <TableColumn fx:id="precioColumn" prefWidth="80.0" text="Precio" />
+                              <TableColumn fx:id="cantidadColumn" prefWidth="70.0" text="Cantidad" />
                               <TableColumn fx:id="subtotalColumn" prefWidth="90.0" text="Subtotal" />
                            </columns>
                         </TableView>
@@ -110,7 +110,7 @@
                                     <HBox spacing="5.0" alignment="CENTER">
                                        <children>
                                           <Label text="🗑️" styleClass="icon-white" />
-                                          <Label text="Remove" styleClass="button-text-white" />
+                                          <Label text="Borrar" styleClass="button-text-white" />
                                        </children>
                                     </HBox>
                                  </graphic>
@@ -121,7 +121,7 @@
                                     <HBox spacing="5.0" alignment="CENTER">
                                        <children>
                                           <Label text="🧹" styleClass="icon-white" />
-                                          <Label text="Clear" styleClass="button-text-white" />
+                                          <Label text="Limpiar" styleClass="button-text-white" />
                                        </children>
                                     </HBox>
                                  </graphic>
@@ -149,7 +149,7 @@
                               <HBox spacing="10.0" alignment="CENTER">
                                  <children>
                                     <Label text="💳" styleClass="icon-white icon-large" />
-                                    <Label text="Process Sale" styleClass="button-text-white button-text-large" />
+                                    <Label text="Prosesar Pago" styleClass="button-text-white button-text-large" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -167,43 +167,43 @@
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label text="📊" styleClass="icon-large" />
-                        <Label text="Sales History" styleClass="section-header" />
+                        <Label text="Historial de Ventas" styleClass="section-header" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label fx:id="todaySalesLabel" text="Today's Sales: $0.00" styleClass="sales-indicator" />
+                        <Label fx:id="todaySalesLabel" text="Ventas de Hoy: $0.00" styleClass="sales-indicator" />
                      </children>
                   </HBox>
                   
                   <TableView fx:id="ventasTable" VBox.vgrow="ALWAYS" styleClass="table-view">
                      <columns>
                         <TableColumn fx:id="ventaIdColumn" prefWidth="60.0" text="ID" />
-                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Date" />
-                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Customer" />
+                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Fecha" />
+                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Cliente" />
                         <TableColumn fx:id="ventaTotalColumn" prefWidth="100.0" text="Total ($)" />
-                        <TableColumn fx:id="accionesColumn" prefWidth="80.0" text="Actions" />
+                        <TableColumn fx:id="accionesColumn" prefWidth="80.0" text="Acciones" />
                      </columns>
                   </TableView>
                   
                   <!-- Sales Summary -->
                   <VBox spacing="10.0" styleClass="summary-panel">
                      <children>
-                        <Label text="📈 Sales Summary" styleClass="summary-title" />
+                        <Label text="📈 Resumen de Ventas" styleClass="summary-title" />
                         <HBox spacing="20.0">
                            <children>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="Today" styleClass="summary-period" />
+                                    <Label text="Hoy" styleClass="summary-period" />
                                     <Label fx:id="todaySummaryLabel" text="" styleClass="summary-amount today" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="This Week" styleClass="summary-period" />
+                                    <Label text="Esta Semana" styleClass="summary-period" />
                                     <Label fx:id="weekSummaryLabel" text="" styleClass="summary-amount week" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="This Month" styleClass="summary-period" />
+                                    <Label text="Este Mes" styleClass="summary-period" />
                                     <Label fx:id="monthSummaryLabel" text="" styleClass="summary-amount month" />
                                  </children>
                               </VBox>
@@ -227,7 +227,7 @@
                   <HBox spacing="8.0" alignment="CENTER">
                      <children>
                         <Label text="🏠" styleClass="icon-white" />
-                        <Label text="Back to Dashboard" styleClass="button-text-white" />
+                        <Label text="Regresar al Dashboard" styleClass="button-text-white" />
                      </children>
                   </HBox>
                </graphic>

@@ -609,3 +609,11 @@
     -fx-font-weight: bold;  /* opcional: negrita */
     -fx-font-size: 14px;    /* opcional: tamaño */
 }
+
+.table-row-cell .text {
+    -fx-fill: black;   /* color del texto */
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: rgb(59, 113, 205);   /* color del texto al seleccionar */
+}

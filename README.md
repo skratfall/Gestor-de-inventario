@@ -1,5 +1,10 @@
 # JavaFX Modular Application
 
+![logo-proyecto](https://github.com/user-attachments/assets/c6a55070-5d4f-4d33-9153-33957e50f4ce)
+
+
+
+
 A modular JavaFX application with clean architecture and organized package structure.
 
 ## Project Structure
@@ -30,6 +35,8 @@ src/
 ├── pom.xml                                 # Maven configuration
 └── README.md                               # This file
 ```
+
+
 
 ## Features
 

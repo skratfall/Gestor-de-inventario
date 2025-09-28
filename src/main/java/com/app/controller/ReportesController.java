@@ -194,7 +194,7 @@ public class ReportesController extends BaseController implements Initializable 
         topProductLabel.setText("Laptop Dell");
 
         // Sales Summary
-        currentMonthSalesLabel.setText("$12,450.00");
+        currentMonthSalesLabel.setText("$12,0.00");
         previousMonthSalesLabel.setText("$10,230.50");
         salesGrowthLabel.setText("+21.7%");
 

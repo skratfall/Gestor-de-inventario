@@ -208,7 +208,7 @@ public class ReportesController extends BaseController implements Initializable 
 
         // Product Performance
         totalProductsLabel.setText("156");
-        activeProductsLabel.setText("148");
+        activeProductsLabel.setText("150");
         lowStockCountLabel.setText("8");
     }
 

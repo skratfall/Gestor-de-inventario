@@ -41,7 +41,7 @@ public class LoginController implements Initializable {
         javafx.application.Platform.runLater(() -> {
             if (loginButton != null && loginButton.getScene() != null) {
                 Stage stage = (Stage) loginButton.getScene().getWindow();
-                stage.setWidth(900);
+                stage.setWidth(500);
                 stage.setHeight(800);
                 stage.centerOnScreen();
             }

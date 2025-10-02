@@ -218,9 +218,10 @@ public class PedidosController extends BaseController implements Initializable {
             selected.setEstado(newStatus);
             pedidosTable.refresh();
             
-            showInfoAlert("Status Updated", 
-                "Order #" + selected.getId() + " status changed from " + 
-                oldStatus + " to " + newStatus);
+            //Alert boton ACTUALIZAR ESTADO
+            showInfoAlert("Estado actualizado", 
+                "Pedido #" + selected.getId() + " estado cambiado de " + 
+                oldStatus + " a " + newStatus);
             
             showOrderDetails(selected);
         }
@@ -234,11 +235,12 @@ public class PedidosController extends BaseController implements Initializable {
         }
     }
 
+    //Alertas al presionas boton ACTUALIZAR
     @FXML
     private void handleRefresh(ActionEvent event) {
         // TODO: Reload data from database
         pedidosTable.refresh();
-        showInfoAlert("Refreshed", "La lista de pedidos ha sido actualizada.");
+        showInfoAlert("Actualizado", "La lista de pedidos ha sido actualizada.");
     }
 
     @FXML
@@ -255,7 +257,7 @@ public class PedidosController extends BaseController implements Initializable {
             
         } catch (Exception e) {
             e.printStackTrace();
-            showErrorAlert("Navigation Error", "Could not load inventory: " + e.getMessage());
+            showErrorAlert("Error de navegación", "No es posible cargar inventario: " + e.getMessage());
         }
     }
 

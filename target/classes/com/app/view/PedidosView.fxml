@@ -148,7 +148,7 @@
                         
                         <HBox spacing="15.0" alignment="CENTER_LEFT">
                            <children>
-                              <ComboBox fx:id="estadoComboBox" prefWidth="180.0" promptText="Select new status" styleClass="combo-box" />
+                              <ComboBox fx:id="estadoComboBox" prefWidth="180.0" promptText="Selecciona un estado" styleClass="combo-box" />
                               <Button fx:id="updateStatusButton" onAction="#handleUpdateStatus" prefWidth="130.0" styleClass="btn, btn-warning">
                                  <graphic>
                                     <HBox spacing="5.0" alignment="CENTER">

@@ -588,12 +588,13 @@
 .pedidos-table {
     -fx-background-color: #ffe4b5;
 }
-
-.pedidos-table .column-header-background {
-    -fx-background-color: #b22222;
-}
-
 .pedidos-table .table-row-cell {
-    -fx-background-color: #fffaf0;
+    -fx-background-color: #f0f0f0;
+}
+.pedidos-table .column-header-background {
+    -fx-background-color: #3c3c3c;
+}
+.pedidos-table .table-cell {
+    -fx-text-fill: #222;
 }
 

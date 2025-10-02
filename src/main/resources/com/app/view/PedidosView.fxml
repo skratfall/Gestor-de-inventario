@@ -44,9 +44,9 @@
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label text="📋" style="-fx-font-size: 24px;" />
-                        <Label text="Orders List" styleClass="section-header" />
+                        <Label text="Lista de pedidos" styleClass="section-header" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label text="Total Orders: 127" style="-fx-text-fill: #7f8c8d;" />
+                        <Label text="Pedidos totales: 127" style="-fx-text-fill: #7f8c8d;" />
                      </children>
                   </HBox>
                   
@@ -57,14 +57,14 @@
                            <children>
                               <Label text="⏳" style="-fx-font-size: 20px;" />
                               <Label text="23" style="-fx-font-weight: bold; -fx-text-fill: #f39c12;" />
-                              <Label text="Pending" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Pendiente" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="⚙️" style="-fx-font-size: 20px;" />
                               <Label text="15" style="-fx-font-weight: bold; -fx-text-fill: #3498db;" />
-                              <Label text="Processing" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Proceso" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">

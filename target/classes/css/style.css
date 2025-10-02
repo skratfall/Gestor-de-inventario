@@ -585,9 +585,15 @@
     -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #e74c3c, #c0392b); 
 }
 
+.pedidos-table {
+    -fx-background-color: #ffe4b5;
+}
+
 .pedidos-table .column-header-background {
-    -fx-background-color: #3c3c3c;
+    -fx-background-color: #b22222;
 }
+
 .pedidos-table .table-row-cell {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: #fffaf0;
 }
+

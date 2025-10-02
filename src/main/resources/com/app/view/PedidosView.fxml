@@ -85,7 +85,7 @@
                      </children>
                   </HBox>
                   
-                  <TableView fx:id="pedidosTable" VBox.vgrow="ALWAYS" styleClass="pedidos-table">
+                  <TableView fx:id="pedidosTable" VBox.vgrow="ALWAYS" styleClass="table-view">
             
                      <columns>
 

@@ -104,7 +104,7 @@
                               <HBox spacing="5.0" alignment="CENTER">
                                  <children>
                                     <Label text="👁️" style="-fx-text-fill: white;" />
-                                    <Label text="View Details" style="-fx-text-fill: white;" />
+                                    <Label text="Detalles" style="-fx-text-fill: white;" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -114,7 +114,7 @@
                               <HBox spacing="5.0" alignment="CENTER">
                                  <children>
                                     <Label text="🔄" style="-fx-text-fill: white;" />
-                                    <Label text="Refresh" style="-fx-text-fill: white;" />
+                                    <Label text="Actualizar" style="-fx-text-fill: white;" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -130,7 +130,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label text="📝" style="-fx-font-size: 24px;" />
-                        <Label fx:id="selectedOrderLabel" text="No order selected" styleClass="section-header" />
+                        <Label fx:id="selectedOrderLabel" text="No hay pedido seleccionado" styleClass="section-header" />
                      </children>
                   </HBox>
                   

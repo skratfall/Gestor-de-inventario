@@ -111,7 +111,7 @@
                               </HBox>
                            </graphic>
                         </Button>
-                        <Button fx:id="refreshButton" onAction="#handleRefresh" prefWidth="100.0" styleClass="btn, btn-secondary">
+                        <Button fx:id="refreshButton" onAction="#handleRefresh" prefWidth="200.0" styleClass="btn, btn-secondary">
                            <graphic>
                               <HBox spacing="5.0" alignment="CENTER">
                                  <children>

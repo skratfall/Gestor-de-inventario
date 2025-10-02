@@ -238,7 +238,7 @@ public class PedidosController extends BaseController implements Initializable {
     private void handleRefresh(ActionEvent event) {
         // TODO: Reload data from database
         pedidosTable.refresh();
-        showInfoAlert("Refreshed", "Orders data has been refreshed.");
+        showInfoAlert("Refreshed", "La lista de pedidos ha sido actualizada.");
     }
 
     @FXML

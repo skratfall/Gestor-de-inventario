@@ -617,3 +617,4 @@
 .table-row-cell:selected .text {
     -fx-fill: rgb(59, 113, 205);   /* color del texto al seleccionar */
 }
+

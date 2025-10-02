@@ -86,7 +86,9 @@
                   </HBox>
                   
                   <TableView fx:id="pedidosTable" VBox.vgrow="ALWAYS" styleClass="pedidos-table">
+            
                      <columns>
+
                         <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
                         <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Date" />
                         <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Customer" />

@@ -134,7 +134,7 @@ public class PedidosController extends BaseController implements Initializable {
                         setStyle("");
                     } else {
                         setText(item);
-                        
+
                         // Apply color based on status
                         switch (item) {
                             case "ENTREGADO":

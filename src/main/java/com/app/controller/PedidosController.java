@@ -24,8 +24,6 @@ import java.util.ResourceBundle;
 /**
  * Controller class for the Orders view
  */
-
- 
 public class PedidosController extends BaseController implements Initializable {
 
     @FXML

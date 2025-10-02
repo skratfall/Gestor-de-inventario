@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 /**
  * Base controller class with common functionality for all controllers
@@ -43,4 +44,9 @@ public abstract class BaseController {
      * Method to be implemented by child controllers for initialization logic
      */
     public abstract void initializeController();
+
+    public void start(Stage primaryStage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'start'");
+    }
 }

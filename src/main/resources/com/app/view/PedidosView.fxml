@@ -20,7 +20,7 @@
       <!-- Header -->
       <HBox styleClass="nav-bar">
          <children>
-            <Label text="📋 Orders Management" styleClass="nav-title" />
+            <Label text="📋 Administrador de pedidos" styleClass="nav-title" />
             <Region HBox.hgrow="ALWAYS" />
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                <children>
@@ -72,14 +72,14 @@
                            <children>
                               <Label text="🚚" style="-fx-font-size: 20px;" />
                               <Label text="31" style="-fx-font-weight: bold; -fx-text-fill: #9b59b6;" />
-                              <Label text="Shipped" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Enviado" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="✅" style="-fx-font-size: 20px;" />
                               <Label text="52" style="-fx-font-weight: bold; -fx-text-fill: #27ae60;" />
-                              <Label text="Delivered" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Entregado" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                      </children>

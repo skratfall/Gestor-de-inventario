@@ -90,9 +90,9 @@
                      <columns>
 
                         <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
-                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Date" />
-                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Customer" />
-                        <TableColumn fx:id="estadoColumn" prefWidth="100.0" text="Status" />
+                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Fecha" />
+                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Cliente" />
+                        <TableColumn fx:id="estadoColumn" prefWidth="100.0" text="Estado" />
                         <TableColumn fx:id="itemsColumn" prefWidth="70.0" text="Items" />
                         <TableColumn fx:id="totalColumn" prefWidth="100.0" text="Total ($)" />
                      </columns>

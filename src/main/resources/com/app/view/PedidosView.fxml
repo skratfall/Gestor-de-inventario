@@ -140,7 +140,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="🔄" style="-fx-font-size: 18px;" />
-                              <Label text="Update Status" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              <Label text="Actualizar estado" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                            </children>
                         </HBox>
                         
@@ -152,7 +152,7 @@
                                     <HBox spacing="5.0" alignment="CENTER">
                                        <children>
                                           <Label text="✏️" style="-fx-text-fill: white;" />
-                                          <Label text="Update Status" style="-fx-text-fill: white;" />
+                                          <Label text="Actualizar" style="-fx-text-fill: white;" />
                                        </children>
                                     </HBox>
                                  </graphic>
@@ -170,7 +170,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="📋" style="-fx-font-size: 18px;" />
-                              <Label text="Order Details" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              <Label text="Detalles del pedido" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                            </children>
                         </HBox>
                         
@@ -192,7 +192,7 @@
                   <HBox spacing="8.0" alignment="CENTER">
                      <children>
                         <Label text="🏠" style="-fx-text-fill: white;" />
-                        <Label text="Back to Dashboard" style="-fx-text-fill: white;" />
+                        <Label text="Volver" style="-fx-text-fill: white;" />
                      </children>
                   </HBox>
                </graphic>

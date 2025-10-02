@@ -170,13 +170,13 @@ public class PedidosController extends BaseController implements Initializable {
                 updateStatusButton.setDisable(false);
                 viewDetailsButton.setDisable(false);
                 estadoComboBox.setValue(newSelection.getEstado());
-                selectedOrderLabel.setText("Order #" + newSelection.getId());
+                selectedOrderLabel.setText("Pedido #" + newSelection.getId());
                 showOrderDetails(newSelection);
             } else {
                 updateStatusButton.setDisable(true);
                 viewDetailsButton.setDisable(true);
                 estadoComboBox.setValue(null);
-                selectedOrderLabel.setText("No order selected");
+                selectedOrderLabel.setText("No hay pedido seleccionado");
                 detailsTextArea.clear();
             }
         });

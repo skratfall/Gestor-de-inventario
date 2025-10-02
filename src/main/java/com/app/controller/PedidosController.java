@@ -317,16 +317,16 @@ public class PedidosController extends BaseController implements Initializable {
 
     private void showOrderDetails(Pedido pedido) {
         StringBuilder details = new StringBuilder();
-        details.append("Order Details\n");
+        details.append("Detalles del pedido\n");
         details.append("=============\n\n");
-        details.append("Order ID: ").append(pedido.getId()).append("\n");
-        details.append("Date: ").append(pedido.getFecha()).append("\n");
-        details.append("Client: ").append(pedido.getCliente().getNombre()).append("\n");
-        details.append("Phone: ").append(pedido.getCliente().getTelefono()).append("\n");
+        details.append("Pedido ID: ").append(pedido.getId()).append("\n");
+        details.append("Fecha: ").append(pedido.getFecha()).append("\n");
+        details.append("Cliente: ").append(pedido.getCliente().getNombre()).append("\n");
+        details.append("Telefono: ").append(pedido.getCliente().getTelefono()).append("\n");
         details.append("Email: ").append(pedido.getCliente().getEmail()).append("\n");
-        details.append("Status: ").append(pedido.getEstado()).append("\n\n");
+        details.append("Estado: ").append(pedido.getEstado()).append("\n\n");
         
-        details.append("Products:\n");
+        details.append("Productos:\n");
         details.append("---------\n");
         for (Producto producto : pedido.getListaProductos()) {
             details.append("• ").append(producto.getNombre())
@@ -334,8 +334,8 @@ public class PedidosController extends BaseController implements Initializable {
                    .append(" (").append(producto.getCategoria()).append(")\n");
         }
         
-        details.append("\nTotal Items: ").append(pedido.getTotalItems()).append("\n");
-        details.append("Total Amount: $").append(String.format("%.2f", pedido.calculateTotal()));
+        details.append("\nTotal Objetos: ").append(pedido.getTotalItems()).append("\n");
+        details.append("Monto total: $").append(String.format("%.2f", pedido.calculateTotal()));
         
         detailsTextArea.setText(details.toString());
     }

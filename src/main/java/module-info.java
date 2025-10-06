@@ -3,6 +3,7 @@ module javafx.modular.app {
     requires javafx.fxml;
     requires java.desktop;
     requires java.sql;
+    requires com.google.gson;
     
     exports com.app;
     exports com.app.controller;

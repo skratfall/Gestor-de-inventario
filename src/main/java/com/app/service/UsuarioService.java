@@ -206,4 +206,42 @@ public class UsuarioService {
         usuario.setActivo(!usuario.isActivo());
         usuarioDAO.update(usuario);
     }
+
+    public boolean createUsuarioAsSystem(String username, String password, String email,
+                                          String nombreCompleto, String rolId, boolean activo) {
+        try {
+            if (username == null || username.trim().isEmpty()) {
+                return false;
+            }
+
+            if (password == null || password.length() < 6) {
+                return false;
+            }
+
+            if (usuarioDAO.existsByUsername(username)) {
+                return false;
+            }
+
+            String passwordHash = PasswordEncoder.hashPassword(password);
+            Usuario usuario = new Usuario(username, passwordHash, email, nombreCompleto, rolId);
+            usuario.setActivo(activo);
+
+            Usuario saved = usuarioDAO.save(usuario);
+            return saved != null;
+        } catch (Exception e) {
+            System.err.println("Error creating user as system: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean hasAnyUsuario() {
+        try {
+            List<Usuario> usuarios = usuarioDAO.findAllWithoutAuth();
+            return usuarios != null && !usuarios.isEmpty();
+        } catch (Exception e) {
+            System.err.println("Error checking if any user exists: " + e.getMessage());
+            return false;
+        }
+    }
 }

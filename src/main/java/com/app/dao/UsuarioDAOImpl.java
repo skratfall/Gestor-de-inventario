@@ -296,6 +296,26 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         return 0;
     }
 
+    public List<Usuario> findAllWithoutAuth() {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT * FROM usuarios ORDER BY username";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                usuarios.add(mapResultSetToUsuario(rs));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error finding all usuarios without auth: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return usuarios;
+    }
+
     private Usuario mapResultSetToUsuario(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
         usuario.setId(rs.getString("id"));

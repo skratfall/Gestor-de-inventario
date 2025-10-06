@@ -1,7 +1,7 @@
 package com.app.service;
 
 import com.app.dao.RolDAO;
-import com.app.dao.UsuarioDAO;
+import com.app.dao.UsuarioDAOImpl;
 import com.app.model.Rol;
 import com.app.model.Usuario;
 import com.app.security.PasswordEncoder;
@@ -13,12 +13,12 @@ import java.util.Optional;
 public class AuthenticationService {
 
     private static AuthenticationService instance;
-    private final UsuarioDAO usuarioDAO;
+    private final UsuarioDAOImpl usuarioDAO;
     private final RolDAO rolDAO;
     private final SessionManager sessionManager;
 
     private AuthenticationService() {
-        this.usuarioDAO = new UsuarioDAO();
+        this.usuarioDAO = new UsuarioDAOImpl();
         this.rolDAO = new RolDAO();
         this.sessionManager = SessionManager.getInstance();
     }

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.PedidosController" stylesheets="@../css/style.css">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.PedidosController" stylesheets="@../../css/style.css">
    <top>
       <!-- Header -->
       <HBox styleClass="nav-bar">
@@ -25,10 +25,10 @@
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                <children>
                   <Button text="🏠 Dashboard" onAction="#handleBack" styleClass="nav-button" />
-                  <Button fx:id="inventarioButton" onAction="#handleInventario" text="📦 Inventory" styleClass="nav-button" />
-                  <Button fx:id="ventasButton" onAction="#handleVentas" text="💰 Sales" styleClass="nav-button" />
+                  <Button text="📦 Inventory" styleClass="nav-button" />
+                  <Button text="💰 Sales" styleClass="nav-button" />
                   <Button text="📋 Orders" styleClass="nav-button, active" />
-                  <Button fx:id="reportesButton" onAction="#handleReportes" text="📊 Reports" styleClass="nav-button" />
+                  <Button text="📊 Reports" styleClass="nav-button" />
                </children>
             </HBox>
          </children>
@@ -46,7 +46,7 @@
                         <Label text="📋" style="-fx-font-size: 24px;" />
                         <Label text="Orders List" styleClass="section-header" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label text="Total de Ordenes: 127" style="-fx-text-fill: #7f8c8d;" />
+                        <Label text="Total Orders: 127" style="-fx-text-fill: #7f8c8d;" />
                      </children>
                   </HBox>
                   
@@ -57,28 +57,28 @@
                            <children>
                               <Label text="⏳" style="-fx-font-size: 20px;" />
                               <Label text="23" style="-fx-font-weight: bold; -fx-text-fill: #f39c12;" />
-                              <Label text="Pendientes" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Pending" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="⚙️" style="-fx-font-size: 20px;" />
                               <Label text="15" style="-fx-font-weight: bold; -fx-text-fill: #3498db;" />
-                              <Label text="Prosesando" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Processing" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="🚚" style="-fx-font-size: 20px;" />
                               <Label text="31" style="-fx-font-weight: bold; -fx-text-fill: #9b59b6;" />
-                              <Label text="Enviado" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Shipped" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0" alignment="CENTER" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="✅" style="-fx-font-size: 20px;" />
                               <Label text="52" style="-fx-font-weight: bold; -fx-text-fill: #27ae60;" />
-                              <Label text="Entregado" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+                              <Label text="Delivered" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
                            </children>
                         </VBox>
                      </children>
@@ -87,10 +87,10 @@
                   <TableView fx:id="pedidosTable" VBox.vgrow="ALWAYS" styleClass="table-view">
                      <columns>
                         <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
-                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Fecha" />
-                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Cliente" />
-                        <TableColumn fx:id="estadoColumn" prefWidth="100.0" text="Estado" />
-                        <TableColumn fx:id="itemsColumn" prefWidth="70.0" text="Cantidad" />
+                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Date" />
+                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Customer" />
+                        <TableColumn fx:id="estadoColumn" prefWidth="100.0" text="Status" />
+                        <TableColumn fx:id="itemsColumn" prefWidth="70.0" text="Items" />
                         <TableColumn fx:id="totalColumn" prefWidth="100.0" text="Total ($)" />
                      </columns>
                   </TableView>
@@ -98,22 +98,22 @@
                   <!-- Action Buttons -->
                   <HBox spacing="15.0" alignment="CENTER_LEFT">
                      <children>
-                        <Button fx:id="viewDetailsButton" onAction="#handleViewDetails" prefWidth="170.0" styleClass="btn, btn-primary">
+                        <Button fx:id="viewDetailsButton" onAction="#handleViewDetails" prefWidth="120.0" styleClass="btn, btn-primary">
                            <graphic>
                               <HBox spacing="5.0" alignment="CENTER">
                                  <children>
                                     <Label text="👁️" style="-fx-text-fill: white;" />
-                                    <Label text="Mostrar Detalles" style="-fx-text-fill: white;" />
+                                    <Label text="View Details" style="-fx-text-fill: white;" />
                                  </children>
                               </HBox>
                            </graphic>
                         </Button>
-                        <Button fx:id="refreshButton" onAction="#handleRefresh" prefWidth="150.0" styleClass="btn, btn-secondary">
+                        <Button fx:id="refreshButton" onAction="#handleRefresh" prefWidth="100.0" styleClass="btn, btn-secondary">
                            <graphic>
                               <HBox spacing="5.0" alignment="CENTER">
                                  <children>
                                     <Label text="🔄" style="-fx-text-fill: white;" />
-                                    <Label text="Actualizar" style="-fx-text-fill: white;" />
+                                    <Label text="Refresh" style="-fx-text-fill: white;" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -129,7 +129,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label text="📝" style="-fx-font-size: 24px;" />
-                        <Label fx:id="selectedOrderLabel" text="Ningun pedido seleccionado" styleClass="section-header" />
+                        <Label fx:id="selectedOrderLabel" text="No order selected" styleClass="section-header" />
                      </children>
                   </HBox>
                   
@@ -139,19 +139,19 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="🔄" style="-fx-font-size: 18px;" />
-                              <Label text="Actualizar Estado" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              <Label text="Update Status" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                            </children>
                         </HBox>
                         
                         <HBox spacing="15.0" alignment="CENTER_LEFT">
                            <children>
-                              <ComboBox fx:id="estadoComboBox" prefWidth="200.0" promptText="Seleccione Estado" styleClass="combo-box" />
-                              <Button fx:id="updateStatusButton" onAction="#handleUpdateStatus" prefWidth="180.0" styleClass="btn, btn-warning">
+                              <ComboBox fx:id="estadoComboBox" prefWidth="180.0" promptText="Select new status" styleClass="combo-box" />
+                              <Button fx:id="updateStatusButton" onAction="#handleUpdateStatus" prefWidth="130.0" styleClass="btn, btn-warning">
                                  <graphic>
                                     <HBox spacing="5.0" alignment="CENTER">
                                        <children>
                                           <Label text="✏️" style="-fx-text-fill: white;" />
-                                          <Label text="Actualizar Estado" style="-fx-text-fill: white;" />
+                                          <Label text="Update Status" style="-fx-text-fill: white;" />
                                        </children>
                                     </HBox>
                                  </graphic>
@@ -169,7 +169,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="📋" style="-fx-font-size: 18px;" />
-                              <Label text="Detalles de la Orden" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              <Label text="Order Details" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                            </children>
                         </HBox>
                         
@@ -186,12 +186,12 @@
       <!-- Footer -->
       <HBox alignment="CENTER_RIGHT" styleClass="padding-medium" style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;">
          <children>
-            <Button fx:id="backButton" onAction="#handleBack" prefWidth="220.0" prefHeight="35.0" styleClass="btn, btn-secondary">
+            <Button fx:id="backButton" onAction="#handleBack" prefWidth="150.0" prefHeight="35.0" styleClass="btn, btn-secondary">
                <graphic>
                   <HBox spacing="8.0" alignment="CENTER">
                      <children>
                         <Label text="🏠" style="-fx-text-fill: white;" />
-                        <Label text="Regresar al Dashboard" style="-fx-text-fill: white;" />
+                        <Label text="Back to Dashboard" style="-fx-text-fill: white;" />
                      </children>
                   </HBox>
                </graphic>

@@ -17,8 +17,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../styles/application.css">
    <left>
@@ -28,11 +26,9 @@
             <!-- Logo/Brand -->
             <VBox alignment="CENTER" spacing="10.0" styleClass="sidebar-header">
                <children>
-                  <ImageView fitWidth="200" fitHeight="200" preserveRatio="true">
-                      <image>
-                        <Image url="@../images/logo-proyecto.jpg" />
-                     </image>
-                  </ImageView>
+                  <Label text="📦" style="-fx-font-size: 48px;" />
+                  <Label text="Inventory Manager" styleClass="sidebar-title" />
+                  <Label text="Dashboard" styleClass="sidebar-subtitle" />
                </children>
             </VBox>
             
@@ -53,7 +49,11 @@
                   
                   <Separator />
                   
-                  <Button text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="220.0" />
+                  <Button fx:id="btnUsuarios" text="👥 Usuarios" styleClass="sidebar-button" prefWidth="220.0" />
+
+                  <Button fx:id="btnSync" text="🔄 Sincronización" styleClass="sidebar-button" prefWidth="220.0" />
+
+                  <Button fx:id="btnConfiguracion" text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="220.0" />
                   
                   <Region VBox.vgrow="ALWAYS" />
                   
@@ -104,7 +104,7 @@
                               <VBox>
                                  <children>
                                     <Label text="Total Ventas Hoy" styleClass="card-title" />
-                                    <Label fx:id="totalSalesLabel" text="" styleClass="card-value" />
+                                    <Label fx:id="totalSalesLabel" text="$12,450.00" styleClass="card-value" />
                                  </children>
                               </VBox>
                            </children>
@@ -170,17 +170,12 @@
                   </VBox>
                   
                   <!-- Pie Chart Card -->
-                  <VBox styleClass="chart-card" spacing="15.0" VBox.vgrow="ALWAYS">
+                  <VBox styleClass="chart-card" spacing="15.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="🥧 Distribución por Categoría" styleClass="chart-title" />
-                        <PieChart fx:id="categoryPieChart"
-                                    VBox.vgrow="ALWAYS"
-                                    prefHeight="300.0"
-                                    prefWidth="400.0"
-                                    styleClass="pie-chart"/>
+                        <PieChart fx:id="categoryPieChart" VBox.vgrow="ALWAYS" styleClass="pie-chart" />
                      </children>
                   </VBox>
-
                </children>
             </HBox>
             
@@ -196,10 +191,10 @@
                         <Button text="📋 Ver Pedidos" onAction="#handlePedidos" styleClass="quick-action-btn, warning" prefWidth="180.0" prefHeight="50.0" />
                         <Button text="📊 Generar Reporte" onAction="#handleReportes" styleClass="quick-action-btn, info" prefWidth="180.0" prefHeight="50.0" />
                      </children>
-                  </HBox>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
          </children>
       </VBox>
-   </center>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../../css/style.css">
 </BorderPane>

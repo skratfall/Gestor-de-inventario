@@ -43,6 +43,15 @@ public class DashboardController extends BaseController implements Initializable
     private Button reportesButton;
 
     @FXML
+    private Button btnUsuarios;
+
+    @FXML
+    private Button btnSync;
+
+    @FXML
+    private Button btnConfiguracion;
+
+    @FXML
     private Button logoutButton;
 
     // --- ReportesView: referencia al gráfico ---
@@ -57,13 +66,92 @@ public class DashboardController extends BaseController implements Initializable
 
     @Override
     public void initializeController() {
-        // Initialize dashboard components
-        welcomeLabel.setText("Bienvenido al Panel de Control");
+        com.app.security.SessionManager sessionManager = com.app.security.SessionManager.getInstance();
+        com.app.model.Usuario currentUser = sessionManager.getCurrentUser();
+
+        if (currentUser != null) {
+            String nombreCompleto = currentUser.getNombreCompleto() != null ?
+                currentUser.getNombreCompleto() : currentUser.getUsername();
+            welcomeLabel.setText("Bienvenido, " + nombreCompleto);
+        } else {
+            welcomeLabel.setText("Bienvenido al Panel de Control");
+        }
+
         loadDashboardData();
+        setupPermissions();
     }
-    
+
+    private void setupPermissions() {
+        com.app.security.SessionManager sessionManager = com.app.security.SessionManager.getInstance();
+
+        inventarioButton.setDisable(!sessionManager.hasPermission("productos", "read"));
+        ventasButton.setDisable(!sessionManager.hasPermission("ventas", "read"));
+        pedidosButton.setDisable(!sessionManager.hasPermission("pedidos", "read"));
+        reportesButton.setDisable(!sessionManager.hasPermission("reportes", "read"));
+
+        if (btnUsuarios != null) {
+            btnUsuarios.setDisable(!sessionManager.hasPermission("usuarios", "read"));
+            btnUsuarios.setOnAction(this::handleUsuarios);
+        }
+
+        if (btnSync != null) {
+            btnSync.setDisable(!sessionManager.hasPermission("sincronizacion", "execute"));
+            btnSync.setOnAction(this::handleSync);
+        }
+
+        if (btnConfiguracion != null) {
+            btnConfiguracion.setDisable(!sessionManager.hasPermission("configuracion", "read"));
+            btnConfiguracion.setOnAction(this::handleConfiguracion);
+        }
+    }
+
+    @FXML
+    private void handleUsuarios(ActionEvent event) {
+        navigateToView("/com/app/view/UsuariosView.fxml", "User Management", 900, 700);
+    }
+
+    @FXML
+    private void handleSync(ActionEvent event) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Sincronización con la Nube");
+        alert.setHeaderText("¿Desea sincronizar datos con la nube?");
+        alert.setContentText("Seleccione la dirección de sincronización:");
+
+        javafx.scene.control.ButtonType btnEnviar = new javafx.scene.control.ButtonType("Enviar a Nube");
+        javafx.scene.control.ButtonType btnRecibir = new javafx.scene.control.ButtonType("Recibir de Nube");
+        javafx.scene.control.ButtonType btnCancelar = javafx.scene.control.ButtonType.CANCEL;
+
+        alert.getButtonTypes().setAll(btnEnviar, btnRecibir, btnCancelar);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == btnEnviar || response == btnRecibir) {
+                com.app.service.SyncService syncService = com.app.service.SyncService.getInstance();
+                java.util.List<String> tables = java.util.Arrays.asList("productos", "ventas", "pedidos", "clientes");
+
+                com.app.service.SyncService.SyncResult result;
+                if (response == btnEnviar) {
+                    result = syncService.syncDataToCloud(tables);
+                } else {
+                    result = syncService.syncDataFromCloud(tables);
+                }
+
+                javafx.scene.control.Alert resultAlert = new javafx.scene.control.Alert(
+                    result.success ? javafx.scene.control.Alert.AlertType.INFORMATION : javafx.scene.control.Alert.AlertType.ERROR
+                );
+                resultAlert.setTitle("Resultado de Sincronización");
+                resultAlert.setHeaderText(result.success ? "Sincronización Exitosa" : "Error en Sincronización");
+                resultAlert.setContentText(result.message + "\nRegistros procesados: " + result.recordsProcessed);
+                resultAlert.showAndWait();
+            }
+        });
+    }
+
+    @FXML
+    private void handleConfiguracion(ActionEvent event) {
+        showInfoAlert("Configuración", "Módulo de configuración en desarrollo");
+    }
+
     private void loadDashboardData() {
-        // TODO: Load actual data from services
         totalSalesLabel.setText("$12,450.00");
         pendingOrdersLabel.setText("23");
 
@@ -119,17 +207,20 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void handleLogout(ActionEvent event) {
+        com.app.service.AuthenticationService authService = com.app.service.AuthenticationService.getInstance();
+        authService.logout();
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/LoginView.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) logoutButton.getScene().getWindow();
-            Scene scene = new Scene(root, 1000, 700);
+            Scene scene = new Scene(root, 900, 800);
             stage.setTitle("Login - JavaFX Application");
             stage.setScene(scene);
             stage.setResizable(false);
             stage.centerOnScreen();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             showErrorAlert("Navigation Error", "Could not load login view: " + e.getMessage());

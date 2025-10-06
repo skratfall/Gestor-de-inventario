@@ -114,9 +114,8 @@ public class LoginController implements Initializable {
         }
     }
     private boolean authenticateUser(String username, String password) {
-        // TODO: Replace with actual authentication using Usuario DAO
-        // For demonstration purposes, accept any non-empty credentials
-        return !username.isEmpty() && !password.isEmpty();
+        com.app.service.AuthenticationService authService = com.app.service.AuthenticationService.getInstance();
+        return authService.login(username, password);
     }
 
     private void showAlert(String title, String message) {

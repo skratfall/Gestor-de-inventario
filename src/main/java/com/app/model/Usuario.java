@@ -1,44 +1,37 @@
 package com.app.model;
 
-/**
- * Usuario entity class representing a system user
- */
+import java.time.LocalDateTime;
+
 public class Usuario {
-    private Long id;
+    private String id;
     private String username;
-    private String password;
-    private String rol;
+    private String passwordHash;
+    private String email;
+    private String nombreCompleto;
+    private String rolId;
+    private boolean activo;
+    private LocalDateTime ultimoAcceso;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    // Role constants
-    public static final String ROL_ADMIN = "ADMIN";
-    public static final String ROL_VENDEDOR = "VENDEDOR";
-    public static final String ROL_USUARIO = "USUARIO";
-
-    // Default constructor
     public Usuario() {
+        this.activo = true;
     }
 
-    // Constructor with parameters
-    public Usuario(String username, String password, String rol) {
+    public Usuario(String username, String passwordHash, String email, String nombreCompleto, String rolId) {
         this.username = username;
-        this.password = password;
-        this.rol = rol != null ? rol : ROL_USUARIO;
+        this.passwordHash = passwordHash;
+        this.email = email;
+        this.nombreCompleto = nombreCompleto;
+        this.rolId = rolId;
+        this.activo = true;
     }
 
-    // Constructor with all parameters including ID
-    public Usuario(Long id, String username, String password, String rol) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.rol = rol;
-    }
-
-    // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -50,57 +43,78 @@ public class Usuario {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public String getRol() {
-        return rol;
+    public String getEmail() {
+        return email;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    // Business methods
-    public boolean isAdmin() {
-        return ROL_ADMIN.equals(rol);
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public boolean isVendedor() {
-        return ROL_VENDEDOR.equals(rol);
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
-    public boolean isUsuario() {
-        return ROL_USUARIO.equals(rol);
+    public String getRolId() {
+        return rolId;
     }
 
-    public boolean hasRole(String role) {
-        return role != null && role.equals(this.rol);
+    public void setRolId(String rolId) {
+        this.rolId = rolId;
     }
 
-    public boolean canManageProducts() {
-        return isAdmin() || isVendedor();
+    public boolean isActivo() {
+        return activo;
     }
 
-    public boolean canManageUsers() {
-        return isAdmin();
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
-    public boolean canViewReports() {
-        return isAdmin() || isVendedor();
+    public LocalDateTime getUltimoAcceso() {
+        return ultimoAcceso;
+    }
+
+    public void setUltimoAcceso(LocalDateTime ultimoAcceso) {
+        this.ultimoAcceso = ultimoAcceso;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
     public String toString() {
         return "Usuario{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", username='" + username + '\'' +
-                ", rol='" + rol + '\'' +
+                ", email='" + email + '\'' +
+                ", nombreCompleto='" + nombreCompleto + '\'' +
+                ", activo=" + activo +
                 '}';
     }
 }

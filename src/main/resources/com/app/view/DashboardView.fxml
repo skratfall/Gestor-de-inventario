@@ -49,7 +49,11 @@
                   
                   <Separator />
                   
-                  <Button text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="220.0" />
+                  <Button fx:id="btnUsuarios" text="👥 Usuarios" styleClass="sidebar-button" prefWidth="220.0" />
+
+                  <Button fx:id="btnSync" text="🔄 Sincronización" styleClass="sidebar-button" prefWidth="220.0" />
+
+                  <Button fx:id="btnConfiguracion" text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="220.0" />
                   
                   <Region VBox.vgrow="ALWAYS" />
                   

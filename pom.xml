@@ -64,11 +64,11 @@
             <version>42.7.1</version>
         </dependency>
 
-        <!-- BCrypt for password hashing -->
+         <!-- Bouncy Castle for cryptography -->
         <dependency>
-            <groupId>org.mindrot</groupId>
-            <artifactId>jbcrypt</artifactId>
-            <version>0.4</version>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.77</version>
         </dependency>
 
         <!-- Gson for JSON parsing -->

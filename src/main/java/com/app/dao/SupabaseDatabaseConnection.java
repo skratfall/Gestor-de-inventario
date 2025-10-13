@@ -21,49 +21,22 @@ public class SupabaseDatabaseConnection {
 
     private void loadProperties() {
         Properties props = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(".env")) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
             if (input == null) {
-                System.err.println("Unable to find .env file, using environment variables");
-                loadFromEnvironment();
-                return;
+                throw new RuntimeException("❌ No se encontró application.properties en resources/");
             }
-
             props.load(input);
-            String supabaseUrl = props.getProperty("VITE_SUPABASE_URL");
 
-            if (supabaseUrl != null) {
-                String projectRef = extractProjectRef(supabaseUrl);
-                this.dbUrl = "jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres";
-                this.dbUser = "postgres." + projectRef;
-                this.dbPassword = System.getenv("SUPABASE_DB_PASSWORD");
+            this.dbUrl = props.getProperty("DB_URL");
+            this.dbUser = props.getProperty("DB_USER");
+            this.dbPassword = props.getProperty("DB_PASSWORD");
 
-                if (this.dbPassword == null || this.dbPassword.isEmpty()) {
-                    System.err.println("Warning: SUPABASE_DB_PASSWORD not set in environment");
-                }
+            if (dbUrl == null || dbUser == null || dbPassword == null) {
+                throw new RuntimeException("❌ Faltan propiedades de conexión en application.properties");
             }
         } catch (IOException e) {
-            System.err.println("Error loading .env file: " + e.getMessage());
-            loadFromEnvironment();
+            throw new RuntimeException("❌ Error cargando configuración de base de datos", e);
         }
-    }
-
-    private void loadFromEnvironment() {
-        String supabaseUrl = System.getenv("VITE_SUPABASE_URL");
-        if (supabaseUrl != null) {
-            String projectRef = extractProjectRef(supabaseUrl);
-            this.dbUrl = "jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres";
-            this.dbUser = "postgres." + projectRef;
-            this.dbPassword = System.getenv("SUPABASE_DB_PASSWORD");
-        }
-    }
-
-    private String extractProjectRef(String supabaseUrl) {
-        String cleaned = supabaseUrl.replace("https://", "").replace("http://", "");
-        int dotIndex = cleaned.indexOf('.');
-        if (dotIndex > 0) {
-            return cleaned.substring(0, dotIndex);
-        }
-        return cleaned;
     }
 
     public static SupabaseDatabaseConnection getInstance() {
@@ -82,13 +55,9 @@ public class SupabaseDatabaseConnection {
             try {
                 Class.forName("org.postgresql.Driver");
                 connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-                System.out.println("Supabase database connection established.");
+                System.out.println("✅ Conexión establecida con Supabase PostgreSQL.");
             } catch (ClassNotFoundException e) {
-                System.err.println("PostgreSQL JDBC Driver not found: " + e.getMessage());
-                throw new SQLException("PostgreSQL JDBC Driver not found", e);
-            } catch (SQLException e) {
-                System.err.println("Failed to establish Supabase database connection: " + e.getMessage());
-                throw e;
+                throw new SQLException("❌ Driver PostgreSQL no encontrado", e);
             }
         }
         return connection;
@@ -98,20 +67,10 @@ public class SupabaseDatabaseConnection {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Supabase database connection closed.");
+                System.out.println("🔒 Conexión cerrada.");
             }
         } catch (SQLException e) {
-            System.err.println("Error closing Supabase database connection: " + e.getMessage());
-        }
-    }
-
-    public boolean testConnection() {
-        try {
-            Connection conn = getConnection();
-            return conn != null && !conn.isClosed();
-        } catch (SQLException e) {
-            System.err.println("Supabase database connection test failed: " + e.getMessage());
-            return false;
+            System.err.println("❌ Error cerrando conexión: " + e.getMessage());
         }
     }
 }

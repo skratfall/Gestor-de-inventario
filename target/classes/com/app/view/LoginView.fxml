@@ -19,12 +19,11 @@
             <!-- Logo Placeholder -->
             <VBox alignment="CENTER" spacing="10.0">
                <children>
-                 <ImageView fitWidth="200" fitHeight="200" preserveRatio="true">
+                  <ImageView fitWidth="200" fitHeight="200" preserveRatio="true">
          <image>
             <Image url="@../images/logo-proyecto.jpg" />
          </image>
       </ImageView>
-                
                </children>
             </VBox>
             

@@ -173,14 +173,13 @@
                   <VBox styleClass="chart-card" spacing="15.0" VBox.vgrow="ALWAYS">
                      <children>
                         <Label text="🥧 Distribución por Categoría" styleClass="chart-title" />
-                        <PieChart fx:id="categoryPieChart"
+                        <PieChart fx:id="categoryPieChart" 
                                     VBox.vgrow="ALWAYS"
                                     prefHeight="300.0"
-                                    prefWidth="400.0"
+                                    prefWidth="400.0" 
                                     styleClass="pie-chart"/>
                      </children>
                   </VBox>
-
                </children>
             </HBox>
             

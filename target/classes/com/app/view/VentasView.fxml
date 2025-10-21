@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.VentasController" stylesheets="@../../css/style.css">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.app.controller.VentasController" stylesheets="@../../css/styles.css">
+   
+   <!-- Top: Navigation Bar -->
    <top>
-      <!-- Header -->
       <HBox styleClass="nav-bar">
          <children>
             <Label text="💰 Sales Management" styleClass="nav-title" />
@@ -24,26 +17,30 @@
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                <children>
                   <Button text="🏠 Dashboard" onAction="#handleBack" styleClass="nav-button" />
-                  <Button text="📦 Inventory" styleClass="nav-button" />
+                  <Button fx:id="inventarioButton" onAction="#handleInventario" text="📦 Inventory" styleClass="nav-button" />
                   <Button text="💰 Sales" styleClass="nav-button, active" />
-                  <Button text="📋 Orders" styleClass="nav-button" />
-                  <Button text="📊 Reports" styleClass="nav-button" />
+                  <Button fx:id="pedidosButton" onAction="#handlePedidos" text="📋 Orders" styleClass="nav-button" />
+                  <Button fx:id="reportesButton" onAction="#handleReportes" text="📊 Reports" styleClass="nav-button" />
                </children>
             </HBox>
          </children>
       </HBox>
    </top>
    
+   <!-- Center: Main Content -->
    <center>
       <HBox spacing="25.0" styleClass="padding-large">
          <children>
             <!-- Left Panel - New Sale -->
             <VBox spacing="20.0" styleClass="card" HBox.hgrow="ALWAYS">
+               <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+               
                <children>
+                  <!-- Header -->
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <Label text="🛒" style="-fx-font-size: 24px;" />
-                        <Label text="New Sale" styleClass="section-header" />
+                        <Label text="🛒" styleClass="icon-large" />
+                        <Label text="Nueva Venta" styleClass="section-header" />
                      </children>
                   </HBox>
                   
@@ -53,26 +50,29 @@
                         <!-- Client Selection -->
                         <VBox spacing="8.0">
                            <children>
-                              <Label text="Select Customer *" style="-fx-font-weight: 600;" />
-                              <ComboBox fx:id="clienteComboBox" prefWidth="280.0" promptText="Choose a customer" styleClass="combo-box" />
+                              <Label text="Seleccione un Cliente *" styleClass="input-label" />
+                              <ComboBox fx:id="clienteComboBox" prefWidth="280.0" 
+                                        promptText="Elija un Cliente" styleClass="combo-box" />
                            </children>
                         </VBox>
                         
                         <!-- Product Selection -->
                         <VBox spacing="8.0">
                            <children>
-                              <Label text="Select Product *" style="-fx-font-weight: 600;" />
-                              <ComboBox fx:id="productoComboBox" prefWidth="280.0" promptText="Choose a product" styleClass="combo-box" />
+                              <Label text="Seleccionar Producto *" styleClass="input-label" />
+                              <ComboBox fx:id="productoComboBox" prefWidth="280.0" 
+                                        promptText="Elija un Producto" styleClass="combo-box" />
                            </children>
                         </VBox>
                         
                         <!-- Add to Cart Button -->
-                        <Button fx:id="addToCartButton" onAction="#handleAddToCart" prefWidth="280.0" prefHeight="40.0" styleClass="btn, btn-primary">
+                        <Button fx:id="addToCartButton" onAction="#handleAddToCart" 
+                                prefWidth="280.0" prefHeight="40.0" styleClass="btn btn-primary">
                            <graphic>
                               <HBox spacing="8.0" alignment="CENTER">
                                  <children>
-                                    <Label text="🛒" style="-fx-text-fill: white;" />
-                                    <Label text="Add to Cart" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                                    <Label text="🛒" styleClass="icon-white" />
+                                    <Label text="Agregar al carrito" styleClass="button-text-white" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -87,37 +87,41 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <Label text="🛍️" style="-fx-font-size: 20px;" />
-                              <Label text="Shopping Cart" styleClass="subtitle" />
+                              <Label text="🛍️" styleClass="icon-medium" />
+                              <Label text="Carrito de Compra" styleClass="subtitle" />
                            </children>
                         </HBox>
                         
                         <TableView fx:id="carritoTable" prefHeight="250.0" styleClass="table-view">
                            <columns>
-                              <TableColumn fx:id="nombreColumn" prefWidth="140.0" text="Product" />
-                              <TableColumn fx:id="categoriaColumn" prefWidth="100.0" text="Category" />
-                              <TableColumn fx:id="precioColumn" prefWidth="80.0" text="Price" />
+                              <TableColumn fx:id="nombreColumn" prefWidth="140.0" text="Producto" />
+                              <TableColumn fx:id="categoriaColumn" prefWidth="100.0" text="Categoria" />
+                              <TableColumn fx:id="precioColumn" prefWidth="80.0" text="Precio" />
+                              <TableColumn fx:id="cantidadColumn" prefWidth="70.0" text="Cantidad" />
+                              <TableColumn fx:id="subtotalColumn" prefWidth="90.0" text="Subtotal" />
                            </columns>
                         </TableView>
                         
                         <HBox spacing="10.0" alignment="CENTER_LEFT">
                            <children>
-                              <Button fx:id="removeFromCartButton" onAction="#handleRemoveFromCart" styleClass="btn, btn-danger" prefWidth="100.0">
+                              <Button fx:id="removeFromCartButton" onAction="#handleRemoveFromCart" 
+                                      styleClass="btn btn-danger" prefWidth="100.0">
                                  <graphic>
                                     <HBox spacing="5.0" alignment="CENTER">
                                        <children>
-                                          <Label text="🗑️" style="-fx-text-fill: white;" />
-                                          <Label text="Remove" style="-fx-text-fill: white;" />
+                                          <Label text="🗑️" styleClass="icon-white" />
+                                          <Label text="Borrar" styleClass="button-text-white" />
                                        </children>
                                     </HBox>
                                  </graphic>
                               </Button>
-                              <Button fx:id="clearCartButton" onAction="#handleClearCart" styleClass="btn, btn-secondary" prefWidth="100.0">
+                              <Button fx:id="clearCartButton" onAction="#handleClearCart" 
+                                      styleClass="btn btn-secondary" prefWidth="100.0">
                                  <graphic>
                                     <HBox spacing="5.0" alignment="CENTER">
                                        <children>
-                                          <Label text="🧹" style="-fx-text-fill: white;" />
-                                          <Label text="Clear" style="-fx-text-fill: white;" />
+                                          <Label text="🧹" styleClass="icon-white" />
+                                          <Label text="Limpiar" styleClass="button-text-white" />
                                        </children>
                                     </HBox>
                                  </graphic>
@@ -134,17 +138,18 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <Label text="💵" style="-fx-font-size: 20px;" />
-                              <Label fx:id="totalLabel" text="Total: $0.00" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #27ae60;" />
+                              <Label text="💵" styleClass="icon-medium" />
+                              <Label fx:id="totalLabel" text="Total: $0.00" styleClass="total-amount" />
                            </children>
                         </HBox>
                         
-                        <Button fx:id="processSaleButton" onAction="#handleProcessSale" prefWidth="280.0" prefHeight="50.0" styleClass="btn, btn-success">
+                        <Button fx:id="processSaleButton" onAction="#handleProcessSale" 
+                                prefWidth="280.0" prefHeight="50.0" styleClass="btn btn-success">
                            <graphic>
                               <HBox spacing="10.0" alignment="CENTER">
                                  <children>
-                                    <Label text="💳" style="-fx-text-fill: white; -fx-font-size: 18px;" />
-                                    <Label text="Process Sale" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;" />
+                                    <Label text="💳" styleClass="icon-white icon-large" />
+                                    <Label text="Prosesar Pago" styleClass="button-text-white button-text-large" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -156,47 +161,50 @@
             
             <!-- Right Panel - Sales History -->
             <VBox spacing="20.0" styleClass="card" HBox.hgrow="ALWAYS">
+               <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+               
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <Label text="📊" style="-fx-font-size: 24px;" />
-                        <Label text="Sales History" styleClass="section-header" />
+                        <Label text="📊" styleClass="icon-large" />
+                        <Label text="Historial de Ventas" styleClass="section-header" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label text="Today's Sales: $1,234.56" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" />
+                        <Label fx:id="todaySalesLabel" text="Ventas de Hoy: $0.00" styleClass="sales-indicator" />
                      </children>
                   </HBox>
                   
                   <TableView fx:id="ventasTable" VBox.vgrow="ALWAYS" styleClass="table-view">
                      <columns>
                         <TableColumn fx:id="ventaIdColumn" prefWidth="60.0" text="ID" />
-                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Date" />
-                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Customer" />
+                        <TableColumn fx:id="fechaColumn" prefWidth="140.0" text="Fecha" />
+                        <TableColumn fx:id="clienteColumn" prefWidth="120.0" text="Cliente" />
                         <TableColumn fx:id="ventaTotalColumn" prefWidth="100.0" text="Total ($)" />
+                        <TableColumn fx:id="accionesColumn" prefWidth="80.0" text="Acciones" />
                      </columns>
                   </TableView>
                   
                   <!-- Sales Summary -->
-                  <VBox spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
+                  <VBox spacing="10.0" styleClass="summary-panel">
                      <children>
-                        <Label text="📈 Sales Summary" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Label text="📈 Resumen de Ventas" styleClass="summary-title" />
                         <HBox spacing="20.0">
                            <children>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="Today" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
-                                    <Label text="$1,234.56" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" />
+                                    <Label text="Hoy" styleClass="summary-period" />
+                                    <Label fx:id="todaySummaryLabel" text="" styleClass="summary-amount today" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="This Week" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
-                                    <Label text="$8,901.23" style="-fx-text-fill: #3498db; -fx-font-weight: bold;" />
+                                    <Label text="Esta Semana" styleClass="summary-period" />
+                                    <Label fx:id="weekSummaryLabel" text="" styleClass="summary-amount week" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="This Month" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
-                                    <Label text="$12,450.00" style="-fx-text-fill: #9b59b6; -fx-font-weight: bold;" />
+                                    <Label text="Este Mes" styleClass="summary-period" />
+                                    <Label fx:id="monthSummaryLabel" text="" styleClass="summary-amount month" />
                                  </children>
                               </VBox>
                            </children>
@@ -209,16 +217,17 @@
       </HBox>
    </center>
    
+   <!-- Bottom: Footer -->
    <bottom>
-      <!-- Footer -->
-      <HBox alignment="CENTER_RIGHT" styleClass="padding-medium" style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;">
+      <HBox alignment="CENTER_RIGHT" styleClass="padding-medium footer">
          <children>
-            <Button fx:id="backButton" onAction="#handleBack" prefWidth="150.0" prefHeight="35.0" styleClass="btn, btn-secondary">
+            <Button fx:id="backButton" onAction="#handleBack" 
+                    prefWidth="200.0" prefHeight="35.0" styleClass="btn btn-secondary">
                <graphic>
                   <HBox spacing="8.0" alignment="CENTER">
                      <children>
-                        <Label text="🏠" style="-fx-text-fill: white;" />
-                        <Label text="Back to Dashboard" style="-fx-text-fill: white;" />
+                        <Label text="🏠" styleClass="icon-white" />
+                        <Label text="Regresar al Dashboard" styleClass="button-text-white" />
                      </children>
                   </HBox>
                </graphic>

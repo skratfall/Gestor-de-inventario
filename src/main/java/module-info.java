@@ -8,6 +8,7 @@ module javafx.modular.app {
 
     exports com.app;
     exports com.app.controller;
+    exports com.app.service;
     exports com.app.security;
     exports com.app.model;
     opens com.app.controller to javafx.fxml;

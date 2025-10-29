@@ -156,6 +156,10 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     private void checkDatabaseConnection() {
+        actualizarEstadoConexion();
+    }
+
+    private void actualizarEstadoConexion() {
         try {
             SupabaseDatabaseConnection dbConnection = SupabaseDatabaseConnection.getInstance();
             boolean isConnected = dbConnection.testConnection();
@@ -176,6 +180,7 @@ public class DashboardController extends BaseController implements Initializable
             lblConnectionStatus.setStyle("-fx-font-size: 20px; -fx-text-fill: #f39c12;");
             lblConnectionText.setText("Error");
             lblConnectionDetails.setText("Error al verificar conexión");
+            System.err.println("Error checking database connection: " + e.getMessage());
         }
     }
 

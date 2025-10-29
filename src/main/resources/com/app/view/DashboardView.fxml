@@ -30,6 +30,7 @@
                </image>
             </ImageView>
             <Label text="Panel Administrativo" styleClass="sidebar-title" />
+            <Label text="Gestión de Inventario" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
             <Label fx:id="lblUserRole" text="Administrador" styleClass="sidebar-subtitle" />
          </VBox>
 

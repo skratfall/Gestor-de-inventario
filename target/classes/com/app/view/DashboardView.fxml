@@ -4,201 +4,260 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.controller.DashboardController" stylesheets="@../styles/application.css">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.app.controller.DashboardController"
+            stylesheets="@../styles/application.css"
+            prefWidth="1200.0" prefHeight="800.0">
+
+   <!-- LEFT SIDEBAR -->
    <left>
-      <!-- Sidebar Navigation -->
-      <VBox styleClass="sidebar" prefWidth="250.0" spacing="10.0">
-         <children>
-            <!-- Logo/Brand -->
-            <VBox alignment="CENTER" spacing="10.0" styleClass="sidebar-header">
-               <children>
-                  <ImageView fitWidth="200" fitHeight="200" preserveRatio="true">
-                      <image>
-                        <Image url="@../images/logo-proyecto.jpg" />
-                     </image>
-                  </ImageView>
-               </children>
-            </VBox>
-            
-            <Separator />
-            
-            <!-- Navigation Menu -->
-            <VBox spacing="5.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <Button fx:id="dashboardButton" text="🏠 Dashboard" styleClass="sidebar-button, active" prefWidth="220.0" />
-                  
-                  <Button fx:id="inventarioButton" onAction="#handleInventario" text="📦 Inventario" styleClass="sidebar-button" prefWidth="220.0" />
-                  
-                  <Button fx:id="ventasButton" onAction="#handleVentas" text="💰 Ventas" styleClass="sidebar-button" prefWidth="220.0" />
-                  
-                  <Button fx:id="pedidosButton" onAction="#handlePedidos" text="📋 Pedidos" styleClass="sidebar-button" prefWidth="220.0" />
-                  
-                  <Button fx:id="reportesButton" onAction="#handleReportes" text="📊 Reportes" styleClass="sidebar-button" prefWidth="220.0" />
-                  
-                  <Separator />
-                  
-                  <Button text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="220.0" />
-                  
-                  <Region VBox.vgrow="ALWAYS" />
-                  
-                  <Button fx:id="logoutButton" onAction="#handleLogout" text="🚪 Cerrar Sesión" styleClass="sidebar-button, logout" prefWidth="220.0" />
-               </children>
-            </VBox>
-         </children>
+      <VBox styleClass="sidebar" prefWidth="280.0" spacing="0">
+         <!-- Logo Header -->
+         <VBox alignment="CENTER" spacing="12" styleClass="sidebar-header">
+            <ImageView fitWidth="180" fitHeight="180" preserveRatio="true">
+               <image>
+                  <Image url="@../images/logo-proyecto.jpg" />
+               </image>
+            </ImageView>
+            <Label text="Panel Administrativo" styleClass="sidebar-title" />
+            <Label text="Gestión de Inventario" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
+            <Label fx:id="lblUserRole" text="Administrador" styleClass="sidebar-subtitle" />
+         </VBox>
+
+         <Separator style="-fx-background-color: rgba(255,255,255,0.1);" />
+
+         <!-- Navigation Menu -->
+         <VBox spacing="8" VBox.vgrow="ALWAYS" style="-fx-padding: 15 15 15 15;">
+            <Label text="ADMINISTRACIÓN" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 10 0 5 10;" />
+
+            <Button fx:id="btnDashboard" text="🏠 Dashboard" styleClass="sidebar-button, active" prefWidth="250.0" />
+
+            <Button fx:id="btnUsuarios" text="👥 Gestión de Usuarios" styleClass="sidebar-button" prefWidth="250.0"
+                    onAction="#handleUsuarios" />
+
+            <Button fx:id="btnRoles" text="🔐 Gestión de Roles" styleClass="sidebar-button" prefWidth="250.0"
+                    onAction="#handleRoles" />
+
+            <Separator style="-fx-background-color: rgba(255,255,255,0.1); -fx-padding: 10 0;" />
+
+            <Label text="SISTEMA" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 10 0 5 10;" />
+
+            <Button fx:id="btnSync" text="🔄 Sincronización" styleClass="sidebar-button" prefWidth="250.0"
+                    onAction="#handleSync" />
+
+            <Button fx:id="btnConfiguracion" text="⚙️ Configuración" styleClass="sidebar-button" prefWidth="250.0"
+                    onAction="#handleConfiguracion" />
+
+            <Button fx:id="btnSeguridad" text="🛡️ Seguridad" styleClass="sidebar-button" prefWidth="250.0"
+                    onAction="#handleSeguridad" />
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Separator style="-fx-background-color: rgba(255,255,255,0.1); -fx-padding: 10 0;" />
+
+            <Button fx:id="btnLogout" text="🚪 Cerrar Sesión" styleClass="sidebar-button, logout" prefWidth="250.0"
+                    onAction="#handleLogout" />
+         </VBox>
       </VBox>
    </left>
-   
+
+   <!-- TOP HEADER -->
    <top>
-      <!-- Top Header Bar -->
-      <HBox styleClass="top-header" alignment="CENTER_LEFT" spacing="20.0">
-         <children>
-            <Label fx:id="welcomeLabel" text="Panel de Control" styleClass="page-title" />
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox spacing="15.0" alignment="CENTER_RIGHT">
-               <children>
-                  <Label text="Usuario: Admin" style="-fx-text-fill: #7f8c8d;" />
-                  <Label text="|" style="-fx-text-fill: #bdc3c7;" />
-                  <Label text="Hoy: 15 Dic 2024" style="-fx-text-fill: #7f8c8d;" />
-               </children>
-            </HBox>
-         </children>
+      <HBox styleClass="top-header" alignment="CENTER_LEFT" spacing="20">
+         <Label fx:id="welcomeLabel" text="Bienvenido al Sistema" styleClass="page-title" />
+         <Region HBox.hgrow="ALWAYS" />
+
+         <!-- User Info Section -->
+         <HBox spacing="20" alignment="CENTER_RIGHT">
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+               <Label fx:id="lblCurrentUser" text="Usuario: Admin" style="-fx-text-fill: #2c3e50; -fx-font-weight: bold;" />
+               <Label fx:id="lblLastLogin" text="Última sesión: Hoy 10:30 AM" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+            </VBox>
+
+            <Separator orientation="VERTICAL" />
+
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+               <Label fx:id="lblCurrentDate" text="Lun, 29 Oct 2025" style="-fx-text-fill: #2c3e50; -fx-font-weight: bold;" />
+               <Label fx:id="lblCurrentTime" text="10:30:45 AM" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+            </VBox>
+         </HBox>
       </HBox>
    </top>
-   
+
+   <!-- MAIN CONTENT -->
    <center>
-      <VBox spacing="25.0" styleClass="main-content">
-         <children>
-            <!-- Dashboard Cards -->
-            <GridPane hgap="20.0" vgap="20.0">
+      <VBox spacing="30" styleClass="main-content">
+
+         <!-- System Status Cards -->
+         <VBox spacing="15">
+            <Label text="Estado del Sistema" styleClass="section-title" />
+
+            <GridPane hgap="25" vgap="25">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+
+               <!-- Card 1: Usuarios Activos -->
+               <VBox styleClass="dashboard-card, admin-card-primary" spacing="12" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                     onMouseClicked="#handleUsuarios" style="-fx-cursor: hand;">
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <Label text="👥" styleClass="admin-card-icon" />
+                     <VBox spacing="5">
+                        <Label text="Usuarios Activos" styleClass="card-title" />
+                        <Label fx:id="lblTotalUsers" text="0" styleClass="admin-card-value" />
+                     </VBox>
+                  </HBox>
+                  <Label text="Gestionar usuarios del sistema" styleClass="card-trend" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <!-- Card 2: Roles Configurados -->
+               <VBox styleClass="dashboard-card, admin-card-success" spacing="12" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                     onMouseClicked="#handleRoles" style="-fx-cursor: hand;">
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <Label text="🔐" styleClass="admin-card-icon" />
+                     <VBox spacing="5">
+                        <Label text="Roles Configurados" styleClass="card-title" />
+                        <Label fx:id="lblTotalRoles" text="0" styleClass="admin-card-value" />
+                     </VBox>
+                  </HBox>
+                  <Label text="Administrar roles y permisos" styleClass="card-trend" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <!-- Card 3: Estado de Conexión -->
+               <VBox styleClass="dashboard-card, admin-card-info" spacing="12" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <Label text="🌐" styleClass="admin-card-icon" />
+                     <VBox spacing="5">
+                        <Label text="Conexión a Supabase" styleClass="card-title" />
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                           <Label fx:id="lblConnectionStatus" text="●" style="-fx-font-size: 20px; -fx-text-fill: #27ae60;" />
+                           <Label fx:id="lblConnectionText" text="Conectado" styleClass="admin-card-value" style="-fx-font-size: 18px;" />
+                        </HBox>
+                     </VBox>
+                  </HBox>
+                  <Label fx:id="lblConnectionDetails" text="Base de datos operativa" styleClass="card-trend" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <!-- Card 4: Última Sincronización -->
+               <VBox styleClass="dashboard-card, admin-card-warning" spacing="12" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <Label text="🔄" styleClass="admin-card-icon" />
+                     <VBox spacing="5">
+                        <Label text="Última Sincronización" styleClass="card-title" />
+                        <Label fx:id="lblLastSync" text="Sin sincronizar" styleClass="admin-card-value" style="-fx-font-size: 16px;" />
+                     </VBox>
+                  </HBox>
+                  <Button text="Sincronizar Ahora" styleClass="quick-action-btn, warning" prefWidth="200"
+                          onAction="#handleSyncNow" />
+               </VBox>
+
+               <!-- Card 5: Sesiones Activas -->
+               <VBox styleClass="dashboard-card, admin-card-secondary" spacing="12" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <Label text="🔑" styleClass="admin-card-icon" />
+                     <VBox spacing="5">
+                        <Label text="Sesión Actual" styleClass="card-title" />
+                        <Label fx:id="lblSessionDuration" text="00:00:00" styleClass="admin-card-value" style="-fx-font-size: 18px;" />
+                     </VBox>
+                  </HBox>
+                  <Label text="Tiempo de sesión activa" styleClass="card-trend" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <!-- Card 6: Configuración del Sistema -->
+               <VBox styleClass="dashboard-card, admin-card-config" spacing="12" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                     onMouseClicked="#handleConfiguracion" style="-fx-cursor: hand;">
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <Label text="⚙️" styleClass="admin-card-icon" />
+                     <VBox spacing="5">
+                        <Label text="Configuración" styleClass="card-title" />
+                        <Label fx:id="lblConfigStatus" text="Configurado" styleClass="admin-card-value" style="-fx-font-size: 16px;" />
+                     </VBox>
+                  </HBox>
+                  <Label text="Parámetros del sistema" styleClass="card-trend" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+            </GridPane>
+         </VBox>
+
+         <!-- Quick Actions Section -->
+         <VBox spacing="15" styleClass="quick-actions-card">
+            <Label text="⚡ Acciones Rápidas" styleClass="section-title" />
+
+            <GridPane hgap="15" vgap="15">
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" />
                   <ColumnConstraints hgrow="ALWAYS" />
                   <ColumnConstraints hgrow="ALWAYS" />
+                  <ColumnConstraints hgrow="ALWAYS" />
                </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-               </rowConstraints>
-               <children>
-                  <!-- Total Ventas Hoy Card -->
-                  <VBox styleClass="dashboard-card, sales-card" spacing="15.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                           <children>
-                              <Label text="💰" styleClass="card-icon" />
-                              <VBox>
-                                 <children>
-                                    <Label text="Total Ventas Hoy" styleClass="card-title" />
-                                    <Label fx:id="totalSalesLabel" text="" styleClass="card-value" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
-                        <Label text="↗️ +15% vs ayer" styleClass="card-trend, positive" />
-                     </children>
-                  </VBox>
-                  
-                  <!-- Pedidos Pendientes Card -->
-                  <VBox styleClass="dashboard-card, orders-card" spacing="15.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                           <children>
-                              <Label text="📋" styleClass="card-icon" />
-                              <VBox>
-                                 <children>
-                                    <Label text="Pedidos Pendientes" styleClass="card-title" />
-                                    <Label fx:id="pendingOrdersLabel" text="23" styleClass="card-value" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
-                        <Label text="⚠️ Requieren atención" styleClass="card-trend, warning" />
-                     </children>
-                  </VBox>
-                  
-                  <!-- Productos en Bajo Stock Card -->
-                  <VBox styleClass="dashboard-card, stock-card" spacing="15.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                           <children>
-                              <Label text="⚠️" styleClass="card-icon" />
-                              <VBox>
-                                 <children>
-                                    <Label text="Productos Bajo Stock" styleClass="card-title" />
-                                    <Label fx:id="lowStockLabel" text="8" styleClass="card-value" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
-                        <Label text="🔄 Necesitan reposición" styleClass="card-trend, danger" />
-                     </children>
-                  </VBox>
-               </children>
+
+               <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="0" styleClass="action-card"
+                     onMouseClicked="#handleUsuarios" style="-fx-cursor: hand;">
+                  <Label text="👤" style="-fx-font-size: 32px;" />
+                  <Label text="Nuevo Usuario" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+               </VBox>
+
+               <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="1" styleClass="action-card"
+                     onMouseClicked="#handleRoles" style="-fx-cursor: hand;">
+                  <Label text="🔐" style="-fx-font-size: 32px;" />
+                  <Label text="Gestionar Roles" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+               </VBox>
+
+               <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="2" styleClass="action-card"
+                     onMouseClicked="#handleSync" style="-fx-cursor: hand;">
+                  <Label text="🔄" style="-fx-font-size: 32px;" />
+                  <Label text="Sincronizar" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+               </VBox>
+
+               <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="3" styleClass="action-card"
+                     onMouseClicked="#handleSeguridad" style="-fx-cursor: hand;">
+                  <Label text="🛡️" style="-fx-font-size: 32px;" />
+                  <Label text="Seguridad" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+               </VBox>
             </GridPane>
-            
-            <!-- Charts Section -->
-            <HBox spacing="25.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <!-- Bar Chart Card -->
-                  <VBox styleClass="chart-card" spacing="15.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <Label text="📊 Ventas por Mes" styleClass="chart-title" />
-                        <BarChart fx:id="salesBarChart" VBox.vgrow="ALWAYS" styleClass="bar-chart">
-                           <xAxis>
-                              <CategoryAxis side="BOTTOM" />
-                           </xAxis>
-                           <yAxis>
-                              <NumberAxis side="LEFT" />
-                           </yAxis>
-                        </BarChart>
-                     </children>
-                  </VBox>
-                  
-                  <!-- Pie Chart Card -->
-                  <VBox styleClass="chart-card" spacing="15.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label text="🥧 Distribución por Categoría" styleClass="chart-title" />
-                        <PieChart fx:id="categoryPieChart" 
-                                    VBox.vgrow="ALWAYS"
-                                    prefHeight="300.0"
-                                    prefWidth="400.0" 
-                                    styleClass="pie-chart"/>
-                     </children>
-                  </VBox>
-               </children>
+         </VBox>
+
+         <!-- System Information -->
+         <VBox spacing="15" styleClass="info-section">
+            <Label text="📊 Información del Sistema" styleClass="section-title" />
+
+            <HBox spacing="30">
+               <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="info-card">
+                  <Label text="Versión del Sistema" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  <Label fx:id="lblSystemVersion" text="v1.0.0" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="info-card">
+                  <Label text="Base de Datos" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  <Label fx:id="lblDatabaseInfo" text="Supabase PostgreSQL" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="info-card">
+                  <Label text="Servidor de Aplicación" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  <Label fx:id="lblServerInfo" text="JavaFX Desktop" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
+
+               <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="info-card">
+                  <Label text="Entorno" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  <Label fx:id="lblEnvironment" text="Producción" style="-fx-text-fill: #7f8c8d;" />
+               </VBox>
             </HBox>
-            
-            <!-- Quick Actions -->
-            <VBox styleClass="quick-actions-card" spacing="20.0">
-               <children>
-                  <Label text="⚡ Acciones Rápidas" styleClass="section-title" />
-                  
-                  <HBox spacing="15.0" alignment="CENTER">
-                     <children>
-                        <Button text="➕ Nueva Venta" onAction="#handleVentas" styleClass="quick-action-btn, primary" prefWidth="180.0" prefHeight="50.0" />
-                        <Button text="📦 Gestionar Inventario" onAction="#handleInventario" styleClass="quick-action-btn, secondary" prefWidth="180.0" prefHeight="50.0" />
-                        <Button text="📋 Ver Pedidos" onAction="#handlePedidos" styleClass="quick-action-btn, warning" prefWidth="180.0" prefHeight="50.0" />
-                        <Button text="📊 Generar Reporte" onAction="#handleReportes" styleClass="quick-action-btn, info" prefWidth="180.0" prefHeight="50.0" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
+         </VBox>
       </VBox>
    </center>
 </BorderPane>

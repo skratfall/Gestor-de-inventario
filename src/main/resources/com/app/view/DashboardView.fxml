@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -96,7 +97,9 @@
 
    <!-- MAIN CONTENT -->
    <center>
-      <VBox spacing="30" styleClass="main-content">
+      <ScrollPane fitToWidth="true" fitToHeight="true"
+                  style="-fx-background-color: transparent; -fx-background: transparent;">
+         <VBox spacing="30" styleClass="main-content">
 
          <!-- System Status Cards -->
          <VBox spacing="15">
@@ -258,6 +261,7 @@
                </VBox>
             </HBox>
          </VBox>
-      </VBox>
+         </VBox>
+      </ScrollPane>
    </center>
 </BorderPane>

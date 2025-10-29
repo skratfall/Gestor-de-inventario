@@ -108,6 +108,8 @@
                 <version>3.14.0</version>
                 <configuration>
                     <release>23</release>
+                    <!-- Compilar usando classpath en lugar de module-path para evitar problemas con dependencias no modulares -->
+                    <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
 

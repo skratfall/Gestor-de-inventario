@@ -63,6 +63,19 @@ public class SupabaseDatabaseConnection {
         return connection;
     }
 
+    /**
+     * Prueba rápida de conexión: intenta abrir una conexión y la cierra.
+     * Devuelve true si la conexión se pudo establecer correctamente.
+     */
+    public boolean testConnection() {
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+            return conn != null && !conn.isClosed();
+        } catch (SQLException e) {
+            System.err.println("Error testing DB connection: " + e.getMessage());
+            return false;
+        }
+    }
+
     public void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {

@@ -616,6 +616,101 @@
 .light-color { -fx-background-color: #ecf0f1; }
 .dark-color { -fx-background-color: #2c3e50; }
 
+/* Administrative Dashboard Styles */
+.admin-card-icon {
+    -fx-font-size: 36px;
+}
+
+.admin-card-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.admin-card-primary {
+    -fx-border-color: #3498db;
+    -fx-border-width: 0 0 0 5;
+}
+
+.admin-card-primary:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 12, 0, 0, 3);
+}
+
+.admin-card-success {
+    -fx-border-color: #27ae60;
+    -fx-border-width: 0 0 0 5;
+}
+
+.admin-card-success:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.3), 12, 0, 0, 3);
+}
+
+.admin-card-info {
+    -fx-border-color: #16a085;
+    -fx-border-width: 0 0 0 5;
+}
+
+.admin-card-warning {
+    -fx-border-color: #f39c12;
+    -fx-border-width: 0 0 0 5;
+}
+
+.admin-card-secondary {
+    -fx-border-color: #95a5a6;
+    -fx-border-width: 0 0 0 5;
+}
+
+.admin-card-config {
+    -fx-border-color: #9b59b6;
+    -fx-border-width: 0 0 0 5;
+}
+
+.admin-card-config:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(155, 89, 182, 0.3), 12, 0, 0, 3);
+}
+
+/* Action Cards for Quick Actions */
+.action-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 25 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+    -fx-border-color: #ecf0f1;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}
+
+.action-card:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.25), 10, 0, 0, 3);
+    -fx-border-color: #3498db;
+    -fx-translate-y: -2;
+}
+
+/* Info Section */
+.info-section {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+.info-card {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+
 /* Navigation Bar */
 .nav-bar {
     -fx-background-color: linear-gradient(to bottom, #34495e, #2c3e50);

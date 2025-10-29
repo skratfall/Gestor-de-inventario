@@ -1,248 +1,436 @@
 package com.app.controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.app.dao.RolDAO;
+import com.app.dao.SupabaseDatabaseConnection;
+import com.app.dao.UsuarioDAOImpl;
+import com.app.model.Rol;
+import com.app.model.Usuario;
+import com.app.security.SessionManager;
+import com.app.service.AuthenticationService;
+import com.app.service.ConfiguracionService;
+import com.app.service.SyncService;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Controller class for the Dashboard view
- */
 public class DashboardController extends BaseController implements Initializable {
 
-    @FXML
-    private Label welcomeLabel;
+    @FXML private Label welcomeLabel;
+    @FXML private Label lblUserRole;
+    @FXML private Label lblCurrentUser;
+    @FXML private Label lblLastLogin;
+    @FXML private Label lblCurrentDate;
+    @FXML private Label lblCurrentTime;
 
-    @FXML
-    private Label totalSalesLabel;
+    @FXML private Label lblTotalUsers;
+    @FXML private Label lblTotalRoles;
+    @FXML private Label lblConnectionStatus;
+    @FXML private Label lblConnectionText;
+    @FXML private Label lblConnectionDetails;
+    @FXML private Label lblLastSync;
+    @FXML private Label lblSessionDuration;
+    @FXML private Label lblConfigStatus;
 
-    @FXML
-    private Label pendingOrdersLabel;
+    @FXML private Label lblSystemVersion;
+    @FXML private Label lblDatabaseInfo;
+    @FXML private Label lblServerInfo;
+    @FXML private Label lblEnvironment;
 
-    @FXML
-    private Button inventarioButton;
+    @FXML private Button btnDashboard;
+    @FXML private Button btnUsuarios;
+    @FXML private Button btnRoles;
+    @FXML private Button btnSync;
+    @FXML private Button btnConfiguracion;
+    @FXML private Button btnSeguridad;
+    @FXML private Button btnLogout;
 
-    @FXML
-    private Button ventasButton;
+    private SessionManager sessionManager;
+    private AuthenticationService authService;
+    private UsuarioDAOImpl usuarioDAO;
+    private RolDAO rolDAO;
+    private SyncService syncService;
+    private ConfiguracionService configService;
 
-    @FXML
-    private Button pedidosButton;
+    private Timeline clockTimeline;
+    private Timeline sessionTimeline;
+    private LocalDateTime sessionStartTime;
 
-    @FXML
-    private Button reportesButton;
-
-    @FXML
-    private Button btnUsuarios;
-
-    @FXML
-    private Button btnSync;
-
-    @FXML
-    private Button btnConfiguracion;
-
-    @FXML
-    private Button logoutButton;
-
-    // --- ReportesView: referencia al gráfico ---
-    @FXML
-    private PieChart categoryPieChart;
+    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy");
+    private DateTimeFormatter loginFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initializeServices();
         initializeController();
         loadDashboardData();
+        startClockUpdates();
+        setupPermissions();
+    }
+
+    private void initializeServices() {
+        sessionManager = SessionManager.getInstance();
+        authService = AuthenticationService.getInstance();
+        usuarioDAO = new UsuarioDAOImpl();
+        rolDAO = new RolDAO();
+        syncService = SyncService.getInstance();
+        configService = ConfiguracionService.getInstance();
+        sessionStartTime = sessionManager.getLoginTime();
     }
 
     @Override
     public void initializeController() {
-        com.app.security.SessionManager sessionManager = com.app.security.SessionManager.getInstance();
-        com.app.model.Usuario currentUser = sessionManager.getCurrentUser();
+        Usuario currentUser = sessionManager.getCurrentUser();
+        Rol currentRole = sessionManager.getCurrentRole();
 
         if (currentUser != null) {
-            String nombreCompleto = currentUser.getNombreCompleto() != null ?
+            String nombreCompleto = currentUser.getNombreCompleto() != null && !currentUser.getNombreCompleto().isEmpty() ?
                 currentUser.getNombreCompleto() : currentUser.getUsername();
+
             welcomeLabel.setText("Bienvenido, " + nombreCompleto);
+            lblCurrentUser.setText("Usuario: " + currentUser.getUsername());
+
+            if (currentUser.getUltimoAcceso() != null) {
+                lblLastLogin.setText("Última sesión: " + currentUser.getUltimoAcceso().format(loginFormatter));
+            } else {
+                lblLastLogin.setText("Primera sesión");
+            }
         } else {
-            welcomeLabel.setText("Bienvenido al Panel de Control");
+            welcomeLabel.setText("Bienvenido al Sistema");
+            lblCurrentUser.setText("Usuario: Invitado");
+            lblLastLogin.setText("Sin sesión activa");
         }
 
-        loadDashboardData();
-        setupPermissions();
+        if (currentRole != null) {
+            lblUserRole.setText(currentRole.getNombre());
+        } else {
+            lblUserRole.setText("Sin rol asignado");
+        }
+
+        updateDateTime();
+        loadSystemInfo();
+    }
+
+    private void loadDashboardData() {
+        loadUserStatistics();
+        checkDatabaseConnection();
+        loadSyncStatus();
+        loadConfigurationStatus();
+    }
+
+    private void loadUserStatistics() {
+        try {
+            List<Usuario> usuarios = usuarioDAO.findAll();
+            long activeUsers = usuarios.stream().filter(Usuario::isActivo).count();
+            lblTotalUsers.setText(String.valueOf(activeUsers));
+
+            List<Rol> roles = rolDAO.findAll();
+            lblTotalRoles.setText(String.valueOf(roles.size()));
+
+        } catch (Exception e) {
+            lblTotalUsers.setText("Error");
+            lblTotalRoles.setText("Error");
+            System.err.println("Error loading user statistics: " + e.getMessage());
+        }
+    }
+
+    private void checkDatabaseConnection() {
+        try {
+            SupabaseDatabaseConnection dbConnection = SupabaseDatabaseConnection.getInstance();
+            boolean isConnected = dbConnection.testConnection();
+
+            if (isConnected) {
+                lblConnectionStatus.setText("●");
+                lblConnectionStatus.setStyle("-fx-font-size: 20px; -fx-text-fill: #27ae60;");
+                lblConnectionText.setText("Conectado");
+                lblConnectionDetails.setText("Base de datos operativa");
+            } else {
+                lblConnectionStatus.setText("●");
+                lblConnectionStatus.setStyle("-fx-font-size: 20px; -fx-text-fill: #e74c3c;");
+                lblConnectionText.setText("Desconectado");
+                lblConnectionDetails.setText("Sin conexión a la base de datos");
+            }
+        } catch (Exception e) {
+            lblConnectionStatus.setText("●");
+            lblConnectionStatus.setStyle("-fx-font-size: 20px; -fx-text-fill: #f39c12;");
+            lblConnectionText.setText("Error");
+            lblConnectionDetails.setText("Error al verificar conexión");
+        }
+    }
+
+    private void loadSyncStatus() {
+        try {
+            List<SyncService.SyncLogEntry> logs = syncService.getSyncHistory(1);
+            if (!logs.isEmpty()) {
+                SyncService.SyncLogEntry lastSync = logs.get(0);
+                if (lastSync.fechaFin != null) {
+                    long minutesAgo = ChronoUnit.MINUTES.between(lastSync.fechaFin, LocalDateTime.now());
+                    if (minutesAgo < 60) {
+                        lblLastSync.setText("Hace " + minutesAgo + " min");
+                    } else {
+                        long hoursAgo = minutesAgo / 60;
+                        lblLastSync.setText("Hace " + hoursAgo + " hrs");
+                    }
+                } else {
+                    lblLastSync.setText("En proceso");
+                }
+            } else {
+                lblLastSync.setText("Sin sincronizar");
+            }
+        } catch (Exception e) {
+            lblLastSync.setText("No disponible");
+        }
+    }
+
+    private void loadConfigurationStatus() {
+        try {
+            String appVersion = configService.getConfigValue("app.version", "1.0.0");
+            lblSystemVersion.setText("v" + appVersion);
+            lblConfigStatus.setText("Configurado");
+        } catch (Exception e) {
+            lblConfigStatus.setText("No configurado");
+        }
+    }
+
+    private void loadSystemInfo() {
+        try {
+            String appName = configService.getConfigValue("app.nombre", "Sistema de Gestión de Inventario");
+            String appVersion = configService.getConfigValue("app.version", "1.0.0");
+
+            lblSystemVersion.setText("v" + appVersion);
+            lblDatabaseInfo.setText("Supabase PostgreSQL");
+            lblServerInfo.setText("JavaFX " + System.getProperty("javafx.version", "24"));
+            lblEnvironment.setText("Producción");
+
+        } catch (Exception e) {
+            System.err.println("Error loading system info: " + e.getMessage());
+        }
+    }
+
+    private void updateDateTime() {
+        LocalDateTime now = LocalDateTime.now();
+        lblCurrentTime.setText(now.format(timeFormatter));
+        lblCurrentDate.setText(now.format(dateFormatter));
+    }
+
+    private void updateSessionDuration() {
+        if (sessionStartTime != null) {
+            LocalDateTime now = LocalDateTime.now();
+            long seconds = ChronoUnit.SECONDS.between(sessionStartTime, now);
+
+            long hours = seconds / 3600;
+            long minutes = (seconds % 3600) / 60;
+            long secs = seconds % 60;
+
+            lblSessionDuration.setText(String.format("%02d:%02d:%02d", hours, minutes, secs));
+        }
+    }
+
+    private void startClockUpdates() {
+        clockTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            updateDateTime();
+        }));
+        clockTimeline.setCycleCount(Animation.INDEFINITE);
+        clockTimeline.play();
+
+        sessionTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            updateSessionDuration();
+        }));
+        sessionTimeline.setCycleCount(Animation.INDEFINITE);
+        sessionTimeline.play();
     }
 
     private void setupPermissions() {
-        com.app.security.SessionManager sessionManager = com.app.security.SessionManager.getInstance();
+        boolean canManageUsers = sessionManager.hasPermission("usuarios", "read");
+        boolean canManageConfig = sessionManager.hasPermission("configuracion", "read");
+        boolean canSync = sessionManager.hasPermission("sincronizacion", "execute");
 
-        inventarioButton.setDisable(!sessionManager.hasPermission("productos", "read"));
-        ventasButton.setDisable(!sessionManager.hasPermission("ventas", "read"));
-        pedidosButton.setDisable(!sessionManager.hasPermission("pedidos", "read"));
-        reportesButton.setDisable(!sessionManager.hasPermission("reportes", "read"));
-
-        if (btnUsuarios != null) {
-            btnUsuarios.setDisable(!sessionManager.hasPermission("usuarios", "read"));
-            btnUsuarios.setOnAction(this::handleUsuarios);
-        }
-
-        if (btnSync != null) {
-            btnSync.setDisable(!sessionManager.hasPermission("sincronizacion", "execute"));
-            btnSync.setOnAction(this::handleSync);
-        }
-
-        if (btnConfiguracion != null) {
-            btnConfiguracion.setDisable(!sessionManager.hasPermission("configuracion", "read"));
-            btnConfiguracion.setOnAction(this::handleConfiguracion);
-        }
+        if (btnUsuarios != null) btnUsuarios.setDisable(!canManageUsers);
+        if (btnRoles != null) btnRoles.setDisable(!canManageUsers);
+        if (btnConfiguracion != null) btnConfiguracion.setDisable(!canManageConfig);
+        if (btnSync != null) btnSync.setDisable(!canSync);
+        if (btnSeguridad != null) btnSeguridad.setDisable(!sessionManager.isAdmin());
     }
 
     @FXML
     private void handleUsuarios(ActionEvent event) {
-        navigateToView("/com/app/view/UsuariosView.fxml", "User Management", 900, 700);
+        navigateToView("/com/app/view/UsuariosView.fxml", "Gestión de Usuarios", 1100, 750);
+    }
+
+    @FXML
+    private void handleUsuarios(MouseEvent event) {
+        navigateToView("/com/app/view/UsuariosView.fxml", "Gestión de Usuarios", 1100, 750);
+    }
+
+    @FXML
+    private void handleRoles(ActionEvent event) {
+        showInfoAlert("Gestión de Roles", "El módulo de gestión de roles estará disponible próximamente.\n\nPodrá configurar:\n- Crear nuevos roles\n- Asignar permisos por módulo\n- Gestionar accesos del sistema");
+    }
+
+    @FXML
+    private void handleRoles(MouseEvent event) {
+        handleRoles((ActionEvent) null);
     }
 
     @FXML
     private void handleSync(ActionEvent event) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Sincronización con la Nube");
         alert.setHeaderText("¿Desea sincronizar datos con la nube?");
         alert.setContentText("Seleccione la dirección de sincronización:");
 
-        javafx.scene.control.ButtonType btnEnviar = new javafx.scene.control.ButtonType("Enviar a Nube");
-        javafx.scene.control.ButtonType btnRecibir = new javafx.scene.control.ButtonType("Recibir de Nube");
-        javafx.scene.control.ButtonType btnCancelar = javafx.scene.control.ButtonType.CANCEL;
+        ButtonType btnEnviar = new ButtonType("Enviar a Nube");
+        ButtonType btnRecibir = new ButtonType("Recibir de Nube");
+        ButtonType btnCancelar = ButtonType.CANCEL;
 
         alert.getButtonTypes().setAll(btnEnviar, btnRecibir, btnCancelar);
 
         alert.showAndWait().ifPresent(response -> {
             if (response == btnEnviar || response == btnRecibir) {
-                com.app.service.SyncService syncService = com.app.service.SyncService.getInstance();
-                java.util.List<String> tables = java.util.Arrays.asList("productos", "ventas", "pedidos", "clientes");
+                List<String> tables = List.of("productos", "ventas", "pedidos", "clientes");
 
-                com.app.service.SyncService.SyncResult result;
+                SyncService.SyncResult result;
                 if (response == btnEnviar) {
                     result = syncService.syncDataToCloud(tables);
                 } else {
                     result = syncService.syncDataFromCloud(tables);
                 }
 
-                javafx.scene.control.Alert resultAlert = new javafx.scene.control.Alert(
-                    result.success ? javafx.scene.control.Alert.AlertType.INFORMATION : javafx.scene.control.Alert.AlertType.ERROR
+                Alert resultAlert = new Alert(
+                    result.success ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR
                 );
                 resultAlert.setTitle("Resultado de Sincronización");
                 resultAlert.setHeaderText(result.success ? "Sincronización Exitosa" : "Error en Sincronización");
                 resultAlert.setContentText(result.message + "\nRegistros procesados: " + result.recordsProcessed);
                 resultAlert.showAndWait();
+
+                loadSyncStatus();
             }
         });
     }
 
     @FXML
+    private void handleSync(MouseEvent event) {
+        handleSync((ActionEvent) null);
+    }
+
+    @FXML
+    private void handleSyncNow(ActionEvent event) {
+        handleSync((ActionEvent) null);
+    }
+
+    @FXML
     private void handleConfiguracion(ActionEvent event) {
-        showInfoAlert("Configuración", "Módulo de configuración en desarrollo");
-    }
-
-    private void loadDashboardData() {
-        totalSalesLabel.setText("$12,450.00");
-        pendingOrdersLabel.setText("23");
-
-
-        // Inicializar PieChart aquí para que se vea en el Dashboard
-        if (categoryPieChart != null) {
-            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Electrónica", 40),
-                new PieChart.Data("Ropa", 25),
-                new PieChart.Data("Hogar", 20),
-                new PieChart.Data("Otros", 15)
-            );
-
-            categoryPieChart.setData(pieChartData);
-            categoryPieChart.setLegendVisible(true);
-            categoryPieChart.setLabelsVisible(true);
-        }
+        showInfoAlert("Configuración del Sistema",
+            "El módulo de configuración avanzada estará disponible próximamente.\n\n" +
+            "Podrá configurar:\n" +
+            "- Parámetros generales del sistema\n" +
+            "- Conexiones y endpoints\n" +
+            "- Apariencia y personalización\n" +
+            "- Opciones de seguridad");
     }
 
     @FXML
-    private void handleInventario(ActionEvent event) {
-        navigateToView("/com/app/view/InventarioView.fxml", "Inventory Management", 1000, 700);
+    private void handleConfiguracion(MouseEvent event) {
+        handleConfiguracion((ActionEvent) null);
     }
 
     @FXML
-    private void handleVentas(ActionEvent event) {
-        navigateToView("/com/app/view/VentasView.fxml", "Sales Management", 900, 800);
+    private void handleSeguridad(ActionEvent event) {
+        showInfoAlert("Panel de Seguridad",
+            "El módulo de seguridad estará disponible próximamente.\n\n" +
+            "Características:\n" +
+            "- Auditoría de accesos\n" +
+            "- Registro de actividades\n" +
+            "- Gestión de sesiones activas\n" +
+            "- Políticas de contraseñas\n" +
+            "- Logs del sistema");
     }
 
     @FXML
-    private void handlePedidos(ActionEvent event) {
-        navigateToView("/com/app/view/PedidosView.fxml", "Orders Management", 1000, 800);
-    }
-
-    @FXML
-    private void handleReportes(ActionEvent event) {
-        navigateToView("/com/app/view/ReportesView.fxml", "Reports", 1000, 800);
-
-        // Simulación de carga de datos en el gráfico
-        if (categoryPieChart != null) {
-            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Electrónica", 40),
-                new PieChart.Data("Ropa", 25),
-                new PieChart.Data("Hogar", 20),
-                new PieChart.Data("Otros", 15)
-            );
-
-            categoryPieChart.setData(pieChartData);
-            categoryPieChart.setLegendVisible(true);
-            categoryPieChart.setLabelsVisible(true);
-        }
+    private void handleSeguridad(MouseEvent event) {
+        handleSeguridad((ActionEvent) null);
     }
 
     @FXML
     private void handleLogout(ActionEvent event) {
-        com.app.service.AuthenticationService authService = com.app.service.AuthenticationService.getInstance();
-        authService.logout();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Cerrar Sesión");
+        alert.setHeaderText("¿Está seguro que desea cerrar sesión?");
+        alert.setContentText("Todos los cambios no guardados se perderán.");
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/LoginView.fxml"));
-            Parent root = loader.load();
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                stopTimelines();
+                authService.logout();
 
-            Stage stage = (Stage) logoutButton.getScene().getWindow();
-            Scene scene = new Scene(root, 900, 800);
-            stage.setTitle("Login - JavaFX Application");
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.centerOnScreen();
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/LoginView.fxml"));
+                    Parent root = loader.load();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            showErrorAlert("Navigation Error", "Could not load login view: " + e.getMessage());
-        }
+                    Stage stage = (Stage) btnLogout.getScene().getWindow();
+                    Scene scene = new Scene(root, 900, 800);
+                    stage.setTitle("Login - Sistema de Gestión");
+                    stage.setScene(scene);
+                    stage.setResizable(false);
+                    stage.centerOnScreen();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showErrorAlert("Error de Navegación", "No se pudo cargar la pantalla de login: " + e.getMessage());
+                }
+            }
+        });
     }
 
     private void navigateToView(String fxmlPath, String title, int width, int height) {
         try {
+            stopTimelines();
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-            
-            Stage stage = (Stage) inventarioButton.getScene().getWindow();
+
+            Stage stage = (Stage) btnDashboard.getScene().getWindow();
             Scene scene = new Scene(root, width, height);
 
-            stage.setTitle(title + " - JavaFX Application");
+            stage.setTitle(title + " - Sistema de Gestión");
             stage.setScene(scene);
             stage.setResizable(true);
             stage.centerOnScreen();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
-            showErrorAlert("Navigation Error", "Could not load " + title.toLowerCase() + ": " + e.getMessage());
+            showErrorAlert("Error de Navegación", "No se pudo cargar " + title + ": " + e.getMessage());
+        }
+    }
+
+    private void stopTimelines() {
+        if (clockTimeline != null) {
+            clockTimeline.stop();
+        }
+        if (sessionTimeline != null) {
+            sessionTimeline.stop();
         }
     }
 

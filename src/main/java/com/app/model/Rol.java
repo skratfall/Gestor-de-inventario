@@ -8,6 +8,7 @@ public class Rol {
     private String id;
     private String nombre;
     private String descripcion;
+    private int nivelAcceso;
     private JsonObject permisos;
     private LocalDateTime createdAt;
 
@@ -18,10 +19,11 @@ public class Rol {
     public Rol() {
     }
 
-    public Rol(String id, String nombre, String descripcion, JsonObject permisos) {
+    public Rol(String id, String nombre, String descripcion, int nivelAcceso, JsonObject permisos) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.nivelAcceso = nivelAcceso;
         this.permisos = permisos;
     }
 
@@ -55,6 +57,14 @@ public class Rol {
 
     public void setPermisos(JsonObject permisos) {
         this.permisos = permisos;
+    }
+
+    public int getNivelAcceso() {
+        return nivelAcceso;
+    }
+
+    public void setNivelAcceso(int nivelAcceso) {
+        this.nivelAcceso = nivelAcceso;
     }
 
     public LocalDateTime getCreatedAt() {

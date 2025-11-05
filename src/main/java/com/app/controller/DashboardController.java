@@ -13,7 +13,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,7 +23,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -279,28 +279,27 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    public void handleUsuarios(ActionEvent event) {
+    public void handleUsuarios(Event event) {
         navigateToView("/com/app/view/UsuariosView.fxml", "Gestión de Usuarios", 1100, 750);
     }
 
     @FXML
-    public void handleUsuariosClick(MouseEvent event) {
-        // Reutiliza la lógica del handler de ActionEvent
-        handleUsuarios((ActionEvent) null);
+    public void handleUsuariosClick(Event event) {
+        handleUsuarios(event);
     }
 
     @FXML
-    private void handleRoles(ActionEvent event) {
+    private void handleRoles(Event event) {
         showInfoAlert("Gestión de Roles", "El módulo de gestión de roles estará disponible próximamente.\n\nPodrá configurar:\n- Crear nuevos roles\n- Asignar permisos por módulo\n- Gestionar accesos del sistema");
     }
 
     @FXML
-    private void handleRolesClick(MouseEvent event) {
-        handleRoles((ActionEvent) null);
+    private void handleRolesClick(Event event) {
+        handleRoles(event);
     }
 
     @FXML
-    private void handleSync(ActionEvent event) {
+    private void handleSync(Event event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Sincronización con la Nube");
         alert.setHeaderText("¿Desea sincronizar datos con la nube?");
@@ -337,17 +336,17 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleSyncClick(MouseEvent event) {
-        handleSync((ActionEvent) null);
+    private void handleSyncClick(Event event) {
+        handleSync(event);
     }
 
     @FXML
-    private void handleSyncNow(ActionEvent event) {
-        handleSync((ActionEvent) null);
+    private void handleSyncNow(Event event) {
+        handleSync(event);
     }
 
     @FXML
-    private void handleConfiguracion(ActionEvent event) {
+    private void handleConfiguracion(Event event) {
         showInfoAlert("Configuración del Sistema",
             "El módulo de configuración avanzada estará disponible próximamente.\n\n" +
             "Podrá configurar:\n" +
@@ -358,12 +357,12 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleConfiguracionClick(MouseEvent event) {
-        handleConfiguracion((ActionEvent) null);
+    private void handleConfiguracionClick(Event event) {
+        handleConfiguracion(event);
     }
 
     @FXML
-    private void handleSeguridad(ActionEvent event) {
+    private void handleSeguridad(Event event) {
         showInfoAlert("Panel de Seguridad",
             "El módulo de seguridad estará disponible próximamente.\n\n" +
             "Características:\n" +
@@ -375,12 +374,12 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleSeguridadClick(MouseEvent event) {
-        handleSeguridad((ActionEvent) null);
+    private void handleSeguridadClick(Event event) {
+        handleSeguridad(event);
     }
 
     @FXML
-    private void handleLogout(ActionEvent event) {
+    private void handleLogout(Event event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Cerrar Sesión");
         alert.setHeaderText("¿Está seguro que desea cerrar sesión?");

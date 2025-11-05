@@ -74,15 +74,30 @@ public class ConfiguracionService {
         }
 
         try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
-            String sql = "UPDATE configuracion_sistema SET valor = ?, updated_at = now(), " +
-                         "updated_by = ?::uuid WHERE clave = ?";
+            // Primero intentamos actualizar
+            String updateSql = "UPDATE configuracion_sistema SET valor = ?, updated_at = now(), " +
+                             "updated_by = ?::uuid WHERE clave = ?";
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, value);
-            stmt.setString(2, sessionManager.getCurrentUser().getId());
-            stmt.setString(3, key);
+            PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+            updateStmt.setString(1, value);
+            updateStmt.setString(2, sessionManager.getCurrentUser().getId());
+            updateStmt.setString(3, key);
 
-            int rowsAffected = stmt.executeUpdate();
+            int rowsAffected = updateStmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                // Si no se actualizó ninguna fila, intentamos insertar
+                String insertSql = "INSERT INTO configuracion_sistema " +
+                                 "(clave, valor, tipo, descripcion, categoria, editable_por_usuario, updated_by) " +
+                                 "VALUES (?, ?, 'string', 'Configuración automática', 'sistema', true, ?::uuid)";
+
+                PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+                insertStmt.setString(1, key);
+                insertStmt.setString(2, value);
+                insertStmt.setString(3, sessionManager.getCurrentUser().getId());
+
+                rowsAffected = insertStmt.executeUpdate();
+            }
 
             if (rowsAffected > 0) {
                 configCache.put(key, value);
@@ -93,6 +108,39 @@ public class ConfiguracionService {
 
         } catch (Exception e) {
             System.err.println("Error updating configuration: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean testConnection() {
+        if (!sessionManager.hasPermission("configuracion", "read")) {
+            throw new SecurityException("No tiene permiso para probar la conexión");
+        }
+
+        try {
+            String url = getConfigValue("db.url");
+            String apiKey = getConfigValue("db.apikey");
+
+            // Verificar que los valores no estén vacíos
+            if (url == null || url.trim().isEmpty() || 
+                apiKey == null || apiKey.trim().isEmpty()) {
+                return false;
+            }
+
+            // Intentar crear una conexión de prueba
+            SupabaseDatabaseConnection testConnection = SupabaseDatabaseConnection.createInstance(url, apiKey);
+            Connection conn = testConnection.getConnection();
+            
+            // Verificar la conexión con una consulta simple
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("SELECT 1");
+                
+                // Si llegamos aquí, la conexión fue exitosa
+                setConfigValue("sync.ultima", LocalDateTime.now().toString());
+                return true;
+            }
+        } catch (Exception e) {
+            System.err.println("Error testing connection: " + e.getMessage());
             return false;
         }
     }

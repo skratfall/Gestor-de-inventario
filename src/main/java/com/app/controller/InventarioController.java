@@ -5,7 +5,7 @@ import com.app.model.Producto;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -82,7 +82,7 @@ public class InventarioController {
 
     // ➕ Mostrar formulario para agregar
     @FXML
-    private void handleAdd(ActionEvent event) {
+    private void handleAdd(Event event) {
         productoEditando = null;
         formTitleLabel.setText("Agregar Nuevo Producto");
         toggleForm(true);
@@ -91,7 +91,7 @@ public class InventarioController {
 
     // ✏️ Mostrar formulario con datos para editar
     @FXML
-    private void handleUpdate(ActionEvent event) {
+    private void handleUpdate(Event event) {
         Producto selected = productosTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             productoEditando = selected;
@@ -110,7 +110,7 @@ public class InventarioController {
 
     // 🗑️ Eliminar producto
     @FXML
-    private void handleDelete(ActionEvent event) {
+    private void handleDelete(Event event) {
         Producto selected = productosTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Eliminar este producto?", ButtonType.YES, ButtonType.NO);
@@ -125,7 +125,7 @@ public class InventarioController {
     }
 
     @FXML
-    private void handleCancelForm(ActionEvent event) {
+    private void handleCancelForm(Event event) {
         clearForm();
         toggleForm(false);
     }
@@ -165,7 +165,7 @@ public class InventarioController {
 
     // 🔙 Método que faltaba
     @FXML
-    private void handleBack(ActionEvent event) {
+    private void handleBack(Event event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/DashboardView.fxml"));
             Parent root = loader.load();

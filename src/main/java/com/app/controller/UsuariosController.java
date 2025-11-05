@@ -8,7 +8,7 @@ import com.app.security.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -394,7 +394,7 @@ public class UsuariosController implements Initializable {
     }
 
  @FXML
-    public void handleBackToDashboard(ActionEvent event) {
+    public void handleBackToDashboard(Event event) {
         try {
             // Cargar el FXML del Dashboard
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/DashboardView.fxml")); // Ajusta la ruta según tu estructura de paquetes

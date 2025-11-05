@@ -118,8 +118,8 @@
                   </rowConstraints>
 
                   <!-- Card 1: Usuarios Activos -->
-                  <VBox styleClass="dashboard-card, admin-card-primary" spacing="12" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                        onMouseClicked="#handleUsuarios" style="-fx-cursor: hand;">
+         <VBox styleClass="dashboard-card, admin-card-primary" spacing="12" GridPane.columnIndex="0" GridPane.rowIndex="0"
+            onMouseClicked="#handleUsuariosClick" style="-fx-cursor: hand;">
                      <HBox alignment="CENTER_LEFT" spacing="15">
                         <Label text="👥" styleClass="admin-card-icon" />
                         <VBox spacing="5">
@@ -131,8 +131,8 @@
                   </VBox>
 
                   <!-- Card 2: Roles Configurados -->
-                  <VBox styleClass="dashboard-card, admin-card-success" spacing="12" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                        onMouseClicked="#handleRoles" style="-fx-cursor: hand;">
+         <VBox styleClass="dashboard-card, admin-card-success" spacing="12" GridPane.columnIndex="1" GridPane.rowIndex="0"
+            onMouseClicked="#handleRolesClick" style="-fx-cursor: hand;">
                      <HBox alignment="CENTER_LEFT" spacing="15">
                         <Label text="🔐" styleClass="admin-card-icon" />
                         <VBox spacing="5">
@@ -184,8 +184,8 @@
                   </VBox>
 
                   <!-- Card 6: Configuración del Sistema -->
-                  <VBox styleClass="dashboard-card, admin-card-config" spacing="12" GridPane.columnIndex="2" GridPane.rowIndex="1"
-                        onMouseClicked="#handleConfiguracion" style="-fx-cursor: hand;">
+         <VBox styleClass="dashboard-card, admin-card-config" spacing="12" GridPane.columnIndex="2" GridPane.rowIndex="1"
+            onMouseClicked="#handleConfiguracionClick" style="-fx-cursor: hand;">
                      <HBox alignment="CENTER_LEFT" spacing="15">
                         <Label text="⚙️" styleClass="admin-card-icon" />
                         <VBox spacing="5">
@@ -210,26 +210,26 @@
                      <ColumnConstraints hgrow="ALWAYS" />
                   </columnConstraints>
 
-                  <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="0" styleClass="action-card"
-                        onMouseClicked="#handleUsuarios" style="-fx-cursor: hand;">
+         <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="0" styleClass="action-card"
+            onMouseClicked="#handleUsuariosClick" style="-fx-cursor: hand;">
                      <Label text="👤" style="-fx-font-size: 32px;" />
                      <Label text="Nuevo Usuario" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                   </VBox>
 
-                  <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="1" styleClass="action-card"
-                        onMouseClicked="#handleRoles" style="-fx-cursor: hand;">
+         <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="1" styleClass="action-card"
+            onMouseClicked="#handleRolesClick" style="-fx-cursor: hand;">
                      <Label text="🔐" style="-fx-font-size: 32px;" />
                      <Label text="Gestionar Roles" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                   </VBox>
 
-                  <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="2" styleClass="action-card"
-                        onMouseClicked="#handleSync" style="-fx-cursor: hand;">
+         <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="2" styleClass="action-card"
+            onMouseClicked="#handleSyncClick" style="-fx-cursor: hand;">
                      <Label text="🔄" style="-fx-font-size: 32px;" />
                      <Label text="Sincronizar" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                   </VBox>
 
-                  <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="3" styleClass="action-card"
-                        onMouseClicked="#handleSeguridad" style="-fx-cursor: hand;">
+         <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="3" styleClass="action-card"
+            onMouseClicked="#handleSeguridadClick" style="-fx-cursor: hand;">
                      <Label text="🛡️" style="-fx-font-size: 32px;" />
                      <Label text="Seguridad" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
                   </VBox>

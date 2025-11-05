@@ -16,6 +16,25 @@ public class RolDAO {
         return SupabaseDatabaseConnection.getInstance().getConnection();
     }
 
+    public boolean existsByNombre(String nombre) {
+        String sql = "SELECT COUNT(*) FROM roles WHERE nombre = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, nombre);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking rol existence: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Optional<Rol> findById(String id) {
         String sql = "SELECT * FROM roles WHERE id = ?::uuid";
 
@@ -79,14 +98,15 @@ public class RolDAO {
     }
 
     public Rol save(Rol rol) {
-        String sql = "INSERT INTO roles (nombre, descripcion, permisos) VALUES (?, ?, ?::jsonb) RETURNING id, created_at";
+        String sql = "INSERT INTO roles (nombre, descripcion, nivel_acceso, permisos) VALUES (?, ?, ?, ?::jsonb) RETURNING id, created_at";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, rol.getNombre());
             stmt.setString(2, rol.getDescripcion());
-            stmt.setString(3, rol.getPermisos() != null ? rol.getPermisos().toString() : "{}");
+            stmt.setInt(3, rol.getNivelAcceso());
+            stmt.setString(4, rol.getPermisos() != null ? rol.getPermisos().toString() : "{}");
 
             ResultSet rs = stmt.executeQuery();
 
@@ -108,15 +128,16 @@ public class RolDAO {
     }
 
     public Rol update(Rol rol) {
-        String sql = "UPDATE roles SET nombre = ?, descripcion = ?, permisos = ?::jsonb WHERE id = ?::uuid";
+        String sql = "UPDATE roles SET nombre = ?, descripcion = ?, nivel_acceso = ?, permisos = ?::jsonb WHERE id = ?::uuid";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, rol.getNombre());
             stmt.setString(2, rol.getDescripcion());
-            stmt.setString(3, rol.getPermisos() != null ? rol.getPermisos().toString() : "{}");
-            stmt.setString(4, rol.getId());
+            stmt.setInt(3, rol.getNivelAcceso());
+            stmt.setString(4, rol.getPermisos() != null ? rol.getPermisos().toString() : "{}");
+            stmt.setString(5, rol.getId());
 
             int rowsAffected = stmt.executeUpdate();
 
@@ -158,6 +179,7 @@ public class RolDAO {
         rol.setId(rs.getString("id"));
         rol.setNombre(rs.getString("nombre"));
         rol.setDescripcion(rs.getString("descripcion"));
+        rol.setNivelAcceso(rs.getInt("nivel_acceso"));
 
         String permisosJson = rs.getString("permisos");
         if (permisosJson != null && !permisosJson.isEmpty()) {

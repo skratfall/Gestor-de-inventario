@@ -19,6 +19,12 @@ public class SupabaseDatabaseConnection {
         loadProperties();
     }
 
+    public SupabaseDatabaseConnection(String url, String apiKey) {
+        this.dbUrl = url;
+        this.dbUser = "postgres";  // Supabase siempre usa postgres como usuario
+        this.dbPassword = apiKey;
+    }
+
     private void loadProperties() {
         Properties props = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
@@ -48,6 +54,10 @@ public class SupabaseDatabaseConnection {
             }
         }
         return instance;
+    }
+
+    public static SupabaseDatabaseConnection createInstance(String url, String apiKey) {
+        return new SupabaseDatabaseConnection(url, apiKey);
     }
 
     public Connection getConnection() throws SQLException {

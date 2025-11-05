@@ -28,6 +28,9 @@
         <VBox spacing="10" style="-fx-padding: 20;">
 
             <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="btnBackToDashboard" text="🏠 Regresar al Dashboard"
+                        onAction="#handleBackToDashboard"
+                        style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold;"/>
                 <Button fx:id="btnNuevoUsuario" text="Nuevo Usuario"
                         onAction="#handleNuevoUsuario"
                         style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"/>

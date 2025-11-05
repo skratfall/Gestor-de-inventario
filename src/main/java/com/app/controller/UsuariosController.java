@@ -8,12 +8,18 @@ import com.app.security.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.geometry.Insets;
-
+import javafx.scene.Node;
+import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,6 +37,7 @@ public class UsuariosController implements Initializable {
     @FXML private TableColumn<Usuario, String> colUltimoAcceso;
     @FXML private TextField txtBuscar;
     @FXML private Label lblTotalUsuarios;
+    @FXML private Button btnBackToDashboard;
     @FXML private Button btnNuevoUsuario;
     @FXML private Button btnEditarUsuario;
     @FXML private Button btnEliminarUsuario;
@@ -384,5 +391,28 @@ public class UsuariosController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+ @FXML
+    public void handleBackToDashboard(ActionEvent event) {
+        try {
+            // Cargar el FXML del Dashboard
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/app/view/DashboardView.fxml")); // Ajusta la ruta según tu estructura de paquetes
+            Parent root = loader.load();
+            
+            // Obtener el Stage actual
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            
+            // Crear nueva escena y asignarla al Stage
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            
+            // Opcional: ajustar el título de la ventana
+            stage.setTitle("Dashboard - Gestión de Inventario");
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Manejo de errores, por ejemplo, mostrar un diálogo de error
+        }
     }
 }

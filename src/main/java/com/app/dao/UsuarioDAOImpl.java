@@ -11,7 +11,11 @@ import java.util.Optional;
 public class UsuarioDAOImpl implements UsuarioDAO {
 
     private Connection getConnection() throws SQLException {
-        return SupabaseDatabaseConnection.getInstance().getConnection();
+            Connection conn = SupabaseDatabaseConnection.getInstance().getConnection();
+            if (conn == null || conn.isClosed()) {
+                throw new SQLException("No se pudo establecer la conexión con la base de datos");
+            }
+            return conn;
     }
 
     @Override
@@ -19,29 +23,31 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         String sql = "INSERT INTO usuarios (username, password_hash, email, nombre_completo, rol_id, activo) " +
                      "VALUES (?, ?, ?, ?, ?::uuid, ?) RETURNING id, created_at, updated_at";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (Connection conn = getConnection()) {
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, usuario.getUsername());
+                    stmt.setString(2, usuario.getPasswordHash());
+                    stmt.setString(3, usuario.getEmail());
+                    stmt.setString(4, usuario.getNombreCompleto());
+                    stmt.setString(5, usuario.getRolId());
+                    stmt.setBoolean(6, usuario.isActivo());
 
-            stmt.setString(1, usuario.getUsername());
-            stmt.setString(2, usuario.getPasswordHash());
-            stmt.setString(3, usuario.getEmail());
-            stmt.setString(4, usuario.getNombreCompleto());
-            stmt.setString(5, usuario.getRolId());
-            stmt.setBoolean(6, usuario.isActivo());
 
-            ResultSet rs = stmt.executeQuery();
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            usuario.setId(rs.getString("id"));
+                            Timestamp createdAt = rs.getTimestamp("created_at");
+                            Timestamp updatedAt = rs.getTimestamp("updated_at");
 
-            if (rs.next()) {
-                usuario.setId(rs.getString("id"));
-                Timestamp createdAt = rs.getTimestamp("created_at");
-                Timestamp updatedAt = rs.getTimestamp("updated_at");
 
-                if (createdAt != null) {
-                    usuario.setCreatedAt(createdAt.toLocalDateTime());
-                }
-                if (updatedAt != null) {
-                    usuario.setUpdatedAt(updatedAt.toLocalDateTime());
-                }
+                            if (createdAt != null) {
+                                usuario.setCreatedAt(createdAt.toLocalDateTime());
+                            }
+                            if (updatedAt != null) {
+                                usuario.setUpdatedAt(updatedAt.toLocalDateTime());
+                            }
+                        }
+                    }
             }
 
             return usuario;
@@ -140,13 +146,15 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = "SELECT * FROM usuarios ORDER BY username";
 
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+            try (Connection conn = getConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery(sql)) {
+                        while (rs.next()) {
+                            usuarios.add(mapResultSetToUsuario(rs));
+                        }
+                    }
+                }
 
-            while (rs.next()) {
-                usuarios.add(mapResultSetToUsuario(rs));
-            }
 
         } catch (SQLException e) {
             System.err.println("Error finding all usuarios: " + e.getMessage());
@@ -160,15 +168,16 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     public Optional<Usuario> findByUsername(String username) {
         String sql = "SELECT * FROM usuarios WHERE username = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (Connection conn = getConnection()) {
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, username);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            return Optional.of(mapResultSetToUsuario(rs));
+                        }
+                    }
+                }
 
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return Optional.of(mapResultSetToUsuario(rs));
-            }
 
         } catch (SQLException e) {
             System.err.println("Error finding usuario by username: " + e.getMessage());
@@ -300,13 +309,15 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = "SELECT * FROM usuarios ORDER BY username";
 
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+            try (Connection conn = getConnection()) {
+                try (Statement stmt = conn.createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery(sql)) {
+                        while (rs.next()) {
+                            usuarios.add(mapResultSetToUsuario(rs));
+                        }
+                    }
+                }
 
-            while (rs.next()) {
-                usuarios.add(mapResultSetToUsuario(rs));
-            }
 
         } catch (SQLException e) {
             System.err.println("Error finding all usuarios without auth: " + e.getMessage());

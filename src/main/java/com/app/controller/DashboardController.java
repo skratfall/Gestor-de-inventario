@@ -279,13 +279,14 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleUsuarios(ActionEvent event) {
+    public void handleUsuarios(ActionEvent event) {
         navigateToView("/com/app/view/UsuariosView.fxml", "Gestión de Usuarios", 1100, 750);
     }
 
     @FXML
-    private void handleUsuarios(MouseEvent event) {
-        navigateToView("/com/app/view/UsuariosView.fxml", "Gestión de Usuarios", 1100, 750);
+    public void handleUsuariosClick(MouseEvent event) {
+        // Reutiliza la lógica del handler de ActionEvent
+        handleUsuarios((ActionEvent) null);
     }
 
     @FXML
@@ -294,7 +295,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleRoles(MouseEvent event) {
+    private void handleRolesClick(MouseEvent event) {
         handleRoles((ActionEvent) null);
     }
 
@@ -336,7 +337,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleSync(MouseEvent event) {
+    private void handleSyncClick(MouseEvent event) {
         handleSync((ActionEvent) null);
     }
 
@@ -357,7 +358,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleConfiguracion(MouseEvent event) {
+    private void handleConfiguracionClick(MouseEvent event) {
         handleConfiguracion((ActionEvent) null);
     }
 
@@ -374,7 +375,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleSeguridad(MouseEvent event) {
+    private void handleSeguridadClick(MouseEvent event) {
         handleSeguridad((ActionEvent) null);
     }
 

@@ -290,7 +290,7 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void handleRoles(Event event) {
-        showInfoAlert("Gestión de Roles", "El módulo de gestión de roles estará disponible próximamente.\n\nPodrá configurar:\n- Crear nuevos roles\n- Asignar permisos por módulo\n- Gestionar accesos del sistema");
+        navigateToView("/com/app/view/RolesView.fxml", "Gestión de Roles", 1000, 700);
     }
 
     @FXML
@@ -347,13 +347,7 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void handleConfiguracion(Event event) {
-        showInfoAlert("Configuración del Sistema",
-            "El módulo de configuración avanzada estará disponible próximamente.\n\n" +
-            "Podrá configurar:\n" +
-            "- Parámetros generales del sistema\n" +
-            "- Conexiones y endpoints\n" +
-            "- Apariencia y personalización\n" +
-            "- Opciones de seguridad");
+        navigateToView("/com/app/view/ConfiguracionView.fxml", "Configuración del Sistema", 1000, 800);
     }
 
     @FXML
@@ -363,14 +357,7 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void handleSeguridad(Event event) {
-        showInfoAlert("Panel de Seguridad",
-            "El módulo de seguridad estará disponible próximamente.\n\n" +
-            "Características:\n" +
-            "- Auditoría de accesos\n" +
-            "- Registro de actividades\n" +
-            "- Gestión de sesiones activas\n" +
-            "- Políticas de contraseñas\n" +
-            "- Logs del sistema");
+        navigateToView("/com/app/view/SeguridadView.fxml", "Panel de Seguridad", 1000, 800);
     }
 
     @FXML

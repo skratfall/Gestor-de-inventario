@@ -6,7 +6,20 @@ import com.google.gson.JsonObject;
 public class PermissionManager {
 
     public static boolean hasPermission(Rol role, String module, String action) {
-        if (role == null || role.getPermisos() == null) {
+        if (role == null) {
+            return false;
+        }
+
+        // Si es ADMIN conceder todos los permisos automáticamente
+        try {
+            if (role.isAdmin()) {
+                return true;
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al verificar admin, continuar con la verificación normal
+        }
+
+        if (role.getPermisos() == null) {
             return false;
         }
 

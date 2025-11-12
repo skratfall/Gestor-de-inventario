@@ -1,6 +1,7 @@
 package com.app;
 
 import com.app.service.UsuarioService;
+import com.app.service.ThemeService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,7 +21,7 @@ public class Main extends Application {
                 hasUsuarios = usuarioService.hasAnyUsuario();
             } catch (Exception e) {
                 System.err.println("⚠️ No se pudo verificar usuarios (conexión a BD): " + e.getMessage());
-                System.err.println("Asumiendo registro inicial...");
+                System.out.println("Asumiendo registro inicial...");
                 hasUsuarios = false;
             }
 
@@ -45,6 +46,9 @@ public class Main extends Application {
             Parent root = loader.load();
 
             Scene scene = new Scene(root, width, height);
+
+            // Registrar la escena con el servicio de tema para aplicar tema guardado
+            ThemeService.getInstance().registerScene(scene);
 
             primaryStage.setTitle(title);
             primaryStage.setScene(scene);

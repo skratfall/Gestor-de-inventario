@@ -20,6 +20,9 @@ c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\security\P
 c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\security\SessionManager.java
 c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\AuthenticationService.java
 c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\ConfiguracionService.java
+c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\LanguageService.java
 c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\SeguridadService.java
 c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\SyncService.java
+c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\ThemeService.java
 c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\service\UsuarioService.java
+c:\Users\usuario\Documents\Gestor-de-inventario\src\main\java\com\app\util\AccessControlUtil.java

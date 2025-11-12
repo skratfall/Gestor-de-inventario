@@ -16,6 +16,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;  // Agregado para logging
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +27,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class SeguridadController implements Initializable {
+
+    private static final Logger logger = LoggerFactory.getLogger(SeguridadController.class);  // Logger SLF4J
 
     @FXML private CheckBox chk2FA;
     @FXML private CheckBox chkBloqueoSesion;
@@ -59,6 +64,7 @@ public class SeguridadController implements Initializable {
         configurarTablaEventos();
         cargarConfiguracion();
         cargarEventos();
+        logger.info("SeguridadController inicializado");
     }
 
     private void configurarControles() {
@@ -89,8 +95,13 @@ public class SeguridadController implements Initializable {
         colUsuario.setCellValueFactory(cellData -> {
             String usuarioId = cellData.getValue().getUsuarioId();
             if (usuarioId != null) {
-                Optional<Usuario> usuario = usuarioService.findUsuarioById(usuarioId);
-                return new SimpleStringProperty(usuario.map(Usuario::getUsername).orElse("N/A"));
+                try {
+                    Optional<Usuario> usuario = usuarioService.findUsuarioById(usuarioId);
+                    return new SimpleStringProperty(usuario.map(Usuario::getUsername).orElse("N/A"));
+                } catch (SecurityException e) {
+                    logger.warn("Acceso denegado a usuario en tabla: {}", usuarioId);
+                    return new SimpleStringProperty("Sin permiso");
+                }
             }
             return new SimpleStringProperty("Sistema");
         });
@@ -102,24 +113,34 @@ public class SeguridadController implements Initializable {
     }
 
     private void cargarConfiguracion() {
-        chk2FA.setSelected(seguridadService.is2FAEnabled());
-        
-        int sessionTimeout = seguridadService.getSessionTimeout();
-        cmbTiempoBloqueo.setValue(convertirMinutosATexto(sessionTimeout));
-        
-        int maxAttempts = seguridadService.getMaxLoginAttempts();
-        cmbIntentosMaximos.setValue(maxAttempts + " intentos");
-        
-        chkAuditoriaAccesos.setSelected(seguridadService.isAuditAccessEnabled());
-        chkAuditoriaRoles.setSelected(seguridadService.isAuditRolesEnabled());
-        chkAuditoriaConfiguracion.setSelected(seguridadService.isAuditConfigEnabled());
+        try {
+            chk2FA.setSelected(seguridadService.is2FAEnabled());
+            
+            int sessionTimeout = seguridadService.getSessionTimeout();
+            cmbTiempoBloqueo.setValue(convertirMinutosATexto(sessionTimeout));
+            
+            int maxAttempts = seguridadService.getMaxLoginAttempts();
+            cmbIntentosMaximos.setValue(maxAttempts + " intentos");
+            
+            chkAuditoriaAccesos.setSelected(seguridadService.isAuditAccessEnabled());
+            chkAuditoriaRoles.setSelected(seguridadService.isAuditRolesEnabled());
+            chkAuditoriaConfiguracion.setSelected(seguridadService.isAuditConfigEnabled());
+        } catch (Exception e) {
+            logger.error("Error cargando configuración", e);
+            mostrarError("Error", "Error al cargar la configuración: " + e.getMessage());
+        }
     }
 
     private void cargarEventos() {
-        List<EventoSeguridad> eventos = seguridadService.obtenerEventos();
-        eventosData.clear();
-        eventosData.addAll(eventos);
-        actualizarTotalEventos();
+        try {
+            List<EventoSeguridad> eventos = seguridadService.obtenerEventos();
+            eventosData.clear();
+            eventosData.addAll(eventos);
+            actualizarTotalEventos();
+        } catch (Exception e) {
+            logger.error("Error cargando eventos", e);
+            mostrarError("Error", "Error al cargar eventos: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -143,9 +164,14 @@ public class SeguridadController implements Initializable {
             
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
-                seguridadService.desbloquearUsuarios();
-                mostrarInfo("Usuarios desbloqueados", 
-                    "Se han desbloqueado todos los usuarios bloqueados");
+                try {
+                    seguridadService.desbloquearUsuarios();
+                    mostrarInfo("Usuarios desbloqueados", 
+                        "Se han desbloqueado todos los usuarios bloqueados");
+                } catch (Exception e) {
+                    logger.error("Error desbloqueando usuarios", e);
+                    mostrarError("Error", "Error al desbloquear usuarios: " + e.getMessage());
+                }
             }
         });
     }
@@ -166,6 +192,7 @@ public class SeguridadController implements Initializable {
             cargarEventos();
             
         } catch (Exception e) {
+            logger.error("Error guardando configuración", e);
             mostrarError("Error", "Error al guardar la configuración: " + e.getMessage());
         }
     }
@@ -179,43 +206,58 @@ public class SeguridadController implements Initializable {
             
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
-                seguridadService.reiniciarConfiguracion();
-                cargarConfiguracion();
-                cargarEventos();
-                mostrarInfo("Configuración reiniciada", 
-                    "La configuración ha sido restaurada a sus valores predeterminados");
+                try {
+                    seguridadService.reiniciarConfiguracion();
+                    cargarConfiguracion();
+                    cargarEventos();
+                    mostrarInfo("Configuración reiniciada", 
+                        "La configuración ha sido restaurada a sus valores predeterminados");
+                } catch (Exception e) {
+                    logger.error("Error reiniciando configuración", e);
+                    mostrarError("Error", "Error al reiniciar configuración: " + e.getMessage());
+                }
             }
         });
     }
 
     @FXML
     private void handleBuscarEventos() {
-        String filtro = txtBuscarEvento.getText().toLowerCase().trim();
-        String tipoSeleccionado = cmbTipoEvento.getValue();
+        try {
+            String filtro = txtBuscarEvento.getText().toLowerCase().trim();
+            String tipoSeleccionado = cmbTipoEvento.getValue();
 
-        List<EventoSeguridad> eventos;
-        if ("Todos".equals(tipoSeleccionado)) {
-            eventos = seguridadService.obtenerEventos();
-        } else {
-            eventos = seguridadService.obtenerEventosPorTipo(tipoSeleccionado.toUpperCase());
+            List<EventoSeguridad> eventos;
+            if ("Todos".equals(tipoSeleccionado)) {
+                eventos = seguridadService.obtenerEventos();
+            } else {
+                eventos = seguridadService.obtenerEventosPorTipo(tipoSeleccionado.toUpperCase());
+            }
+
+            if (!filtro.isEmpty()) {
+                eventos = eventos.stream()
+                    .filter(e -> e.getDescripcion().toLowerCase().contains(filtro))
+                    .toList();
+            }
+
+            eventosData.clear();
+            eventosData.addAll(eventos);
+            actualizarTotalEventos();
+        } catch (Exception e) {
+            logger.error("Error buscando eventos", e);
+            mostrarError("Error", "Error al buscar eventos: " + e.getMessage());
         }
-
-        if (!filtro.isEmpty()) {
-            eventos = eventos.stream()
-                .filter(e -> e.getDescripcion().toLowerCase().contains(filtro))
-                .toList();
-        }
-
-        eventosData.clear();
-        eventosData.addAll(eventos);
-        actualizarTotalEventos();
     }
 
     @FXML
     private void handleRefrescarEventos() {
-        txtBuscarEvento.clear();
-        cmbTipoEvento.getSelectionModel().selectFirst();
-        cargarEventos();
+        try {
+            txtBuscarEvento.clear();
+            cmbTipoEvento.getSelectionModel().selectFirst();
+            cargarEventos();
+        } catch (Exception e) {
+            logger.error("Error refrescando eventos", e);
+            mostrarError("Error", "Error al refrescar eventos: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -238,6 +280,7 @@ public class SeguridadController implements Initializable {
             stage.setTitle("Dashboard - Gestión de Inventario");
             
         } catch (IOException e) {
+            logger.error("Error cargando dashboard", e);
             mostrarError("Error", "No se pudo cargar el dashboard: " + e.getMessage());
         }
     }

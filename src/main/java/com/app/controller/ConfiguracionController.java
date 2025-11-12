@@ -3,6 +3,9 @@ package com.app.controller;
 import com.app.model.EventoSeguridad;
 import com.app.service.ConfiguracionService;
 import com.app.service.SeguridadService;
+import com.app.service.ThemeService;
+import com.app.service.LanguageService;
+import com.app.security.SessionManager;  // Agregado para verificar permisos
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,6 +16,9 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.event.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;  // Agregado para logging
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +27,8 @@ import java.util.ResourceBundle;
 
 public class ConfiguracionController implements Initializable {
     
+    private static final Logger logger = LoggerFactory.getLogger(ConfiguracionController.class);  // Logger SLF4J
+
     @FXML private RadioButton rbTemaClaro;
     @FXML private RadioButton rbTemaOscuro;
     @FXML private ComboBox<String> cmbIdioma;
@@ -50,8 +58,33 @@ public class ConfiguracionController implements Initializable {
         configService = ConfiguracionService.getInstance();
         seguridadService = SeguridadService.getInstance();
 
-        initializeControls();
-        cargarConfiguracion();
+        // Verificar permisos antes de cargar
+        if (!SessionManager.getInstance().isAdmin()) {
+            mostrarError("Acceso denegado", "Solo administradores pueden acceder a la configuración");
+            logger.warn("Usuario no administrador intentó acceder a configuración");
+            return;  // Evita cargar y previene crash
+        }
+
+        try {
+            initializeControls();
+            cargarConfiguracion();
+            
+            // Registrar la escena actual con ThemeService cuando se cargue
+            javafx.application.Platform.runLater(() -> {
+                Scene currentScene = rbTemaClaro.getScene();
+                if (currentScene != null) {
+                    ThemeService.getInstance().registerScene(currentScene);
+                }
+            });
+            
+            // Registrar listener para cambios de idioma
+            LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+                logger.info("Idioma cambiado a: {}", newLanguage);
+            });
+        } catch (Exception e) {
+            logger.error("Error inicializando ConfiguracionController", e);
+            mostrarError("Error", "Error al inicializar la vista: " + e.getMessage());
+        }
     }
 
     private void initializeControls() {
@@ -77,48 +110,55 @@ public class ConfiguracionController implements Initializable {
     }
 
     private void cargarConfiguracion() {
-        // Cargar configuración de interfaz
-        String appName = configService.getConfigValue("app.nombre", "Gestión de Inventario");
-        txtNombreApp.setText(appName);
+        try {
+            // Cargar configuración de interfaz
+            String appName = configService.getConfigValue("app.nombre", "Gestión de Inventario");
+            txtNombreApp.setText(appName != null ? appName : "");
 
-        String tema = configService.getConfigValue("app.tema", "claro");
-        if ("oscuro".equals(tema)) {
-            rbTemaOscuro.setSelected(true);
-        } else {
-            rbTemaClaro.setSelected(true);
+            String tema = configService.getConfigValue("app.tema", "claro");
+            if ("oscuro".equals(tema)) {
+                rbTemaOscuro.setSelected(true);
+            } else {
+                rbTemaClaro.setSelected(true);
+            }
+
+            String idioma = configService.getConfigValue("app.idioma", "Español");
+            cmbIdioma.setValue(idioma != null ? idioma : "Español");
+
+            chkMostrarAyuda.setSelected(Boolean.parseBoolean(
+                configService.getConfigValue("app.mostrarAyuda", "true")));
+            chkNotificaciones.setSelected(Boolean.parseBoolean(
+                configService.getConfigValue("app.notificaciones", "true")));
+
+            // Cargar configuración de conexión
+            txtSupabaseUrl.setText(configService.getConfigValue("db.url", ""));
+            txtSupabaseKey.setText(configService.getConfigValue("db.apikey", ""));
+
+            chkSincAuto.setSelected(Boolean.parseBoolean(
+                configService.getConfigValue("sync.automatica", "true")));
+            String intervalo = configService.getConfigValue("sync.intervalo", "30 minutos");
+            cmbIntervaloSync.setValue(intervalo != null ? intervalo : "30 minutos");
+
+            // Mostrar última sincronización
+            String ultimaSync = configService.getConfigValue("sync.ultima");
+            if (ultimaSync != null) {
+                lblUltimaSync.setText("Última sincronización: " + 
+                    LocalDateTime.parse(ultimaSync).format(dateFormatter));
+            } else {
+                lblUltimaSync.setText("Última sincronización: Nunca");
+            }
+
+            // Cargar configuración de respaldo
+            chkBackupAuto.setSelected(Boolean.parseBoolean(
+                configService.getConfigValue("backup.automatico", "true")));
+            String frecuencia = configService.getConfigValue("backup.frecuencia", "Semanal");
+            cmbFrecuenciaBackup.setValue(frecuencia != null ? frecuencia : "Semanal");
+
+            logger.debug("Configuración cargada exitosamente");
+        } catch (Exception e) {
+            logger.error("Error cargando configuración", e);
+            mostrarError("Error", "Error al cargar la configuración: " + e.getMessage());
         }
-
-        String idioma = configService.getConfigValue("app.idioma", "Español");
-        cmbIdioma.setValue(idioma);
-
-        chkMostrarAyuda.setSelected(Boolean.parseBoolean(
-            configService.getConfigValue("app.mostrarAyuda", "true")));
-        chkNotificaciones.setSelected(Boolean.parseBoolean(
-            configService.getConfigValue("app.notificaciones", "true")));
-
-        // Cargar configuración de conexión
-        txtSupabaseUrl.setText(configService.getConfigValue("db.url", ""));
-        txtSupabaseKey.setText(configService.getConfigValue("db.apikey", ""));
-
-        chkSincAuto.setSelected(Boolean.parseBoolean(
-            configService.getConfigValue("sync.automatica", "true")));
-        String intervalo = configService.getConfigValue("sync.intervalo", "30 minutos");
-        cmbIntervaloSync.setValue(intervalo);
-
-        // Mostrar última sincronización
-        String ultimaSync = configService.getConfigValue("sync.ultima");
-        if (ultimaSync != null) {
-            lblUltimaSync.setText("Última sincronización: " + 
-                LocalDateTime.parse(ultimaSync).format(dateFormatter));
-        } else {
-            lblUltimaSync.setText("Última sincronización: Nunca");
-        }
-
-        // Cargar configuración de respaldo
-        chkBackupAuto.setSelected(Boolean.parseBoolean(
-            configService.getConfigValue("backup.automatico", "true")));
-        String frecuencia = configService.getConfigValue("backup.frecuencia", "Semanal");
-        cmbFrecuenciaBackup.setValue(frecuencia);
     }
 
     @FXML
@@ -147,6 +187,7 @@ public class ConfiguracionController implements Initializable {
                     "No se pudo establecer la conexión con Supabase");
             }
         } catch (Exception e) {
+            logger.error("Error probando conexión", e);
             mostrarError("Error", "Error al probar la conexión: " + e.getMessage());
         }
     }
@@ -229,6 +270,7 @@ public class ConfiguracionController implements Initializable {
                     seguridadService.registrarEvento(EventoSeguridad.TIPO_CONFIGURACION, 
                         "Configuración restaurada a valores predeterminados");
                 } catch (Exception e) {
+                    logger.error("Error restaurando configuración", e);
                     mostrarError("Error",
                         "Error al restaurar la configuración: " + e.getMessage());
                 }
@@ -241,9 +283,28 @@ public class ConfiguracionController implements Initializable {
         try {
             // Guardar configuración de interfaz
             configService.setConfigValue("app.nombre", txtNombreApp.getText());
-            configService.setConfigValue("app.tema", 
-                rbTemaOscuro.isSelected() ? "oscuro" : "claro");
-            configService.setConfigValue("app.idioma", cmbIdioma.getValue());
+            
+            // Aplicar tema en tiempo real
+            String nuevoTema = rbTemaOscuro.isSelected() ? "oscuro" : "claro";
+            String temaCSS = nuevoTema.equals("oscuro") ? "/css/theme-dark.css" : "/css/theme-light.css";
+            
+            // Actualizar stylesheet de la escena actual
+            Scene currentScene = rbTemaClaro.getScene();
+            if (currentScene != null) {
+                // Remover temas antiguos
+                currentScene.getStylesheets().removeIf(url -> url.contains("theme-"));
+                // Añadir nuevo tema
+                currentScene.getStylesheets().add(getClass().getResource(temaCSS).toExternalForm());
+                logger.info("Tema {} aplicado a la escena", nuevoTema);
+            }
+            
+            configService.setConfigValue("app.tema", nuevoTema);
+            
+            // Aplicar idioma en tiempo real
+            String nuevoIdioma = cmbIdioma.getValue();
+            LanguageService.getInstance().setLanguage(nuevoIdioma);
+            configService.setConfigValue("app.idioma", nuevoIdioma);
+            
             configService.setConfigValue("app.mostrarAyuda", 
                 String.valueOf(chkMostrarAyuda.isSelected()));
             configService.setConfigValue("app.notificaciones", 
@@ -263,11 +324,12 @@ public class ConfiguracionController implements Initializable {
                 cmbFrecuenciaBackup.getValue());
 
             mostrarInfo("Configuración guardada",
-                "Los cambios han sido guardados exitosamente");
+                "Los cambios han sido guardados exitosamente y aplicados inmediatamente");
             seguridadService.registrarEvento(EventoSeguridad.TIPO_CONFIGURACION, 
                 "Configuración del sistema actualizada");
 
         } catch (Exception e) {
+            logger.error("Error guardando cambios", e);
             mostrarError("Error",
                 "Error al guardar la configuración: " + e.getMessage());
         }
@@ -282,10 +344,15 @@ public class ConfiguracionController implements Initializable {
             
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
+            
+            // Registrar la nueva escena con ThemeService
+            ThemeService.getInstance().registerScene(scene);
+            
             stage.setScene(scene);
             stage.setTitle("Dashboard - Gestión de Inventario");
             
         } catch (IOException e) {
+            logger.error("Error cargando dashboard", e);
             mostrarError("Error", "No se pudo cargar el dashboard: " + e.getMessage());
         }
     }

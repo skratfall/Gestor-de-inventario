@@ -2,6 +2,8 @@ package com.app.dao;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;  // Asegúrate de tener SLF4J/Logback en tu pom.xml
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,8 @@ import java.util.Properties;
  * en el servidor y para manejar conexiones concurrentes de forma segura.
  */
 public class SupabaseDatabaseConnection {
+
+    private static final Logger logger = LoggerFactory.getLogger(SupabaseDatabaseConnection.class);  // Logger SLF4J
 
     private static SupabaseDatabaseConnection instance;
     private HikariDataSource dataSource;
@@ -62,7 +66,15 @@ public class SupabaseDatabaseConnection {
     private void initDataSource() {
         try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(dbUrl);
+            
+            // Configurar URL con parámetros para limpieza de prepared statements
+            String urlWithParams = dbUrl;
+            if (!dbUrl.contains("preparedStatementCacheSize")) {
+                urlWithParams = dbUrl + (dbUrl.contains("?") ? "&" : "?") + 
+                               "preparedStatementCacheSize=0&preparedStatementCacheSqlLimit=0";
+            }
+            
+            config.setJdbcUrl(urlWithParams);
             config.setUsername(dbUser);
             config.setPassword(dbPassword);
             config.setMaximumPoolSize(maxPoolSize);
@@ -72,13 +84,16 @@ public class SupabaseDatabaseConnection {
             config.setIdleTimeout(600000); // 10min
             config.setMaxLifetime(1800000); // 30min
             config.setLeakDetectionThreshold(60000); // Detect connections not closed after 60s
+            
+            // Configurar limpieza de statements al devolver conexión al pool
+            config.setConnectionInitSql("DISCARD ALL");  // Cambiado: Limpia prepared statements y estados de sesión
 
-            System.out.println("✅ Inicializando HikariCP pool con máximo: " + maxPoolSize + " conexiones.");
+            logger.info("✅ Inicializando HikariCP pool con máximo: {} conexiones.", maxPoolSize);
             this.dataSource = new HikariDataSource(config);
             this.poolInitialized = true;
         } catch (Exception e) {
-            System.err.println("⚠️ HikariCP pool inicialización falló: " + e.getMessage());
-            System.err.println("⚠️ Usando modo fallback con DriverManager (menos eficiente)");
+            logger.warn("⚠️ HikariCP pool inicialización falló: {}", e.getMessage());
+            logger.warn("⚠️ Usando modo fallback con DriverManager (menos eficiente)");
             this.fallbackMode = true;
             this.poolInitialized = false;
         }
@@ -91,14 +106,14 @@ public class SupabaseDatabaseConnection {
                     try {
                         instance = new SupabaseDatabaseConnection();
                     } catch (RuntimeException e) {
-                        System.err.println("❌ Error inicial al crear SupabaseDatabaseConnection: " + e.getMessage());
+                        logger.error("❌ Error inicial al crear SupabaseDatabaseConnection: {}", e.getMessage());
                         // Reintentar después de 5 segundos si el pool está saturado
                         if (e.getMessage() != null && e.getMessage().contains("Max client connections")) {
-                            System.out.println("⏳ Esperando 5 segundos antes de reintentar...");
+                            logger.info("⏳ Esperando 5 segundos antes de reintentar...");
                             try {
                                 Thread.sleep(5000);
                                 instance = new SupabaseDatabaseConnection();
-                                System.out.println("✅ Reintento exitoso");
+                                logger.info("✅ Reintento exitoso");
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
                                 throw new RuntimeException("Interrumpido durante retry", e);
@@ -137,7 +152,7 @@ public class SupabaseDatabaseConnection {
         try (Connection conn = getConnection()) {
             return conn != null && !conn.isClosed();
         } catch (SQLException e) {
-            System.err.println("Error testing DB connection: " + e.getMessage());
+            logger.error("Error testing DB connection: {}", e.getMessage());
             return false;
         }
     }
@@ -145,7 +160,7 @@ public class SupabaseDatabaseConnection {
     public void closePool() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            System.out.println("🔒 Pool Hikari cerrado.");
+            logger.info("🔒 Pool Hikari cerrado.");
         }
     }
 }

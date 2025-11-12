@@ -2,6 +2,8 @@ package com.app.service;
 
 import com.app.dao.SupabaseDatabaseConnection;
 import com.app.security.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;  // Agregado para logging
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -12,7 +14,9 @@ import java.util.Map;
 
 public class ConfiguracionService {
 
-    private static ConfiguracionService instance;
+    private static final Logger logger = LoggerFactory.getLogger(ConfiguracionService.class);  // Logger SLF4J
+
+    private static volatile ConfiguracionService instance;  // Volatile para thread-safety
     private final SessionManager sessionManager;
     private Map<String, String> configCache;
 
@@ -38,23 +42,24 @@ public class ConfiguracionService {
             return;
         }
 
-        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
-            String sql = "SELECT clave, valor FROM configuracion_sistema";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT clave, valor FROM configuracion_sistema")) {
 
             configCache.clear();
             while (rs.next()) {
                 configCache.put(rs.getString("clave"), rs.getString("valor"));
             }
+            logger.debug("Configuración cargada: {} entradas", configCache.size());
         } catch (Exception e) {
-            System.err.println("Error loading configuration: " + e.getMessage());
+            logger.error("Error loading configuration: {}", e.getMessage(), e);
         }
     }
 
     public String getConfigValue(String key) {
         if (!sessionManager.isAdmin()) {
-            throw new SecurityException("Solo administradores pueden acceder a la configuración");
+            logger.warn("Usuario no administrador intentando acceder a configuración: {}", key);
+            return null;  // Devuelve null en lugar de lanzar excepción
         }
 
         return configCache.getOrDefault(key, null);
@@ -62,7 +67,8 @@ public class ConfiguracionService {
 
     public String getConfigValue(String key, String defaultValue) {
         if (!sessionManager.isAdmin()) {
-            return defaultValue;
+            logger.warn("Usuario no administrador intentando acceder a configuración: {}", key);
+            return defaultValue;  // Devuelve valor por defecto
         }
 
         return configCache.getOrDefault(key, defaultValue);
@@ -73,41 +79,65 @@ public class ConfiguracionService {
             throw new SecurityException("No tiene permiso para modificar la configuración");
         }
 
-        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+        try {
             // Primero intentamos actualizar
             String updateSql = "UPDATE configuracion_sistema SET valor = ?, updated_at = now(), " +
                              "updated_by = ?::uuid WHERE clave = ?";
 
-            PreparedStatement updateStmt = conn.prepareStatement(updateSql);
-            updateStmt.setString(1, value);
-            updateStmt.setString(2, sessionManager.getCurrentUser().getId());
-            updateStmt.setString(3, key);
+            try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection();
+                 PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
 
-            int rowsAffected = updateStmt.executeUpdate();
+                updateStmt.setString(1, value);
+                // Manejo de UUID: Convierte string a UUID si es válido
+                if (sessionManager.getCurrentUser() != null) {
+                    try {
+                        updateStmt.setObject(2, java.util.UUID.fromString(sessionManager.getCurrentUser().getId()));
+                    } catch (IllegalArgumentException e) {
+                        logger.warn("ID de usuario no es UUID válido: {}", sessionManager.getCurrentUser().getId());
+                        updateStmt.setObject(2, null);
+                    }
+                } else {
+                    updateStmt.setObject(2, null);
+                }
+                updateStmt.setString(3, key);
 
-            if (rowsAffected == 0) {
-                // Si no se actualizó ninguna fila, intentamos insertar
-                String insertSql = "INSERT INTO configuracion_sistema " +
-                                 "(clave, valor, tipo, descripcion, categoria, editable_por_usuario, updated_by) " +
-                                 "VALUES (?, ?, 'string', 'Configuración automática', 'sistema', true, ?::uuid)";
+                int rowsAffected = updateStmt.executeUpdate();
 
-                PreparedStatement insertStmt = conn.prepareStatement(insertSql);
-                insertStmt.setString(1, key);
-                insertStmt.setString(2, value);
-                insertStmt.setString(3, sessionManager.getCurrentUser().getId());
+                if (rowsAffected == 0) {
+                    // Si no se actualizó ninguna fila, intentamos insertar
+                    String insertSql = "INSERT INTO configuracion_sistema " +
+                                     "(clave, valor, tipo, descripcion, categoria, editable_por_usuario, updated_by) " +
+                                     "VALUES (?, ?, 'string', 'Configuración automática', 'sistema', true, ?::uuid)";
 
-                rowsAffected = insertStmt.executeUpdate();
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                        insertStmt.setString(1, key);
+                        insertStmt.setString(2, value);
+                        if (sessionManager.getCurrentUser() != null) {
+                            try {
+                                insertStmt.setObject(3, java.util.UUID.fromString(sessionManager.getCurrentUser().getId()));
+                            } catch (IllegalArgumentException e) {
+                                logger.warn("ID de usuario no es UUID válido: {}", sessionManager.getCurrentUser().getId());
+                                insertStmt.setObject(3, null);
+                            }
+                        } else {
+                            insertStmt.setObject(3, null);
+                        }
+
+                        rowsAffected = insertStmt.executeUpdate();
+                    }
+                }
+
+                if (rowsAffected > 0) {
+                    configCache.put(key, value);
+                    logger.debug("Configuración actualizada: {} = {}", key, value);
+                    return true;
+                }
+
+                return false;
             }
-
-            if (rowsAffected > 0) {
-                configCache.put(key, value);
-                return true;
-            }
-
-            return false;
 
         } catch (Exception e) {
-            System.err.println("Error updating configuration: " + e.getMessage());
+            logger.error("Error updating configuration: {}", e.getMessage(), e);
             return false;
         }
     }
@@ -133,10 +163,11 @@ public class ConfiguracionService {
 
                 // Si llegamos aquí, la conexión fue exitosa
                 setConfigValue("sync.ultima", LocalDateTime.now().toString());
+                logger.info("Conexión a Supabase probada exitosamente");
                 return true;
             }
         } catch (Exception e) {
-            System.err.println("Error testing connection: " + e.getMessage());
+            logger.error("Error testing connection: {}", e.getMessage(), e);
             return false;
         }
     }
@@ -148,10 +179,9 @@ public class ConfiguracionService {
 
         List<ConfigEntry> entries = new ArrayList<>();
 
-        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
-            String sql = "SELECT * FROM configuracion_sistema ORDER BY categoria, clave";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM configuracion_sistema ORDER BY categoria, clave")) {
 
             while (rs.next()) {
                 ConfigEntry entry = new ConfigEntry();
@@ -170,8 +200,9 @@ public class ConfiguracionService {
 
                 entries.add(entry);
             }
+            logger.debug("Obtenidas {} entradas de configuración", entries.size());
         } catch (Exception e) {
-            System.err.println("Error fetching configuration: " + e.getMessage());
+            logger.error("Error fetching configuration: {}", e.getMessage(), e);
         }
 
         return entries;
@@ -184,32 +215,33 @@ public class ConfiguracionService {
 
         List<ConfigEntry> entries = new ArrayList<>();
 
-        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
-            String sql = "SELECT * FROM configuracion_sistema WHERE categoria = ? ORDER BY clave";
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM configuracion_sistema WHERE categoria = ? ORDER BY clave")) {
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, category);
-            ResultSet rs = stmt.executeQuery();
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ConfigEntry entry = new ConfigEntry();
+                    entry.id = rs.getString("id");
+                    entry.clave = rs.getString("clave");
+                    entry.valor = rs.getString("valor");
+                    entry.tipo = rs.getString("tipo");
+                    entry.descripcion = rs.getString("descripcion");
+                    entry.categoria = rs.getString("categoria");
+                    entry.editablePorUsuario = rs.getBoolean("editable_por_usuario");
 
-            while (rs.next()) {
-                ConfigEntry entry = new ConfigEntry();
-                entry.id = rs.getString("id");
-                entry.clave = rs.getString("clave");
-                entry.valor = rs.getString("valor");
-                entry.tipo = rs.getString("tipo");
-                entry.descripcion = rs.getString("descripcion");
-                entry.categoria = rs.getString("categoria");
-                entry.editablePorUsuario = rs.getBoolean("editable_por_usuario");
+                    Timestamp updatedAt = rs.getTimestamp("updated_at");
+                    if (updatedAt != null) {
+                        entry.updatedAt = updatedAt.toLocalDateTime();
+                    }
 
-                Timestamp updatedAt = rs.getTimestamp("updated_at");
-                if (updatedAt != null) {
-                    entry.updatedAt = updatedAt.toLocalDateTime();
+                    entries.add(entry);
                 }
-
-                entries.add(entry);
             }
+            logger.debug("Obtenidas {} entradas para categoría {}", entries.size(), category);
         } catch (Exception e) {
-            System.err.println("Error fetching configuration by category: " + e.getMessage());
+            logger.error("Error fetching configuration by category: {}", e.getMessage(), e);
         }
 
         return entries;
@@ -221,26 +253,36 @@ public class ConfiguracionService {
             throw new SecurityException("No tiene permiso para crear configuraciones");
         }
 
-        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
-            String sql = "INSERT INTO configuracion_sistema " +
-                         "(clave, valor, tipo, descripcion, categoria, editable_por_usuario, updated_by) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?::uuid)";
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "INSERT INTO configuracion_sistema " +
+                     "(clave, valor, tipo, descripcion, categoria, editable_por_usuario, updated_by) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?::uuid)")) {
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, clave);
             stmt.setString(2, valor);
             stmt.setString(3, tipo);
             stmt.setString(4, descripcion);
             stmt.setString(5, categoria);
             stmt.setBoolean(6, editablePorUsuario);
-            stmt.setString(7, sessionManager.getCurrentUser().getId());
+            if (sessionManager.getCurrentUser() != null) {
+                try {
+                    stmt.setObject(7, java.util.UUID.fromString(sessionManager.getCurrentUser().getId()));
+                } catch (IllegalArgumentException e) {
+                    logger.warn("ID de usuario no es UUID válido: {}", sessionManager.getCurrentUser().getId());
+                    stmt.setObject(7, null);
+                }
+            } else {
+                stmt.setObject(7, null);
+            }
 
             stmt.executeUpdate();
             configCache.put(clave, valor);
+            logger.debug("Entrada de configuración creada: {}", clave);
             return true;
 
         } catch (Exception e) {
-            System.err.println("Error creating configuration entry: " + e.getMessage());
+            logger.error("Error creating configuration entry: {}", e.getMessage(), e);
             return false;
         }
     }

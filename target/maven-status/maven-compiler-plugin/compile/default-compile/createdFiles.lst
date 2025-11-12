@@ -1,5 +1,6 @@
 com\app\dao\UsuarioDAOImpl.class
 com\app\service\ConfiguracionService$ConfigEntry.class
+com\app\service\LanguageService$LanguageChangeListener.class
 com\app\service\SyncService.class
 com\app\security\PasswordEncoder.class
 com\app\service\SyncService$SyncLogEntry.class
@@ -7,8 +8,10 @@ com\app\Main.class
 com\app\service\UsuarioService.class
 com\app\dao\UsuarioDAO.class
 com\app\model\Usuario.class
+com\app\service\LanguageService.class
 com\app\security\PermissionManager.class
 com\app\model\Rol.class
+com\app\util\AccessControlUtil.class
 com\app\model\EventoSeguridad.class
 com\app\controller\BaseController.class
 com\app\service\ConfiguracionService.class
@@ -25,4 +28,5 @@ com\app\controller\LoginController.class
 com\app\service\SyncService$SyncResult.class
 com\app\controller\DashboardController.class
 com\app\dao\RolDAO.class
+com\app\service\ThemeService.class
 com\app\controller\RolesController.class

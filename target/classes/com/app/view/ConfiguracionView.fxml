@@ -24,13 +24,14 @@
     </top>
 
     <center>
-        <VBox spacing="20" style="-fx-padding: 20;">
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button fx:id="btnBackToDashboard" text="🏠 Regresar al Dashboard"
-                        onAction="#handleBackToDashboard" styleClass="button-info"/>
-            </HBox>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="20" style="-fx-padding: 20;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button fx:id="btnBackToDashboard" text="🏠 Regresar al Dashboard"
+                            onAction="#handleBackToDashboard" styleClass="button-info"/>
+                </HBox>
 
-            <TabPane VBox.vgrow="ALWAYS">
+                <TabPane VBox.vgrow="ALWAYS">
                 <!-- Pestaña: Interfaz de Usuario -->
                 <Tab text="Interfaz de Usuario" closable="false">
                     <VBox spacing="20" style="-fx-padding: 20;">
@@ -129,6 +130,7 @@
                 <Button fx:id="btnGuardarConfig" text="Guardar Cambios"
                         onAction="#handleGuardarCambios" styleClass="button-primary"/>
             </HBox>
-        </VBox>
+            </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>

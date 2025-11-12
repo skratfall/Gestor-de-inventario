@@ -56,8 +56,9 @@
                 </VBox>
 
                 <!-- Formulario de Rol -->
-                <VBox fx:id="formPane" spacing="15" styleClass="form-container" visible="false" managed="false">
-                    <Label text="Detalles del Rol" styleClass="form-title"/>
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <VBox fx:id="formPane" spacing="15" styleClass="form-container" visible="false" managed="false">
+                        <Label text="Detalles del Rol" styleClass="form-title"/>
 
                     <GridPane vgap="15" hgap="10">
                         <columnConstraints>
@@ -85,7 +86,8 @@
                         <Button fx:id="btnGuardar" text="Guardar"
                                 onAction="#handleGuardar" styleClass="button-primary"/>
                     </HBox>
-                </VBox>
+                    </VBox>
+                </ScrollPane>
             </SplitPane>
         </VBox>
     </center>

@@ -32,8 +32,9 @@
 
             <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
                 <!-- Panel Izquierdo - Configuración -->
-                <VBox spacing="15" style="-fx-padding: 20;">
-                    <Label text="Políticas de Seguridad" styleClass="section-title"/>
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <VBox spacing="15" style="-fx-padding: 20;">
+                        <Label text="Políticas de Seguridad" styleClass="section-title"/>
 
                     <!-- 2FA -->
                     <VBox spacing="10" styleClass="section-card">
@@ -95,35 +96,38 @@
                         <Button fx:id="btnGuardarConfiguracion" text="Guardar Cambios"
                                 onAction="#handleGuardarConfiguracion" styleClass="button-primary"/>
                     </HBox>
-                </VBox>
+                    </VBox>
+                </ScrollPane>
 
                 <!-- Panel Derecho - Eventos -->
-                <VBox spacing="15" style="-fx-padding: 20;">
-                    <Label text="Eventos de Seguridad" styleClass="section-title"/>
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <VBox spacing="15" style="-fx-padding: 20;">
+                        <Label text="Eventos de Seguridad" styleClass="section-title"/>
 
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <ComboBox fx:id="cmbTipoEvento" promptText="Tipo de evento"/>
-                        <TextField fx:id="txtBuscarEvento" promptText="Buscar eventos..." styleClass="search-field"
-                                 HBox.hgrow="ALWAYS"/>
-                        <Button text="Buscar" onAction="#handleBuscarEventos" styleClass="button-info"/>
-                        <Button text="Refrescar" onAction="#handleRefrescarEventos" styleClass="button-info"/>
-                    </HBox>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ComboBox fx:id="cmbTipoEvento" promptText="Tipo de evento"/>
+                            <TextField fx:id="txtBuscarEvento" promptText="Buscar eventos..." styleClass="search-field"
+                                     HBox.hgrow="ALWAYS"/>
+                            <Button text="Buscar" onAction="#handleBuscarEventos" styleClass="button-info"/>
+                            <Button text="Refrescar" onAction="#handleRefrescarEventos" styleClass="button-info"/>
+                        </HBox>
 
-                    <TableView fx:id="tableEventos" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="colFecha" text="Fecha y Hora" prefWidth="150"/>
-                            <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
-                            <TableColumn fx:id="colUsuario" text="Usuario" prefWidth="100"/>
-                            <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="200"/>
-                        </columns>
-                    </TableView>
+                        <TableView fx:id="tableEventos" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colFecha" text="Fecha y Hora" prefWidth="150"/>
+                                <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
+                                <TableColumn fx:id="colUsuario" text="Usuario" prefWidth="100"/>
+                                <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="200"/>
+                            </columns>
+                        </TableView>
 
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label fx:id="lblTotalEventos" text="Total: 0 eventos" styleClass="total-label"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Button text="Exportar Eventos" onAction="#handleExportarEventos" styleClass="button-info"/>
-                    </HBox>
-                </VBox>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label fx:id="lblTotalEventos" text="Total: 0 eventos" styleClass="total-label"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Exportar Eventos" onAction="#handleExportarEventos" styleClass="button-info"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
             </SplitPane>
         </VBox>
     </center>

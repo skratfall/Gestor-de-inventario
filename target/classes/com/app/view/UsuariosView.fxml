@@ -24,41 +24,43 @@
     </top>
 
     <center>
-        <VBox spacing="10" style="-fx-padding: 20;">
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="10" style="-fx-padding: 20;">
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button fx:id="btnBackToDashboard" text="🏠 Regresar al Dashboard"
-                        onAction="#handleBackToDashboard" styleClass="button-info"/>
-                <Button fx:id="btnNuevoUsuario" text="Nuevo Usuario"
-                        onAction="#handleNuevoUsuario" styleClass="button-primary"/>
-                <Button fx:id="btnEditarUsuario" text="Editar"
-                        onAction="#handleEditarUsuario" styleClass="button-secondary"/>
-                <Button fx:id="btnEliminarUsuario" text="Eliminar"
-                        onAction="#handleEliminarUsuario" styleClass="button-danger"/>
-                <Button fx:id="btnResetPassword" text="Restablecer Contraseña"
-                        onAction="#handleResetPassword" styleClass="button-warning"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <TextField fx:id="txtBuscar" promptText="Buscar usuario..." styleClass="search-field"
-                           prefWidth="200"/>
-                <Button text="Buscar" onAction="#handleBuscar" styleClass="button-info"/>
-                <Button text="Refrescar" onAction="#handleRefrescar" styleClass="button-info"/>
-            </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button fx:id="btnBackToDashboard" text="🏠 Regresar al Dashboard"
+                            onAction="#handleBackToDashboard" styleClass="button-info"/>
+                    <Button fx:id="btnNuevoUsuario" text="Nuevo Usuario"
+                            onAction="#handleNuevoUsuario" styleClass="button-primary"/>
+                    <Button fx:id="btnEditarUsuario" text="Editar"
+                            onAction="#handleEditarUsuario" styleClass="button-secondary"/>
+                    <Button fx:id="btnEliminarUsuario" text="Eliminar"
+                            onAction="#handleEliminarUsuario" styleClass="button-danger"/>
+                    <Button fx:id="btnResetPassword" text="Restablecer Contraseña"
+                            onAction="#handleResetPassword" styleClass="button-warning"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="txtBuscar" promptText="Buscar usuario..." styleClass="search-field"
+                               prefWidth="200"/>
+                    <Button text="Buscar" onAction="#handleBuscar" styleClass="button-info"/>
+                    <Button text="Refrescar" onAction="#handleRefrescar" styleClass="button-info"/>
+                </HBox>
 
-            <TableView fx:id="tableUsuarios" VBox.vgrow="ALWAYS" styleClass="table-view">
-                <columns>
-                    <TableColumn fx:id="colUsername" text="Usuario" prefWidth="120"/>
-                    <TableColumn fx:id="colNombreCompleto" text="Nombre Completo" prefWidth="180"/>
-                    <TableColumn fx:id="colEmail" text="Email" prefWidth="180"/>
-                    <TableColumn fx:id="colRol" text="Rol" prefWidth="100"/>
-                    <TableColumn fx:id="colActivo" text="Estado" prefWidth="80"/>
-                    <TableColumn fx:id="colUltimoAcceso" text="Último Acceso" prefWidth="140"/>
-                </columns>
-            </TableView>
+                <TableView fx:id="tableUsuarios" VBox.vgrow="ALWAYS" styleClass="table-view">
+                    <columns>
+                        <TableColumn fx:id="colUsername" text="Usuario" prefWidth="120"/>
+                        <TableColumn fx:id="colNombreCompleto" text="Nombre Completo" prefWidth="180"/>
+                        <TableColumn fx:id="colEmail" text="Email" prefWidth="180"/>
+                        <TableColumn fx:id="colRol" text="Rol" prefWidth="100"/>
+                        <TableColumn fx:id="colActivo" text="Estado" prefWidth="80"/>
+                        <TableColumn fx:id="colUltimoAcceso" text="Último Acceso" prefWidth="140"/>
+                    </columns>
+                </TableView>
 
-            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
-                <Label fx:id="lblTotalUsuarios" text="Total: 0 usuarios" styleClass="total-label"/>
-            </HBox>
-        </VBox>
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
+                    <Label fx:id="lblTotalUsuarios" text="Total: 0 usuarios" styleClass="total-label"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
     </center>
 
 </BorderPane>

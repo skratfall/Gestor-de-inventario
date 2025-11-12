@@ -126,15 +126,11 @@ public class ConfiguracionService {
                 apiKey == null || apiKey.trim().isEmpty()) {
                 return false;
             }
-
-            // Intentar crear una conexión de prueba
-            SupabaseDatabaseConnection testConnection = SupabaseDatabaseConnection.createInstance(url, apiKey);
-            Connection conn = testConnection.getConnection();
-            
-            // Verificar la conexión con una consulta simple
-            try (Statement stmt = conn.createStatement()) {
+            // Intentar crear una conexión de prueba usando DriverManager en try-with-resources
+            try (Connection conn = java.sql.DriverManager.getConnection(url, "postgres", apiKey);
+                 Statement stmt = conn.createStatement()) {
                 stmt.execute("SELECT 1");
-                
+
                 // Si llegamos aquí, la conexión fue exitosa
                 setConfigValue("sync.ultima", LocalDateTime.now().toString());
                 return true;

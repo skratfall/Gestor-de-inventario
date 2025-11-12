@@ -4,23 +4,22 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import java.net.URL?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.app.controller.SeguridadController"
             prefHeight="700.0" prefWidth="900.0">
+    <stylesheets>
+        <URL value="@/css/ModernStyles.css" />
+    </stylesheets>
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 20;">
-            <Label text="Configuración de Seguridad" textFill="white">
-                <font>
-                    <Font name="System Bold" size="24.0"/>
-                </font>
-            </Label>
-            <Label text="Configure las políticas de seguridad y monitoree eventos del sistema" textFill="#ecf0f1">
-                <font>
-                    <Font size="14.0"/>
-                </font>
-            </Label>
+        <VBox spacing="10" styleClass="module-header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="Configuración de Seguridad" styleClass="module-title"/>
+            <Label text="Configure las políticas de seguridad y monitoree eventos del sistema" style="-fx-text-fill: #ecf0f1;"/>
         </VBox>
     </top>
 
@@ -28,27 +27,21 @@
         <VBox spacing="20" style="-fx-padding: 20;">
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Button fx:id="btnBackToDashboard" text="🏠 Regresar al Dashboard"
-                        onAction="#handleBackToDashboard"
-                        style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
+                        onAction="#handleBackToDashboard" styleClass="button-info"/>
             </HBox>
 
             <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
                 <!-- Panel Izquierdo - Configuración -->
                 <VBox spacing="15" style="-fx-padding: 20;">
-                    <Label text="Políticas de Seguridad" styleClass="section-title">
-                        <font>
-                            <Font name="System Bold" size="16.0"/>
-                        </font>
-                    </Label>
+                    <Label text="Políticas de Seguridad" styleClass="section-title"/>
 
                     <!-- 2FA -->
-                    <VBox spacing="10" styleClass="config-section">
+                    <VBox spacing="10" styleClass="section-card">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <CheckBox fx:id="chk2FA" text="Autenticación de Dos Factores (2FA)"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button fx:id="btnConfigura2FA" text="Configurar"
-                                    onAction="#handleConfigura2FA"
-                                    style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                                    onAction="#handleConfigura2FA" styleClass="button-secondary"/>
                         </HBox>
                         <Label text="Requiere verificación adicional al iniciar sesión"
                                style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
@@ -57,7 +50,7 @@
                     <Separator/>
 
                     <!-- Bloqueo de Sesión -->
-                    <VBox spacing="10" styleClass="config-section">
+                    <VBox spacing="10" styleClass="section-card">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <CheckBox fx:id="chkBloqueoSesion" text="Bloqueo por Inactividad"/>
                             <Region HBox.hgrow="ALWAYS"/>
@@ -70,15 +63,14 @@
                     <Separator/>
 
                     <!-- Intentos de Login -->
-                    <VBox spacing="10" styleClass="config-section">
+                    <VBox spacing="10" styleClass="section-card">
                         <Label text="Control de Intentos Fallidos"/>
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label text="Intentos máximos:"/>
                             <ComboBox fx:id="cmbIntentosMaximos" promptText="Intentos"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button fx:id="btnDesbloquearUsuarios" text="Desbloquear Usuarios"
-                                    onAction="#handleDesbloquearUsuarios"
-                                    style="-fx-background-color: #e67e22; -fx-text-fill: white;"/>
+                                    onAction="#handleDesbloquearUsuarios" styleClass="button-warning"/>
                         </HBox>
                         <Label text="Después de exceder los intentos, la cuenta se bloqueará temporalmente"
                                style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
@@ -87,7 +79,7 @@
                     <Separator/>
 
                     <!-- Registro de Auditorías -->
-                    <VBox spacing="10" styleClass="config-section">
+                    <VBox spacing="10" styleClass="section-card">
                         <Label text="Registro de Auditorías"/>
                         <CheckBox fx:id="chkAuditoriaAccesos" text="Registrar accesos al sistema"/>
                         <CheckBox fx:id="chkAuditoriaRoles" text="Registrar cambios de roles"/>
@@ -99,30 +91,22 @@
                     <!-- Botones de Acción -->
                     <HBox spacing="10" alignment="CENTER_RIGHT">
                         <Button fx:id="btnReiniciarConfiguracion" text="Reiniciar Configuración"
-                                onAction="#handleReiniciarConfiguracion"
-                                style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                                onAction="#handleReiniciarConfiguracion" styleClass="button-danger"/>
                         <Button fx:id="btnGuardarConfiguracion" text="Guardar Cambios"
-                                onAction="#handleGuardarConfiguracion"
-                                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                                onAction="#handleGuardarConfiguracion" styleClass="button-primary"/>
                     </HBox>
                 </VBox>
 
                 <!-- Panel Derecho - Eventos -->
                 <VBox spacing="15" style="-fx-padding: 20;">
-                    <Label text="Eventos de Seguridad" styleClass="section-title">
-                        <font>
-                            <Font name="System Bold" size="16.0"/>
-                        </font>
-                    </Label>
+                    <Label text="Eventos de Seguridad" styleClass="section-title"/>
 
                     <HBox spacing="10" alignment="CENTER_LEFT">
                         <ComboBox fx:id="cmbTipoEvento" promptText="Tipo de evento"/>
-                        <TextField fx:id="txtBuscarEvento" promptText="Buscar eventos..."
+                        <TextField fx:id="txtBuscarEvento" promptText="Buscar eventos..." styleClass="search-field"
                                  HBox.hgrow="ALWAYS"/>
-                        <Button text="Buscar" onAction="#handleBuscarEventos"
-                                style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-                        <Button text="Refrescar" onAction="#handleRefrescarEventos"
-                                style="-fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+                        <Button text="Buscar" onAction="#handleBuscarEventos" styleClass="button-info"/>
+                        <Button text="Refrescar" onAction="#handleRefrescarEventos" styleClass="button-info"/>
                     </HBox>
 
                     <TableView fx:id="tableEventos" VBox.vgrow="ALWAYS">
@@ -135,10 +119,9 @@
                     </TableView>
 
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label fx:id="lblTotalEventos" text="Total: 0 eventos"/>
+                        <Label fx:id="lblTotalEventos" text="Total: 0 eventos" styleClass="total-label"/>
                         <Region HBox.hgrow="ALWAYS"/>
-                        <Button text="Exportar Eventos" onAction="#handleExportarEventos"
-                                style="-fx-background-color: #2c3e50; -fx-text-fill: white;"/>
+                        <Button text="Exportar Eventos" onAction="#handleExportarEventos" styleClass="button-info"/>
                     </HBox>
                 </VBox>
             </SplitPane>

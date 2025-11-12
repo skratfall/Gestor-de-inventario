@@ -13,7 +13,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
             UsuarioService usuarioService = UsuarioService.getInstance();
-            boolean hasUsuarios = usuarioService.hasAnyUsuario();
+            boolean hasUsuarios = false;
+            
+            // Intentar verificar si existen usuarios; si falla, asumir que es registro inicial
+            try {
+                hasUsuarios = usuarioService.hasAnyUsuario();
+            } catch (Exception e) {
+                System.err.println("⚠️ No se pudo verificar usuarios (conexión a BD): " + e.getMessage());
+                System.err.println("Asumiendo registro inicial...");
+                hasUsuarios = false;
+            }
 
             String viewPath;
             String title;

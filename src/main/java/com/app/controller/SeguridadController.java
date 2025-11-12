@@ -25,6 +25,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.io.FileOutputStream;
+import java.io.File;
+ 
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 public class SeguridadController implements Initializable {
 
@@ -262,9 +274,95 @@ public class SeguridadController implements Initializable {
 
     @FXML
     private void handleExportarEventos() {
-        // Aquí iría la lógica para exportar eventos
-        mostrarInfo("Exportar eventos", 
-            "Esta funcionalidad será implementada próximamente");
+        if (eventosData == null || eventosData.isEmpty()) {
+            mostrarAdvertencia("Exportar eventos", "No hay eventos para exportar");
+            return;
+        }
+
+        // Mostrar FileChooser para que el usuario seleccione ubicación y nombre de archivo
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar eventos de seguridad");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Workbook", "*.xlsx"));
+
+        // Intentar abrir en la carpeta Descargas del usuario si existe
+        String userHome = System.getProperty("user.home");
+        File defaultDir = new File(userHome, "Downloads");
+        if (!defaultDir.exists() || !defaultDir.isDirectory()) {
+            defaultDir = new File(userHome);
+        }
+        fileChooser.setInitialDirectory(defaultDir);
+        fileChooser.setInitialFileName("eventos_seguridad.xlsx");
+
+        Window window = tableEventos.getScene().getWindow();
+        File chosen = fileChooser.showSaveDialog(window);
+        if (chosen == null) {
+            // Usuario canceló
+            return;
+        }
+
+        // Crear workbook y hoja
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            CreationHelper createHelper = workbook.getCreationHelper();
+            Sheet sheet = workbook.createSheet("Eventos de Seguridad");
+
+            // Estilos
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd/mm/yyyy hh:mm:ss"));
+
+            // Cabeceras
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Fecha");
+            headerRow.createCell(1).setCellValue("Tipo");
+            headerRow.createCell(2).setCellValue("Usuario");
+            headerRow.createCell(3).setCellValue("Descripción");
+
+            // Filas
+            int rowIdx = 1;
+            for (EventoSeguridad ev : eventosData) {
+                Row row = sheet.createRow(rowIdx++);
+                Cell c0 = row.createCell(0);
+                if (ev.getFecha() != null) {
+                    c0.setCellValue(ev.getFecha().format(dateFormatter));
+                } else {
+                    c0.setCellValue("");
+                }
+                row.createCell(1).setCellValue(ev.getTipo() != null ? ev.getTipo() : "");
+                // Usuario: intentar resolver nombre
+                String usuarioDisplay = "";
+                if (ev.getUsuarioId() != null && !"sistema".equals(ev.getUsuarioId())) {
+                    try {
+                        Optional<Usuario> u = usuarioService.findUsuarioById(ev.getUsuarioId());
+                        usuarioDisplay = u.map(Usuario::getUsername).orElse(ev.getUsuarioId());
+                    } catch (Exception ex) {
+                        usuarioDisplay = ev.getUsuarioId();
+                    }
+                } else {
+                    usuarioDisplay = "Sistema";
+                }
+                row.createCell(2).setCellValue(usuarioDisplay);
+                row.createCell(3).setCellValue(ev.getDescripcion() != null ? ev.getDescripcion() : "");
+            }
+
+            // Auto-ajustar columnas
+            for (int i = 0; i < 4; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // Guardar en la ruta seleccionada por el usuario
+            File outFile = chosen;
+            if (!outFile.getName().toLowerCase().endsWith(".xlsx")) {
+                outFile = new File(outFile.getAbsolutePath() + ".xlsx");
+            }
+            try (FileOutputStream fileOut = new FileOutputStream(outFile)) {
+                workbook.write(fileOut);
+            }
+
+            mostrarInfo("Exportar eventos", "Eventos exportados a: " + outFile.getAbsolutePath());
+
+        } catch (Exception e) {
+            logger.error("Error exportando eventos a XLSX", e);
+            mostrarError("Error exportando", "No se pudo exportar eventos: " + e.getMessage());
+        }
     }
 
     @FXML

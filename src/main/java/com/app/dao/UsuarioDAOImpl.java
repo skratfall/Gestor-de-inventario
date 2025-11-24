@@ -96,16 +96,29 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     }
 
     public void delete(String id) {
-        String sql = "DELETE FROM usuarios WHERE id = ?::uuid";
+        String countSql = "SELECT COUNT(*) FROM eventos_seguridad WHERE usuario_id = ?::uuid";
+        String deleteSql = "DELETE FROM usuarios WHERE id = ?::uuid";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection()) {
+            // Comprobar si existen eventos referenciando al usuario
+            try (PreparedStatement countStmt = conn.prepareStatement(countSql)) {
+                countStmt.setString(1, id);
+                try (ResultSet rs = countStmt.executeQuery()) {
+                    if (rs.next()) {
+                        long count = rs.getLong(1);
+                        if (count > 0) {
+                            throw new RuntimeException("No se puede eliminar el usuario porque tiene " + count + " evento(s) de seguridad relacionados. Considere desactivarlo en su lugar.");
+                        }
+                    }
+                }
+            }
 
-            stmt.setString(1, id);
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected == 0) {
-                throw new RuntimeException("Usuario not found with id: " + id);
+            try (PreparedStatement delStmt = conn.prepareStatement(deleteSql)) {
+                delStmt.setString(1, id);
+                int rowsAffected = delStmt.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new RuntimeException("Usuario not found with id: " + id);
+                }
             }
 
         } catch (SQLException e) {

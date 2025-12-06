@@ -56,6 +56,7 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+<<<<<<< HEAD
         System.out.println("🔍 DEBUG: LoginController.initialize() called");
         
         // Inicializar textos con traducciones
@@ -68,6 +69,9 @@ public class LoginController implements Initializable {
         LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
             Platform.runLater(this::updateUITexts);
         });
+=======
+        setupValidation();
+>>>>>>> ef94d70334394b0dbabbde695e3659d2ba60dfbe
     }
 
     private void updateUITexts() {

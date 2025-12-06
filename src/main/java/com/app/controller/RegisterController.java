@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.dao.RolDAO;
 import com.app.model.Rol;
 import com.app.service.UsuarioService;
+import com.app.service.LanguageService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.net.URL;
 import java.util.Optional;
@@ -47,6 +49,7 @@ public class RegisterController implements Initializable {
         this.usuarioService = UsuarioService.getInstance();
         this.rolDAO = new RolDAO();
         setupValidation();
+        setupLanguageListener();
 
         javafx.application.Platform.runLater(() -> {
             if (registerButton != null && registerButton.getScene() != null) {
@@ -177,5 +180,14 @@ public class RegisterController implements Initializable {
         emailField.clear();
         nombreCompletoField.clear();
         usernameField.requestFocus();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService langService = LanguageService.getInstance();
+        langService.addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(() -> {
+                // Redibujar la UI si es necesario
+            });
+        });
     }
 }

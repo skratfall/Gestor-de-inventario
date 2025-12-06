@@ -1,6 +1,8 @@
 package com.app.controller;
 
 import com.app.model.Usuario;
+import com.app.service.LanguageService;
+import com.app.util.I18nUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,19 +36,48 @@ public class LoginController implements Initializable {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private javafx.scene.control.Label lblWelcome;
+
+    @FXML
+    private javafx.scene.control.Label lblSubtitle;
+
+    @FXML
+    private javafx.scene.control.Label lblUsername;
+
+    @FXML
+    private javafx.scene.control.Label lblPassword;
+
+    @FXML
+    private javafx.scene.control.Label lblLoginBtn;
+
+    @FXML
+    private javafx.scene.control.Label lblCancelBtn;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        System.out.println("🔍 DEBUG: LoginController.initialize() called");
+        
+        // Inicializar textos con traducciones
+        updateUITexts();
+        
         // Initialize any required components here
         setupValidation();
-        // Establecer tamaño de la ventana de login
-        javafx.application.Platform.runLater(() -> {
-            if (loginButton != null && loginButton.getScene() != null) {
-                Stage stage = (Stage) loginButton.getScene().getWindow();
-                stage.setWidth(900);
-                stage.setHeight(800);
-                stage.centerOnScreen();
-            }
+        
+        // Registrar listener para cambios de idioma
+        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
         });
+    }
+
+    private void updateUITexts() {
+        I18nUtil.setLabelText(lblWelcome, "login.titulo");
+        I18nUtil.setLabelText(lblUsername, "👤 " + I18nUtil.get("usuarios.usuario"));
+        I18nUtil.setLabelText(lblPassword, "🔒 " + I18nUtil.get("login.password"));
+        I18nUtil.setLabelText(lblLoginBtn, I18nUtil.get("login.entrar"));
+        I18nUtil.setLabelText(lblCancelBtn, I18nUtil.get("btn.cancelar"));
+        I18nUtil.setPromptText(usernameField, "login.usuario");
+        I18nUtil.setPromptText(passwordField, "login.password");
     }
 
     private void setupValidation() {

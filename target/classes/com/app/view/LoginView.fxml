@@ -35,8 +35,8 @@
             <!-- Welcome Message -->
             <VBox alignment="CENTER" spacing="8.0">
                <children>
-                  <Label text="Bienvenido de vuelta" styleClass="login-title" />
-                  <Label text="Ingresa tus credenciales para continuar" styleClass="login-subtitle" />
+                  <Label fx:id="lblWelcome" text="Bienvenido de vuelta" styleClass="login-title" />
+                  <Label fx:id="lblSubtitle" text="Ingresa tus credenciales para continuar" styleClass="login-subtitle" />
                </children>
             </VBox>
             
@@ -46,7 +46,7 @@
                   <!-- Username Field -->
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="👤 Usuario" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50; -fx-font-size: 14px;" />
+                        <Label fx:id="lblUsername" text="👤 Usuario" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50; -fx-font-size: 14px;" />
                         <TextField fx:id="usernameField" prefWidth="350.0" prefHeight="45.0" promptText="Ingresa tu nombre de usuario" styleClass="login-field">
                            <font>
                               <Font size="16.0" />
@@ -58,7 +58,7 @@
                   <!-- Password Field -->
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="🔒 Contraseña" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50; -fx-font-size: 14px;" />
+                        <Label fx:id="lblPassword" text="🔒 Contraseña" style="-fx-font-weight: 600; -fx-text-fill: #2c3e50; -fx-font-size: 14px;" />
                         <PasswordField fx:id="passwordField" prefWidth="350.0" prefHeight="45.0" promptText="Ingresa tu contraseña" styleClass="login-field">
                            <font>
                               <Font size="16.0" />
@@ -75,7 +75,7 @@
                               <HBox spacing="10.0" alignment="CENTER">
                                  <children>
                                     <Label text="🚀" style="-fx-text-fill: white; -fx-font-size: 18px;" />
-                                    <Label text="Iniciar Sesión" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;" />
+                                    <Label fx:id="lblLoginBtn" text="Iniciar Sesión" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;" />
                                  </children>
                               </HBox>
                            </graphic>
@@ -86,7 +86,7 @@
                               <HBox spacing="8.0" alignment="CENTER">
                                  <children>
                                     <Label text="❌" style="-fx-text-fill: #e74c3c;" />
-                                    <Label text="Cancelar" style="-fx-text-fill: #e74c3c; -fx-font-weight: 500;" />
+                                    <Label fx:id="lblCancelBtn" text="Cancelar" style="-fx-text-fill: #e74c3c; -fx-font-weight: 500;" />
                                  </children>
                               </HBox>
                            </graphic>

@@ -2,6 +2,7 @@ package com.app;
 
 import com.app.service.UsuarioService;
 import com.app.service.ThemeService;
+import com.app.util.StageDebugger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,6 +13,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("🚀 DEBUG: Main.start() called - primaryStage: " + System.identityHashCode(primaryStage));
+        StageDebugger.trackStage(primaryStage, "Main - Primary Stage");
+        
         try {
             UsuarioService usuarioService = UsuarioService.getInstance();
             boolean hasUsuarios = false;
@@ -55,7 +59,17 @@ public class Main extends Application {
             primaryStage.setResizable(false);
             primaryStage.centerOnScreen();
 
+            System.out.println("✅ DEBUG: About to call primaryStage.show()");
+            System.out.println("   Stage width: " + primaryStage.getWidth());
+            System.out.println("   Stage height: " + primaryStage.getHeight());
+            System.out.println("   Stage resizable: " + primaryStage.isResizable());
+            StageDebugger.recordShowCall("Main.start() - PRIMARY SHOW CALL");
             primaryStage.show();
+            System.out.println("✅ DEBUG: primaryStage.show() completed successfully");
+            System.out.println("   Stages currently visible: " + countVisibleStages());
+            
+            // Iniciar un monitor de ventanas en background
+            startWindowMonitor();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,6 +78,73 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        System.out.println("📋 Starting application...");
         launch(args);
+    }
+
+    private static int countVisibleStages() {
+        // Contar todas las windows visibles de JavaFX
+        // Esto es un poco de hack pero útil para depuración
+        int count = 0;
+        try {
+            java.util.Collection<javafx.stage.Window> windows = 
+                javafx.stage.Window.getWindows();
+            for (javafx.stage.Window w : windows) {
+                if (w instanceof javafx.stage.Stage) {
+                    javafx.stage.Stage s = (javafx.stage.Stage) w;
+                    if (s.isShowing()) {
+                        count++;
+                        System.out.println("   📌 Visible Stage: " + s.getTitle() + 
+                            " (hash: " + System.identityHashCode(s) + ")");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("   ❌ Error counting stages: " + e.getMessage());
+        }
+        return count;
+    }
+
+    private static void startWindowMonitor() {
+        // Monitorear cambios en ventanas cada 2 segundos durante los primeros 10 segundos
+        Thread monitorThread = new Thread(() -> {
+            try {
+                int previousCount = 0;
+                for (int i = 0; i < 5; i++) {
+                    Thread.sleep(2000); // Esperar 2 segundos
+                    int currentCount = countVisibleStagesQuiet();
+                    if (currentCount != previousCount) {
+                        System.out.println("🔔 [MONITOR] Cambio detectado: " + previousCount + 
+                            " -> " + currentCount + " ventanas visibles");
+                        countVisibleStages(); // Mostrar detalles
+                    }
+                    previousCount = currentCount;
+                }
+            } catch (InterruptedException e) {
+                // Ignorar
+            }
+        });
+        monitorThread.setDaemon(true);
+        monitorThread.setName("WindowMonitor");
+        monitorThread.start();
+    }
+
+    private static int countVisibleStagesQuiet() {
+        try {
+            int count = 0;
+            java.util.Collection<javafx.stage.Window> windows = 
+                javafx.stage.Window.getWindows();
+            for (javafx.stage.Window w : windows) {
+                if (w instanceof javafx.stage.Stage) {
+                    javafx.stage.Stage s = (javafx.stage.Stage) w;
+                    if (s.isShowing()) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 }

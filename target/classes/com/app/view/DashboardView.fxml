@@ -36,8 +36,8 @@
                      <Image url="@../images/logo-proyecto.jpg" />
                   </image>
                </ImageView>
-               <Label text="Panel Administrativo" styleClass="sidebar-title" />
-               <Label text="Gestión de Inventario" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
+               <Label fx:id="lblPanelTitle" text="Panel Administrativo" styleClass="sidebar-title" />
+               <Label fx:id="lblAppName" text="Gestión de Inventario" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
                <Label fx:id="lblUserRole" text="Administrador" styleClass="sidebar-subtitle" />
             </VBox>
 
@@ -45,7 +45,7 @@
 
             <!-- Navigation Menu -->
             <VBox spacing="8" VBox.vgrow="ALWAYS" style="-fx-padding: 15 15 15 15;">
-               <Label text="ADMINISTRACIÓN" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 10 0 5 10;" />
+               <Label fx:id="lblAdminSection" text="ADMINISTRACIÓN" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 10 0 5 10;" />
 
                <Button fx:id="btnDashboard" text="🏠 Dashboard" styleClass="sidebar-button, active" prefWidth="250.0" />
 
@@ -57,7 +57,7 @@
 
                <Separator style="-fx-background-color: rgba(255,255,255,0.1); -fx-padding: 10 0;" />
 
-               <Label text="SISTEMA" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 10 0 5 10;" />
+               <Label fx:id="lblSystemSection" text="SISTEMA" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 10 0 5 10;" />
 
                <Button fx:id="btnSync" text="🔄 Sincronización" styleClass="sidebar-button" prefWidth="250.0"
                        onAction="#handleSync" />
@@ -109,7 +109,7 @@
 
             <!-- System Status Cards -->
             <VBox spacing="15">
-               <Label text="Estado del Sistema" styleClass="section-title" />
+               <Label fx:id="lblStatusSection" text="Estado del Sistema" styleClass="section-title" />
 
                <GridPane hgap="25" vgap="25">
                   <columnConstraints>

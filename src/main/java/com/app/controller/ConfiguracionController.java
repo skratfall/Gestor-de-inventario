@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.event.Event;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;  // Agregado para logging
 
@@ -79,7 +80,10 @@ public class ConfiguracionController implements Initializable {
             
             // Registrar listener para cambios de idioma
             LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
-                logger.info("Idioma cambiado a: {}", newLanguage);
+                Platform.runLater(() -> {
+                    logger.info("Idioma cambiado a: {}", newLanguage);
+                    cargarConfiguracion();
+                });
             });
         } catch (Exception e) {
             logger.error("Error inicializando ConfiguracionController", e);

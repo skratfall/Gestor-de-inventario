@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.model.Rol;
 import com.app.dao.RolDAO;
+import com.app.service.LanguageService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import javafx.application.Platform;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -54,6 +56,7 @@ public class RolesController implements Initializable {
         setupNivelesAcceso();
         cargarRoles();
         ocultarFormulario();
+        setupLanguageListener();
     }
 
     private void setupTableColumns() {
@@ -289,5 +292,14 @@ public class RolesController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService langService = LanguageService.getInstance();
+        langService.addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(() -> {
+                cargarRoles();
+            });
+        });
     }
 }

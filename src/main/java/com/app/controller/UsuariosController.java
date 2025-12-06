@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.model.Rol;
 import com.app.model.Usuario;
 import com.app.service.UsuarioService;
+import com.app.service.LanguageService;
 import com.app.dao.RolDAO;
 import com.app.security.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.application.Platform;
 import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
@@ -60,6 +62,7 @@ public class UsuariosController implements Initializable {
         setupTableColumns();
         setupPermissions();
         loadUsuarios();
+        setupLanguageListener();
     }
 
     private void setupTableColumns() {
@@ -414,5 +417,14 @@ public class UsuariosController implements Initializable {
             e.printStackTrace();
             // Manejo de errores, por ejemplo, mostrar un diálogo de error
         }
+    }
+
+    private void setupLanguageListener() {
+        LanguageService langService = LanguageService.getInstance();
+        langService.addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(() -> {
+                loadUsuarios();
+            });
+        });
     }
 }

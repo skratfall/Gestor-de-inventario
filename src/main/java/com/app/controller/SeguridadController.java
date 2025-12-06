@@ -4,6 +4,7 @@ import com.app.model.EventoSeguridad;
 import com.app.model.Usuario;
 import com.app.service.SeguridadService;
 import com.app.service.UsuarioService;
+import com.app.service.LanguageService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;  // Agregado para logging
 
@@ -27,7 +29,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.io.FileOutputStream;
 import java.io.File;
- 
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -76,6 +77,7 @@ public class SeguridadController implements Initializable {
         configurarTablaEventos();
         cargarConfiguracion();
         cargarEventos();
+        setupLanguageListener();
         logger.info("SeguridadController inicializado");
     }
 
@@ -425,5 +427,14 @@ public class SeguridadController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService langService = LanguageService.getInstance();
+        langService.addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(() -> {
+                cargarEventos();
+            });
+        });
     }
 }

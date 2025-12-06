@@ -95,6 +95,7 @@ public class DashboardController extends BaseController implements Initializable
         loadDashboardData();
         startClockUpdates();
         setupPermissions();
+        setupLanguageListener();
         
         // Registrar la escena actual con ThemeService cuando se cargue
         javafx.application.Platform.runLater(() -> {
@@ -122,6 +123,7 @@ public class DashboardController extends BaseController implements Initializable
 
     @Override
     public void initializeController() {
+        LanguageService langService = LanguageService.getInstance();
         Usuario currentUser = sessionManager.getCurrentUser();
         Rol currentRole = sessionManager.getCurrentRole();
 
@@ -129,17 +131,17 @@ public class DashboardController extends BaseController implements Initializable
             String nombreCompleto = currentUser.getNombreCompleto() != null && !currentUser.getNombreCompleto().isEmpty() ?
                 currentUser.getNombreCompleto() : currentUser.getUsername();
 
-            welcomeLabel.setText("Bienvenido, " + nombreCompleto);
-            lblCurrentUser.setText("Usuario: " + currentUser.getUsername());
+            welcomeLabel.setText(langService.get("dashboard.bienvenido") + ", " + nombreCompleto);
+            lblCurrentUser.setText(langService.get("usuarios.usuario") + ": " + currentUser.getUsername());
 
             if (currentUser.getUltimoAcceso() != null) {
-                lblLastLogin.setText("Última sesión: " + currentUser.getUltimoAcceso().format(loginFormatter));
+                lblLastLogin.setText(langService.get("dashboard.ultima_sincro") + ": " + currentUser.getUltimoAcceso().format(loginFormatter));
             } else {
                 lblLastLogin.setText("Primera sesión");
             }
         } else {
-            welcomeLabel.setText("Bienvenido al Sistema");
-            lblCurrentUser.setText("Usuario: Invitado");
+            welcomeLabel.setText(langService.get("dashboard.bienvenido") + " al Sistema");
+            lblCurrentUser.setText(langService.get("usuarios.usuario") + ": Invitado");
             lblLastLogin.setText("Sin sesión activa");
         }
 
@@ -493,5 +495,18 @@ public class DashboardController extends BaseController implements Initializable
 
     public void refreshDashboard() {
         loadDashboardData();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService langService = LanguageService.getInstance();
+        langService.addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
+        });
+    }
+
+    private void updateUITexts() {
+        LanguageService langService = LanguageService.getInstance();
+        // Los textos se actualizarán cada vez que el idioma cambie
+        initializeController();
     }
 }

@@ -74,8 +74,8 @@ public class LoginController implements Initializable {
         I18nUtil.setLabelText(lblWelcome, "login.titulo");
         I18nUtil.setLabelText(lblUsername, "👤 " + I18nUtil.get("usuarios.usuario"));
         I18nUtil.setLabelText(lblPassword, "🔒 " + I18nUtil.get("login.password"));
-        I18nUtil.setLabelText(lblLoginBtn, "🚀 " + I18nUtil.get("login.entrar"));
-        I18nUtil.setLabelText(lblCancelBtn, "❌ " + I18nUtil.get("btn.cancelar"));
+        I18nUtil.setLabelText(lblLoginBtn, I18nUtil.get("login.entrar"));
+        I18nUtil.setLabelText(lblCancelBtn, I18nUtil.get("btn.cancelar"));
         I18nUtil.setPromptText(usernameField, "login.usuario");
         I18nUtil.setPromptText(passwordField, "login.password");
     }

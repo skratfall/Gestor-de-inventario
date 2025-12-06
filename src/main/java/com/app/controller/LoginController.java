@@ -56,7 +56,6 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-<<<<<<< HEAD
         System.out.println("🔍 DEBUG: LoginController.initialize() called");
         
         // Inicializar textos con traducciones
@@ -69,17 +68,14 @@ public class LoginController implements Initializable {
         LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
             Platform.runLater(this::updateUITexts);
         });
-=======
-        setupValidation();
->>>>>>> ef94d70334394b0dbabbde695e3659d2ba60dfbe
     }
 
     private void updateUITexts() {
         I18nUtil.setLabelText(lblWelcome, "login.titulo");
         I18nUtil.setLabelText(lblUsername, "👤 " + I18nUtil.get("usuarios.usuario"));
         I18nUtil.setLabelText(lblPassword, "🔒 " + I18nUtil.get("login.password"));
-        I18nUtil.setLabelText(lblLoginBtn, I18nUtil.get("login.entrar"));
-        I18nUtil.setLabelText(lblCancelBtn, I18nUtil.get("btn.cancelar"));
+        I18nUtil.setLabelText(lblLoginBtn, "🚀 " + I18nUtil.get("login.entrar"));
+        I18nUtil.setLabelText(lblCancelBtn, "❌ " + I18nUtil.get("btn.cancelar"));
         I18nUtil.setPromptText(usernameField, "login.usuario");
         I18nUtil.setPromptText(passwordField, "login.password");
     }

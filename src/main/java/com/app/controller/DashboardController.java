@@ -506,7 +506,34 @@ public class DashboardController extends BaseController implements Initializable
 
     private void updateUITexts() {
         LanguageService langService = LanguageService.getInstance();
-        // Los textos se actualizarán cada vez que el idioma cambie
-        initializeController();
+        Usuario currentUser = sessionManager.getCurrentUser();
+        Rol currentRole = sessionManager.getCurrentRole();
+
+        if (currentUser != null) {
+            String nombreCompleto = currentUser.getNombreCompleto() != null && !currentUser.getNombreCompleto().isEmpty() ?
+                currentUser.getNombreCompleto() : currentUser.getUsername();
+            welcomeLabel.setText(langService.get("dashboard.bienvenido") + ", " + nombreCompleto);
+            lblCurrentUser.setText(langService.get("usuarios.usuario") + ": " + currentUser.getUsername());
+        } else {
+            welcomeLabel.setText(langService.get("dashboard.bienvenido") + " al Sistema");
+            lblCurrentUser.setText(langService.get("usuarios.usuario") + ": Invitado");
+        }
+
+        if (currentRole != null) {
+            lblUserRole.setText(currentRole.getNombre());
+        }
+
+        lblLastLogin.setText(langService.get("dashboard.ultima_sincro") + ": " +
+            (currentUser != null && currentUser.getUltimoAcceso() != null ?
+                currentUser.getUltimoAcceso().format(loginFormatter) : "N/A"));
+
+        lblTotalUsers.setText(String.valueOf(lblTotalUsers.getText().isEmpty() ? "0" : lblTotalUsers.getText()));
+        lblTotalRoles.setText(String.valueOf(lblTotalRoles.getText().isEmpty() ? "0" : lblTotalRoles.getText()));
+
+        lblConnectionText.setText(lblConnectionText.getText());
+        lblConnectionDetails.setText(lblConnectionDetails.getText());
+        lblLastSync.setText(lblLastSync.getText());
+        lblSessionDuration.setText(lblSessionDuration.getText());
+        lblConfigStatus.setText(lblConfigStatus.getText());
     }
 }

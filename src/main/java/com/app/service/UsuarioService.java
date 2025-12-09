@@ -244,4 +244,40 @@ public class UsuarioService {
             return false;
         }
     }
+
+    /**
+     * Verifica si existen usuarios ACTIVOS en el sistema
+     * Si no hay usuarios activos, es necesario mostrar el registro
+     */
+    public boolean hasAnyActiveUsuario() {
+        try {
+            List<Usuario> usuarios = usuarioDAO.findAllWithoutAuth();
+            if (usuarios == null || usuarios.isEmpty()) {
+                return false;
+            }
+            // Retorna true si existe al menos un usuario activo
+            return usuarios.stream().anyMatch(Usuario::isActivo);
+        } catch (Exception e) {
+            System.err.println("Error checking if any active user exists: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si todos los usuarios están deshabilitados
+     * Retorna true si no hay usuarios activos pero hay usuarios en total
+     */
+    public boolean areAllUsuariosDisabled() {
+        try {
+            List<Usuario> usuarios = usuarioDAO.findAllWithoutAuth();
+            if (usuarios == null || usuarios.isEmpty()) {
+                return false; // No hay usuarios, no aplica el concepto "todos deshabilitados"
+            }
+            // Retorna true si todos los usuarios están inactivos
+            return usuarios.stream().allMatch(u -> !u.isActivo());
+        } catch (Exception e) {
+            System.err.println("Error checking if all users are disabled: " + e.getMessage());
+            return false;
+        }
+    }
 }

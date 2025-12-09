@@ -18,15 +18,15 @@ public class Main extends Application {
         
         try {
             UsuarioService usuarioService = UsuarioService.getInstance();
-            boolean hasUsuarios = false;
+            boolean hasActiveUsuarios = false;
             
-            // Intentar verificar si existen usuarios; si falla, asumir que es registro inicial
+            // Intentar verificar si existen usuarios activos; si falla, asumir que es registro inicial
             try {
-                hasUsuarios = usuarioService.hasAnyUsuario();
+                hasActiveUsuarios = usuarioService.hasAnyActiveUsuario();
             } catch (Exception e) {
                 System.err.println("⚠️ No se pudo verificar usuarios (conexión a BD): " + e.getMessage());
                 System.out.println("Asumiendo registro inicial...");
-                hasUsuarios = false;
+                hasActiveUsuarios = false;
             }
 
             String viewPath;
@@ -34,11 +34,11 @@ public class Main extends Application {
             int width;
             int height;
 
-            if (!hasUsuarios) {
+            if (!hasActiveUsuarios) {
                 viewPath = "/com/app/view/RegisterView.fxml";
                 title = "Registro Inicial - Sistema de Gestión de Inventario";
-                width = 500;
-                height = 600;
+                width = 600;
+                height = 800;
             } else {
                 viewPath = "/com/app/view/LoginView.fxml";
                 title = "Login - Sistema de Gestión de Inventario";

@@ -132,7 +132,12 @@ public class RegisterController implements Initializable {
 
             if (success) {
                 showAlert(Alert.AlertType.INFORMATION, "Registro Exitoso",
-                    "El usuario administrador ha sido creado exitosamente.\n\nAhora puede iniciar sesión.");
+                    "¡El usuario administrador ha sido creado exitosamente!\n\n" +
+                    "Datos del primer usuario:\n" +
+                    "Usuario: " + username + "\n" +
+                    "Rol: ADMINISTRADOR\n" +
+                    "Estado: ACTIVO\n\n" +
+                    "Ahora puede iniciar sesión con estas credenciales.");
                 navigateToLogin();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Error de Registro",

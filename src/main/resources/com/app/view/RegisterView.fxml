@@ -6,116 +6,138 @@
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.app.controller.RegisterController"
-      alignment="CENTER"
-      spacing="20"
-      style="-fx-background-color: #f5f5f5;">
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.app.controller.RegisterController"
+           style="-fx-background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
     <stylesheets>
         <URL value="@/css/modern-ui.css" />
         <URL value="@/css/theme-light.css" />
     </stylesheets>
 
-    <padding>
-        <Insets top="30" right="40" bottom="30" left="40"/>
-    </padding>
+    <!-- Fondo Oscuro Semi-transparente -->
+    <Region style="-fx-background-color: rgba(0, 0, 0, 0.1);"/>
 
-    <Label fx:id="lblTitle" text="Registro de Administrador" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;">
-        <font>
-            <Font name="System Bold" size="24.0"/>
-        </font>
-    </Label>
+    <!-- Card Principal -->
+    <VBox alignment="CENTER" spacing="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0.3, 0, 10);">
+        <StackPane.margin>
+            <Insets/>
+        </StackPane.margin>
 
-    <Label fx:id="lblSubtitle" text="Bienvenido al Sistema de Gestión de Inventario"
-           style="-fx-font-size: 14px; -fx-text-fill: #666666;"
-           wrapText="true">
-        <padding>
-            <Insets bottom="10"/>
-        </padding>
-    </Label>
+        <!-- Header Gradient -->
+        <VBox spacing="0" style="-fx-background: linear-gradient(180deg, #3498db 0%, #2980b9 100%); -fx-padding: 40 60 40 60;" alignment="CENTER">
+            <Label text="✓" style="-fx-font-size: 48px; -fx-text-fill: white; -fx-font-weight: bold;" alignment="CENTER">
+                <VBox.margin>
+                    <Insets bottom="15"/>
+                </VBox.margin>
+            </Label>
 
-    <Separator prefWidth="400">
-        <VBox.margin>
-            <Insets top="10" bottom="10"/>
-        </VBox.margin>
-    </Separator>
+            <Label text="Crear Cuenta de Administrador" 
+                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;"
+                   alignment="CENTER">
+                <font>
+                    <Font name="System Bold" size="28.0"/>
+                </font>
+                <VBox.margin>
+                    <Insets bottom="8"/>
+                </VBox.margin>
+            </Label>
 
-    <Label text="Por favor, registre la cuenta de administrador inicial del sistema"
-           style="-fx-font-size: 12px; -fx-text-fill: #888888;"
-           wrapText="true">
-        <padding>
-            <Insets bottom="20"/>
-        </padding>
-    </Label>
+            <Label text="Primera vez? Registre la cuenta administrativa del sistema"
+                   style="-fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.9);"
+                   wrapText="true"
+                   alignment="CENTER">
+                <VBox.margin>
+                    <Insets bottom="0"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
 
-    <GridPane hgap="10" vgap="15" alignment="CENTER">
-        <columnConstraints>
-            <ColumnConstraints minWidth="120" prefWidth="120" halignment="RIGHT"/>
-            <ColumnConstraints minWidth="250" prefWidth="250"/>
-        </columnConstraints>
+        <!-- Formulario Container -->
+        <VBox spacing="20" style="-fx-background-color: #f5f7fa; -fx-padding: 40 60 40 60;">
 
-        <Label text="Usuario:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="usernameField"
-                   promptText="Nombre de usuario"
-                   style="-fx-pref-height: 35px;"
-                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <!-- Nombre Completo -->
+            <VBox spacing="8">
+                <Label text="Nombre Completo" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <TextField fx:id="nombreCompletoField"
+                           promptText="Ej: Juan García López"
+                           style="-fx-padding: 12px 15px; -fx-font-size: 13px; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #d0d8e0; -fx-border-width: 2; -fx-focus-color: #3498db; -fx-faint-focus-color: rgba(52,152,219,0.1);"/>
+            </VBox>
 
-        <Label text="Contraseña:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <PasswordField fx:id="passwordField"
-                       promptText="Mínimo 6 caracteres"
-                       style="-fx-pref-height: 35px;"
-                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <!-- Usuario -->
+            <VBox spacing="8">
+                <Label text="Nombre de Usuario" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <TextField fx:id="usernameField"
+                           promptText="Ej: juangarcia"
+                           style="-fx-padding: 12px 15px; -fx-font-size: 13px; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #d0d8e0; -fx-border-width: 2; -fx-focus-color: #3498db; -fx-faint-focus-color: rgba(52,152,219,0.1);"/>
+            </VBox>
 
-        <Label text="Confirmar:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <PasswordField fx:id="confirmPasswordField"
-                       promptText="Repita la contraseña"
-                       style="-fx-pref-height: 35px;"
-                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <!-- Email -->
+            <VBox spacing="8">
+                <Label text="Correo Electrónico" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <TextField fx:id="emailField"
+                           promptText="correo@empresa.com"
+                           style="-fx-padding: 12px 15px; -fx-font-size: 13px; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #d0d8e0; -fx-border-width: 2; -fx-focus-color: #3498db; -fx-faint-focus-color: rgba(52,152,219,0.1);"/>
+            </VBox>
 
-        <Label text="Email:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <TextField fx:id="emailField"
-                   promptText="correo@ejemplo.com"
-                   style="-fx-pref-height: 35px;"
-                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            <!-- Contraseña -->
+            <VBox spacing="8">
+                <Label text="Contraseña" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <PasswordField fx:id="passwordField"
+                               promptText="Mínimo 6 caracteres"
+                               style="-fx-padding: 12px 15px; -fx-font-size: 13px; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #d0d8e0; -fx-border-width: 2; -fx-focus-color: #3498db; -fx-faint-focus-color: rgba(52,152,219,0.1);"/>
+            </VBox>
 
-        <Label text="Nombre:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <TextField fx:id="nombreCompletoField"
-                   promptText="Nombre completo"
-                   style="-fx-pref-height: 35px;"
-                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-    </GridPane>
+            <!-- Confirmar Contraseña -->
+            <VBox spacing="8">
+                <Label text="Confirmar Contraseña" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <PasswordField fx:id="confirmPasswordField"
+                               promptText="Repita la contraseña"
+                               style="-fx-padding: 12px 15px; -fx-font-size: 13px; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-color: #d0d8e0; -fx-border-width: 2; -fx-focus-color: #3498db; -fx-faint-focus-color: rgba(52,152,219,0.1);"/>
+            </VBox>
 
-    <HBox spacing="15" alignment="CENTER">
-        <VBox.margin>
-            <Insets top="20"/>
-        </VBox.margin>
+            <!-- Botones -->
+            <HBox spacing="15" alignment="CENTER">
+                <VBox.margin>
+                    <Insets top="20"/>
+                </VBox.margin>
 
-        <Button fx:id="registerButton"
-                text="Registrar Administrador"
-                onAction="#handleRegister"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
-            <cursor>
-                <javafx.scene.Cursor fx:constant="HAND"/>
-            </cursor>
-        </Button>
+                <!-- Botón Registrar -->
+                <Button fx:id="registerButton"
+                        text="✓ Registrar Administrador"
+                        onAction="#handleRegister"
+                        style="-fx-background: linear-gradient(180deg, #3498db 0%, #2980b9 100%); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 14 40 14 40; -fx-cursor: hand; -fx-background-radius: 6; -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.4), 10, 0.3, 0, 4);">
+                    <cursor>
+                        <javafx.scene.Cursor fx:constant="HAND"/>
+                    </cursor>
+                    <HBox.margin>
+                        <Insets right="10"/>
+                    </HBox.margin>
+                </Button>
 
-        <Button fx:id="cancelButton"
-                text="Salir"
-                onAction="#handleCancel"
-                style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
-            <cursor>
-                <javafx.scene.Cursor fx:constant="HAND"/>
-            </cursor>
-        </Button>
-    </HBox>
+                <!-- Botón Cancelar -->
+                <Button fx:id="cancelButton"
+                        text="✕ Salir"
+                        onAction="#handleCancel"
+                        style="-fx-background-color: #ecf0f1; -fx-text-fill: #e74c3c; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 14 40 14 40; -fx-cursor: hand; -fx-background-radius: 6; -fx-border-color: #e74c3c; -fx-border-width: 2;">
+                    <cursor>
+                        <javafx.scene.Cursor fx:constant="HAND"/>
+                    </cursor>
+                    <HBox.margin>
+                        <Insets left="10"/>
+                    </HBox.margin>
+                </Button>
+            </HBox>
 
-    <Label text="Este formulario solo aparece la primera vez que inicia el sistema"
-           style="-fx-font-size: 11px; -fx-text-fill: #999999; -fx-font-style: italic;"
-           wrapText="true">
-        <padding>
-            <Insets top="20"/>
-        </padding>
-    </Label>
-
-</VBox>
+            <!-- Nota de Información -->
+            <Label text="ℹ Esta es la única vez que verá este formulario. Registre cuidadosamente los datos del administrador."
+                   style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"
+                   wrapText="true"
+                   alignment="CENTER">
+                <padding>
+                    <Insets top="20"/>
+                </padding>
+            </Label>
+        </VBox>
+    </VBox>
+</StackPane>

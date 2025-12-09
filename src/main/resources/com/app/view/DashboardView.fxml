@@ -168,7 +168,7 @@
                      <HBox alignment="CENTER_LEFT" spacing="15">
                         <Label text="🔄" styleClass="admin-card-icon" />
                         <VBox spacing="5">
-                           <Label text="Última Sincronización" styleClass="card-title" />
+                           <Label text="Última Sincronización" styleClass="card-title" fx:id="ultima_sincro" />
                            <Label fx:id="lblLastSync" text="Sin sincronizar" styleClass="admin-card-value" style="-fx-font-size: 16px;" />
                         </VBox>
                      </HBox>
@@ -194,7 +194,7 @@
                      <HBox alignment="CENTER_LEFT" spacing="15">
                         <Label text="⚙️" styleClass="admin-card-icon" />
                         <VBox spacing="5">
-                           <Label text="Configuración" styleClass="card-title" />
+                           <Label text="Configuración" styleClass="card-title" fx:id="configuracion" />
                            <Label fx:id="lblConfigStatus" text="Configurado" styleClass="admin-card-value" style="-fx-font-size: 16px;" />
                         </VBox>
                      </HBox>
@@ -218,7 +218,7 @@
          <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="0" styleClass="action-card"
             onMouseClicked="#handleUsuariosClick" style="-fx-cursor: hand;">
                      <Label text="👤" style="-fx-font-size: 32px;" />
-                     <Label text="Nuevo Usuario" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                     <Label text="Nuevo Usuario" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" fx:id="nuevo_usuario" />
                   </VBox>
 
          <VBox spacing="8" alignment="CENTER" GridPane.columnIndex="1" styleClass="action-card"

@@ -100,17 +100,29 @@ public class LanguageService {
         es.put("config.dos", "DOS (Sistema Operativo)");
         
         // Dashboard
+        es.put("dashboard.panelTitle", "Panel de Control");
+        es.put("dashboard.appName", "Sistema de Gestión de Inventario");
+        es.put("dashboard.adminSection", "Sección Administrativa");
+        es.put("dashboard.systemSection", "Información del Sistema");
+        es.put("dashboard.StatusSection", "Estado del Sistema");
+        es.put("dashboard.dashboard", "Dashboard");
+        es.put("dashboard.Usuarios", "Usuarios");
+        es.put("dashboard.roles", "Roles");
+        es.put("dashboard.sync", "Sincronizar");
+        es.put("dashboard.configuracion", "Configuración");
+        es.put("dashboard.seguridad", "Seguridad");
+        es.put("dashboard.logout", "Cerrar Sesión");
         es.put("dashboard.titulo", "Panel de Control");
         es.put("dashboard.bienvenido", "Bienvenido");
         es.put("dashboard.rol", "Rol");
-        es.put("dashboard.usuarios_totales", "Usuarios Totales");
-        es.put("dashboard.roles_totales", "Roles Totales");
+        es.put("dashboard.TotalUsers", "Usuarios Totales");
+        es.put("dashboard.TotalRoles", "Roles Totales");
         es.put("dashboard.eventos_recientes", "Eventos Recientes");
         es.put("dashboard.sincronizacion", "Sincronización en la Nube");
         es.put("dashboard.iniciar_sincro", "Iniciar Sincronización");
         es.put("dashboard.sincronizando", "Sincronizando...");
         es.put("dashboard.ultima_sincro", "Última Sincronización");
-        es.put("dashboard.estado", "Estado");
+        es.put("dashboard.ConnectionText", "Estado");
         es.put("dashboard.gestion_usuarios", "Gestión de Usuarios");
         es.put("dashboard.gestion_roles", "Gestión de Roles");
         es.put("dashboard.gestion_seguridad", "Gestión de Seguridad");
@@ -278,11 +290,23 @@ public class LanguageService {
         en.put("config.dos", "DOS (Operating System)");
         
         // Dashboard
+        en.put("dashboard.panelTitle", "Control Panel");
+        en.put("dashboard.appName", "Inventory Management System");
+        en.put("dashboard.adminSection", "Administrative Section");
+        en.put("dashboard.systemSection", "System Information");
+        en.put("dashboard.StatusSection", "System Status");
+        en.put("dashboard.dashboard", "Dashboard");
+        en.put("dashboard.Usuarios", "Users");
+        en.put("dashboard.roles", "Roles");
+        en.put("dashboard.sync", "Sync");
+        en.put("dashboard.configuracion", "Settings");
+        en.put("dashboard.seguridad", "Security");
+        en.put("dashboard.logout", "Logout");
         en.put("dashboard.titulo", "Control Panel");
         en.put("dashboard.bienvenido", "Welcome");
         en.put("dashboard.rol", "Role");
-        en.put("dashboard.usuarios_totales", "Total Users");
-        en.put("dashboard.roles_totales", "Total Roles");
+        en.put("dashboard.TotalUsers", "Total Users");
+        en.put("dashboard.TotalRoles", "Total Roles");
         en.put("dashboard.eventos_recientes", "Recent Events");
         en.put("dashboard.sincronizacion", "Cloud Synchronization");
         en.put("dashboard.iniciar_sincro", "Start Synchronization");
@@ -293,8 +317,9 @@ public class LanguageService {
         en.put("dashboard.gestion_roles", "Role Management");
         en.put("dashboard.gestion_seguridad", "Security Management");
         en.put("dashboard.acceso_denegado", "Access denied to this feature");
+        en.put("dashboard.nuevo_usuario", "User new");
         
-        // Users
+               // Users
         en.put("usuarios.titulo", "User Management");
         en.put("usuarios.nombre", "Name");
         en.put("usuarios.usuario", "Username");
@@ -456,11 +481,23 @@ public class LanguageService {
         pt.put("config.dos", "DOS (Sistema Operacional)");
         
         // Dashboard
+        pt.put("dashboard.panelTitle", "Painel de Controle");
+        pt.put("dashboard.appName", "Sistema de Gestão de Inventário");
+        pt.put("dashboard.adminSection", "Seção Administrativa");
+        pt.put("dashboard.systemSection", "Informações do Sistema");
+        pt.put("dashboard.StatusSection", "Status do Sistema");
+        pt.put("dashboard.dashboard", "Painel");
+        pt.put("dashboard.usuarios", "Usuários");
+        pt.put("dashboard.roles", "Funções");
+        pt.put("dashboard.sync", "Sincronizar");
+        pt.put("dashboard.configuracion", "Configurações");
+        pt.put("dashboard.seguridad", "Segurança");
+        pt.put("dashboard.logout", "Sair");
         pt.put("dashboard.titulo", "Painel de Controle");
         pt.put("dashboard.bienvenido", "Bem-vindo");
         pt.put("dashboard.rol", "Função");
-        pt.put("dashboard.usuarios_totales", "Total de Usuários");
-        pt.put("dashboard.roles_totales", "Total de Funções");
+        pt.put("dashboard.TotalUsers", "Total de Usuários");
+        pt.put("dashboard.TotalRoles", "Total de Funções");
         pt.put("dashboard.eventos_recientes", "Eventos Recentes");
         pt.put("dashboard.sincronizacion", "Sincronização em Nuvem");
         pt.put("dashboard.iniciar_sincro", "Iniciar Sincronização");
@@ -599,7 +636,7 @@ public class LanguageService {
         fr.put("btn.rechazar", "Rejeter");
         fr.put("btn.cerrar", "Fermer");
         
-        // Messages
+                // Messages
         fr.put("msg.exito", "Opération complétée avec succès");
         fr.put("msg.error", "Erreur");
         fr.put("msg.advertencia", "Avertissement");
@@ -634,11 +671,23 @@ public class LanguageService {
         fr.put("config.dos", "DOS (Système d'Exploitation)");
         
         // Tableau de bord
+        fr.put("dashboard.panelTitle", "Panneau de Contrôle");
+        fr.put("dashboard.appName", "Système de Gestion des Inventaires");
+        fr.put("dashboard.adminSection", "Section Administrative");
+        fr.put("dashboard.systemSection", "Informations Système");
+        fr.put("dashboard.StatusSection", "Statut du Système");
+        fr.put("dashboard.dashboard", "Tableau de bord");
+        fr.put("dashboard.usuarios", "Utilisateurs");
+        fr.put("dashboard.roles", "Rôles");
+        fr.put("dashboard.sync", "Synchroniser");
+        fr.put("dashboard.configuracion", "Paramètres");
+        fr.put("dashboard.seguridad", "Sécurité");
+        fr.put("dashboard.logout", "Déconnexion");
         fr.put("dashboard.titulo", "Panneau de Contrôle");
         fr.put("dashboard.bienvenido", "Bienvenue");
         fr.put("dashboard.rol", "Rôle");
-        fr.put("dashboard.usuarios_totales", "Nombre Total d'Utilisateurs");
-        fr.put("dashboard.roles_totales", "Nombre Total de Rôles");
+        fr.put("dashboard.TotalUsers", "Nombre Total d'Utilisateurs");
+        fr.put("dashboard.TotalRoles", "Nombre Total de Rôles");
         fr.put("dashboard.eventos_recientes", "Événements Récents");
         fr.put("dashboard.sincronizacion", "Synchronisation Cloud");
         fr.put("dashboard.iniciar_sincro", "Démarrer la Synchronisation");

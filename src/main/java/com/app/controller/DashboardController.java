@@ -29,7 +29,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.app.util.I18nUtil;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -48,6 +48,11 @@ public class DashboardController extends BaseController implements Initializable
     @FXML private Label lblLastLogin;
     @FXML private Label lblCurrentDate;
     @FXML private Label lblCurrentTime;
+    @FXML private Label lblPanelTitle;
+    @FXML private Label lblAppName;
+    @FXML private Label lblAdminSection;
+    @FXML private Label lblSystemSection;
+    @FXML private Label lblStatusSection;
 
     @FXML private Label lblTotalUsers;
     @FXML private Label lblTotalRoles;
@@ -506,6 +511,24 @@ public class DashboardController extends BaseController implements Initializable
 
     private void updateUITexts() {
         LanguageService langService = LanguageService.getInstance();
+
+        // Labels principales y secciones
+        I18nUtil.setLabelText(lblPanelTitle, "dashboard.panelTitle");
+        I18nUtil.setLabelText(lblAppName, "dashboard.appName");
+        I18nUtil.setLabelText(lblAdminSection, "dashboard.adminSection");
+        I18nUtil.setLabelText(lblSystemSection, "dashboard.systemSection");
+        I18nUtil.setLabelText(lblStatusSection, "dashboard.statusSection");
+
+        // Botones principales
+        I18nUtil.setButtonText(btnDashboard, "dashboard.dashboard");
+        I18nUtil.setButtonText(btnUsuarios, "dashboard.usuarios");
+        I18nUtil.setButtonText(btnRoles, "dashboard.roles");
+        I18nUtil.setButtonText(btnSync, "dashboard.sync");
+        I18nUtil.setButtonText(btnConfiguracion, "dashboard.configuracion");
+        I18nUtil.setButtonText(btnSeguridad, "dashboard.seguridad");
+        I18nUtil.setButtonText(btnLogout, "dashboard.logout");
+
+        // Labels dinámicos
         Usuario currentUser = sessionManager.getCurrentUser();
         Rol currentRole = sessionManager.getCurrentRole();
 
@@ -526,14 +549,6 @@ public class DashboardController extends BaseController implements Initializable
         lblLastLogin.setText(langService.get("dashboard.ultima_sincro") + ": " +
             (currentUser != null && currentUser.getUltimoAcceso() != null ?
                 currentUser.getUltimoAcceso().format(loginFormatter) : "N/A"));
-
-        lblTotalUsers.setText(String.valueOf(lblTotalUsers.getText().isEmpty() ? "0" : lblTotalUsers.getText()));
-        lblTotalRoles.setText(String.valueOf(lblTotalRoles.getText().isEmpty() ? "0" : lblTotalRoles.getText()));
-
-        lblConnectionText.setText(lblConnectionText.getText());
-        lblConnectionDetails.setText(lblConnectionDetails.getText());
-        lblLastSync.setText(lblLastSync.getText());
-        lblSessionDuration.setText(lblSessionDuration.getText());
-        lblConfigStatus.setText(lblConfigStatus.getText());
     }
+    
 }

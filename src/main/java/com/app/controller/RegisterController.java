@@ -4,6 +4,7 @@ import com.app.dao.RolDAO;
 import com.app.model.Rol;
 import com.app.service.UsuarioService;
 import com.app.service.LanguageService;
+import com.app.util.I18nUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +20,12 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
+
+    @FXML
+    private Label lblTitle;
+
+    @FXML
+    private Label lblSubtitle;
 
     @FXML
     private TextField usernameField;
@@ -48,6 +55,9 @@ public class RegisterController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.usuarioService = UsuarioService.getInstance();
         this.rolDAO = new RolDAO();
+
+        updateUITexts();
+        setupLanguageListener();
         setupValidation();
         setupLanguageListener();
 
@@ -183,11 +193,15 @@ public class RegisterController implements Initializable {
     }
 
     private void setupLanguageListener() {
-        LanguageService langService = LanguageService.getInstance();
-        langService.addLanguageChangeListener(newLanguage -> {
-            Platform.runLater(() -> {
-                // Redibujar la UI si es necesario
-            });
+        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
         });
+    }
+
+    private void updateUITexts() {
+        I18nUtil.setLabelText(lblTitle, "registro.titulo");
+        I18nUtil.setLabelText(lblSubtitle, "registro.bienvenido");
+        I18nUtil.setButtonText(registerButton, "btn.registrar");
+        I18nUtil.setButtonText(cancelButton, "btn.cancelar");
     }
 }

@@ -5,6 +5,7 @@ import com.app.service.ConfiguracionService;
 import com.app.service.SeguridadService;
 import com.app.service.ThemeService;
 import com.app.service.LanguageService;
+import com.app.util.I18nUtil;
 import com.app.security.SessionManager;  // Agregado para verificar permisos
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +31,8 @@ public class ConfiguracionController implements Initializable {
     
     private static final Logger logger = LoggerFactory.getLogger(ConfiguracionController.class);  // Logger SLF4J
 
+    @FXML private Label lblPanelTitle;
+    @FXML private Label lblPanelSubtitle;
     @FXML private RadioButton rbTemaClaro;
     @FXML private RadioButton rbTemaOscuro;
     @FXML private ComboBox<String> cmbIdioma;
@@ -67,8 +70,10 @@ public class ConfiguracionController implements Initializable {
         }
 
         try {
+            updateUITexts();
             initializeControls();
             cargarConfiguracion();
+            setupLanguageListener();
             
             // Registrar la escena actual con ThemeService cuando se cargue
             javafx.application.Platform.runLater(() -> {
@@ -383,5 +388,16 @@ public class ConfiguracionController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
+        });
+    }
+
+    private void updateUITexts() {
+        I18nUtil.setLabelText(lblPanelTitle, "configuracion.titulo");
+        I18nUtil.setLabelText(lblPanelSubtitle, "configuracion.subtitulo");
     }
 }

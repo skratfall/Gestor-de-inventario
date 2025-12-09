@@ -19,8 +19,8 @@
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
-            <Label text="Gestión de Roles" styleClass="module-title"/>
-            <Label text="Administre los roles y niveles de acceso del sistema" style="-fx-text-fill: #ecf0f1;"/>
+            <Label fx:id="lblPanelTitle" text="Gestión de Roles" styleClass="module-title"/>
+            <Label fx:id="lblPanelSubtitle" text="Administre los roles y niveles de acceso del sistema" style="-fx-text-fill: #ecf0f1;"/>
         </VBox>
     </top>
 
@@ -38,8 +38,8 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <TextField fx:id="txtBuscar" promptText="Buscar rol..." styleClass="search-field"
                           prefWidth="200"/>
-                <Button text="🔍 Buscar" onAction="#handleBuscar" styleClass="button-info"/>
-                <Button text="🔄 Refrescar" onAction="#handleRefrescar" styleClass="button-info"/>
+                <Button fx:id="btnBuscar" text="🔍 Buscar" onAction="#handleBuscar" styleClass="button-info"/>
+                <Button fx:id="btnRefrescar" text="🔄 Refrescar" onAction="#handleRefrescar" styleClass="button-info"/>
             </HBox>
 
             <SplitPane dividerPositions="0.6" VBox.vgrow="ALWAYS">

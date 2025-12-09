@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.model.Rol;
 import com.app.dao.RolDAO;
 import com.app.service.LanguageService;
+import com.app.util.I18nUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +26,8 @@ import java.util.ResourceBundle;
 
 public class RolesController implements Initializable {
 
+    @FXML private Label lblPanelTitle;
+    @FXML private Label lblPanelSubtitle;
     @FXML private TableView<Rol> tableRoles;
     @FXML private TableColumn<Rol, String> colId;
     @FXML private TableColumn<Rol, String> colNombre;
@@ -36,6 +39,8 @@ public class RolesController implements Initializable {
     @FXML private TextArea txtDescripcion;
     @FXML private ComboBox<String> cmbNivelAcceso;
     @FXML private Label lblTotalRoles;
+    @FXML private Button btnBuscar;
+    @FXML private Button btnRefrescar;
     
     @FXML private VBox formPane;
     @FXML private Button btnGuardar;
@@ -52,11 +57,38 @@ public class RolesController implements Initializable {
         rolDAO = new RolDAO();
         rolesData = FXCollections.observableArrayList();
         
+        updateUITexts();
         setupTableColumns();
         setupNivelesAcceso();
         cargarRoles();
         ocultarFormulario();
         setupLanguageListener();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
+        });
+    }
+
+    private void updateUITexts() {
+        I18nUtil.setLabelText(lblPanelTitle, "roles.titulo");
+        I18nUtil.setLabelText(lblPanelSubtitle, "roles.subtitulo");
+        I18nUtil.setButtonText(btnBuscar, "btn.buscar");
+        I18nUtil.setButtonText(btnRefrescar, "btn.refrescar");
+        I18nUtil.setPromptText(txtBuscar, "roles.buscar_rol");
+        
+        colId.setText(I18nUtil.get("roles.id"));
+        colNombre.setText(I18nUtil.get("roles.nombre"));
+        colDescripcion.setText(I18nUtil.get("roles.descripcion"));
+        colNivelAcceso.setText(I18nUtil.get("roles.nivel_acceso"));
+        
+        updateRolesLabel();
+    }
+
+    private void updateRolesLabel() {
+        long total = rolesData.stream().count();
+        lblTotalRoles.setText(I18nUtil.get("roles.total") + ": " + total);
     }
 
     private void setupTableColumns() {
@@ -292,14 +324,5 @@ public class RolesController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-    }
-
-    private void setupLanguageListener() {
-        LanguageService langService = LanguageService.getInstance();
-        langService.addLanguageChangeListener(newLanguage -> {
-            Platform.runLater(() -> {
-                cargarRoles();
-            });
-        });
     }
 }

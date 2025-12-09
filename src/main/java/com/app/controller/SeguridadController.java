@@ -5,6 +5,7 @@ import com.app.model.Usuario;
 import com.app.service.SeguridadService;
 import com.app.service.UsuarioService;
 import com.app.service.LanguageService;
+import com.app.util.I18nUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -43,6 +44,8 @@ public class SeguridadController implements Initializable {
 
     private static final Logger logger = LoggerFactory.getLogger(SeguridadController.class);  // Logger SLF4J
 
+    @FXML private Label lblPanelTitle;
+    @FXML private Label lblPanelSubtitle;
     @FXML private CheckBox chk2FA;
     @FXML private CheckBox chkBloqueoSesion;
     @FXML private ComboBox<String> cmbTiempoBloqueo;
@@ -73,12 +76,36 @@ public class SeguridadController implements Initializable {
         eventosData = FXCollections.observableArrayList();
         dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
+        updateUITexts();
         configurarControles();
         configurarTablaEventos();
         cargarConfiguracion();
         cargarEventos();
         setupLanguageListener();
         logger.info("SeguridadController inicializado");
+    }
+
+    private void setupLanguageListener() {
+        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
+        });
+    }
+
+    private void updateUITexts() {
+        I18nUtil.setLabelText(lblPanelTitle, "seguridad.titulo");
+        I18nUtil.setLabelText(lblPanelSubtitle, "seguridad.subtitulo");
+        
+        colFecha.setText(I18nUtil.get("seguridad.fecha"));
+        colTipo.setText(I18nUtil.get("seguridad.tipo_evento"));
+        colUsuario.setText(I18nUtil.get("usuarios.usuario"));
+        colDescripcion.setText(I18nUtil.get("seguridad.descripcion"));
+        
+        updateEventosLabel();
+    }
+
+    private void updateEventosLabel() {
+        long total = eventosData.stream().count();
+        lblTotalEventos.setText(I18nUtil.get("seguridad.total_eventos") + ": " + total);
     }
 
     private void configurarControles() {
@@ -427,14 +454,5 @@ public class SeguridadController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-    }
-
-    private void setupLanguageListener() {
-        LanguageService langService = LanguageService.getInstance();
-        langService.addLanguageChangeListener(newLanguage -> {
-            Platform.runLater(() -> {
-                cargarEventos();
-            });
-        });
     }
 }

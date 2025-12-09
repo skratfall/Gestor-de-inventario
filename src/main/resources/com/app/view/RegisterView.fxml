@@ -20,13 +20,13 @@
         <Insets top="30" right="40" bottom="30" left="40"/>
     </padding>
 
-    <Label text="Registro de Administrador" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;">
+    <Label fx:id="lblTitle" text="Registro de Administrador" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;">
         <font>
             <Font name="System Bold" size="24.0"/>
         </font>
     </Label>
 
-    <Label text="Bienvenido al Sistema de Gestión de Inventario"
+    <Label fx:id="lblSubtitle" text="Bienvenido al Sistema de Gestión de Inventario"
            style="-fx-font-size: 14px; -fx-text-fill: #666666;"
            wrapText="true">
         <padding>

@@ -19,8 +19,8 @@
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
-            <Label text="Configuración del Sistema" styleClass="module-title"/>
-            <Label text="Personalice los parámetros y preferencias del sistema" style="-fx-text-fill: #ecf0f1;"/>
+            <Label fx:id="lblPanelTitle" text="Configuración del Sistema" styleClass="module-title"/>
+            <Label fx:id="lblPanelSubtitle" text="Personalice los parámetros y preferencias del sistema" style="-fx-text-fill: #ecf0f1;"/>
         </VBox>
     </top>
 

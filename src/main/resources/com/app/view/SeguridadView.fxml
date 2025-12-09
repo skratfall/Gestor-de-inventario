@@ -19,8 +19,8 @@
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
-            <Label text="Configuración de Seguridad" styleClass="module-title"/>
-            <Label text="Configure las políticas de seguridad y monitoree eventos del sistema" style="-fx-text-fill: #ecf0f1;"/>
+            <Label fx:id="lblPanelTitle" text="Configuración de Seguridad" styleClass="module-title"/>
+            <Label fx:id="lblPanelSubtitle" text="Configure las políticas de seguridad y monitoree eventos del sistema" style="-fx-text-fill: #ecf0f1;"/>
         </VBox>
     </top>
 

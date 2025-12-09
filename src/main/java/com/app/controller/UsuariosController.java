@@ -4,6 +4,7 @@ import com.app.model.Rol;
 import com.app.model.Usuario;
 import com.app.service.UsuarioService;
 import com.app.service.LanguageService;
+import com.app.util.I18nUtil;
 import com.app.dao.RolDAO;
 import com.app.security.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
@@ -30,6 +31,8 @@ import java.util.ResourceBundle;
 
 public class UsuariosController implements Initializable {
 
+    @FXML private Label lblPanelTitle;
+    @FXML private Label lblPanelSubtitle;
     @FXML private TableView<Usuario> tableUsuarios;
     @FXML private TableColumn<Usuario, String> colUsername;
     @FXML private TableColumn<Usuario, String> colNombreCompleto;
@@ -44,6 +47,8 @@ public class UsuariosController implements Initializable {
     @FXML private Button btnEditarUsuario;
     @FXML private Button btnEliminarUsuario;
     @FXML private Button btnResetPassword;
+    @FXML private Button btnBuscar;
+    @FXML private Button btnRefrescar;
 
     private UsuarioService usuarioService;
     private RolDAO rolDAO;
@@ -59,10 +64,45 @@ public class UsuariosController implements Initializable {
         usuariosData = FXCollections.observableArrayList();
         dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+        updateUITexts();
         setupTableColumns();
         setupPermissions();
         loadUsuarios();
         setupLanguageListener();
+    }
+
+    private void setupLanguageListener() {
+        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
+            Platform.runLater(this::updateUITexts);
+        });
+    }
+
+    private void updateUITexts() {
+        I18nUtil.setLabelText(lblPanelTitle, "usuarios.titulo");
+        I18nUtil.setLabelText(lblPanelSubtitle, "usuarios.subtitulo");
+        I18nUtil.setButtonText(btnBackToDashboard, "btn.volver");
+        I18nUtil.setButtonText(btnNuevoUsuario, "btn.nuevo");
+        I18nUtil.setButtonText(btnEditarUsuario, "btn.editar");
+        I18nUtil.setButtonText(btnEliminarUsuario, "btn.eliminar");
+        I18nUtil.setButtonText(btnResetPassword, "usuarios.reset_password");
+        I18nUtil.setButtonText(btnBuscar, "btn.buscar");
+        I18nUtil.setButtonText(btnRefrescar, "btn.refrescar");
+        I18nUtil.setPromptText(txtBuscar, "usuarios.buscar_usuario");
+        
+        // Actualizar columnas
+        colUsername.setText(I18nUtil.get("usuarios.usuario"));
+        colNombreCompleto.setText(I18nUtil.get("usuarios.nombre_completo"));
+        colEmail.setText(I18nUtil.get("usuarios.email"));
+        colRol.setText(I18nUtil.get("usuarios.rol"));
+        colActivo.setText(I18nUtil.get("usuarios.estado"));
+        colUltimoAcceso.setText(I18nUtil.get("usuarios.ultimo_acceso"));
+        
+        updateUsuariosLabel();
+    }
+
+    private void updateUsuariosLabel() {
+        long total = usuariosData.stream().count();
+        lblTotalUsuarios.setText(I18nUtil.get("usuarios.total") + ": " + total);
     }
 
     private void setupTableColumns() {
@@ -417,14 +457,5 @@ public class UsuariosController implements Initializable {
             e.printStackTrace();
             // Manejo de errores, por ejemplo, mostrar un diálogo de error
         }
-    }
-
-    private void setupLanguageListener() {
-        LanguageService langService = LanguageService.getInstance();
-        langService.addLanguageChangeListener(newLanguage -> {
-            Platform.runLater(() -> {
-                loadUsuarios();
-            });
-        });
     }
 }

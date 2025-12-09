@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.model.Usuario;
 import com.app.service.LanguageService;
+import com.app.service.SeguridadService;
 import com.app.util.I18nUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -53,10 +54,17 @@ public class LoginController implements Initializable {
 
     @FXML
     private javafx.scene.control.Label lblCancelBtn;
+    
+    @FXML
+    private javafx.scene.control.Label lblIntentosRestantes;
+    
+    private SeguridadService seguridadService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("🔍 DEBUG: LoginController.initialize() called");
+        
+        this.seguridadService = SeguridadService.getInstance();
         
         // Inicializar textos con traducciones
         updateUITexts();
@@ -67,6 +75,11 @@ public class LoginController implements Initializable {
         // Registrar listener para cambios de idioma
         LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
             Platform.runLater(this::updateUITexts);
+        });
+        
+        // Listener para mostrar intentos restantes
+        usernameField.textProperty().addListener((obs, oldVal, newVal) -> {
+            actualizarIntentosRestantes();
         });
     }
 
@@ -84,6 +97,7 @@ public class LoginController implements Initializable {
         // Add listeners for form validation
         usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
             validateForm();
+            actualizarIntentosRestantes();
         });
 
         passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -99,6 +113,43 @@ public class LoginController implements Initializable {
                          !passwordField.getText().trim().isEmpty();
         loginButton.setDisable(!isValid);
     }
+    
+    private void actualizarIntentosRestantes() {
+        try {
+            String username = usernameField.getText().trim();
+            if (username.isEmpty()) {
+                if (lblIntentosRestantes != null) {
+                    lblIntentosRestantes.setText("");
+                }
+                return;
+            }
+            
+            // Verificar si usuario está bloqueado
+            if (seguridadService.estaUsuarioBloqueado(username)) {
+                if (lblIntentosRestantes != null) {
+                    lblIntentosRestantes.setText("❌ Usuario bloqueado por exceso de intentos");
+                    lblIntentosRestantes.setStyle("-fx-text-fill: #d32f2f;");
+                }
+                return;
+            }
+            
+            // Mostrar intentos restantes
+            int intentosRestantes = seguridadService.obtenerIntentosRestantes(username);
+            int maxIntentos = seguridadService.getMaxLoginAttempts(); // Leer dinámicamente
+            
+            if (intentosRestantes > 0 && intentosRestantes < maxIntentos) {
+                if (lblIntentosRestantes != null) {
+                    lblIntentosRestantes.setText("⚠️ Intentos restantes: " + intentosRestantes + "/" + maxIntentos);
+                    lblIntentosRestantes.setStyle("-fx-text-fill: #f57c00;");
+                }
+            } else if (lblIntentosRestantes != null) {
+                lblIntentosRestantes.setText("");
+            }
+        } catch (Exception e) {
+            System.err.println("Error actualizando intentos: " + e.getMessage());
+            // No lanzar excepción, solo registrar
+        }
+    }
 
     @FXML
     private void handleLogin(ActionEvent event) {
@@ -110,13 +161,43 @@ public class LoginController implements Initializable {
             return;
         }
 
+        // Verificar si usuario está bloqueado ANTES de intentar login
+        if (seguridadService.estaUsuarioBloqueado(username)) {
+            showAlert("Cuenta Bloqueada", 
+                "❌ Esta cuenta ha sido bloqueada por exceso de intentos fallidos.\n\n" +
+                "Por favor, contacte al administrador para desbloquearla.");
+            passwordField.clear();
+            return;
+        }
+
         // TODO: Implement actual authentication logic here
         // For now, we'll simulate a successful login
         if (authenticateUser(username, password)) {
             navigateToDashboard();
         } else {
-            showAlert("Login Failed", "Invalid username or password.");
+            // Login fallido - mostrar intentos restantes y máximo
+            int intentosRestantes = seguridadService.obtenerIntentosRestantes(username);
+            int maxIntentos = seguridadService.getMaxLoginAttempts();
+            
+            if (intentosRestantes <= 0) {
+                showAlert("Cuenta Bloqueada", 
+                    "❌ Se han agotado todos los intentos permitidos (" + maxIntentos + ").\n\n" +
+                    "Su cuenta ha sido bloqueada por seguridad.\n" +
+                    "Contacte al administrador para desbloquearla.");
+            } else if (intentosRestantes == 1) {
+                showAlert("⚠️ ÚLTIMO INTENTO", 
+                    "❌ Credenciales incorrectas.\n\n" +
+                    "⚠️ Tiene 1 ÚLTIMO intento restante antes de que su cuenta se bloquee.\n" +
+                    "Por favor, verifique su usuario y contraseña.\n\n" +
+                    "(Máximo de intentos configurado: " + maxIntentos + ")");
+            } else {
+                showAlert("Login Fallido", 
+                    "❌ Usuario o contraseña incorrectos.\n\n" +
+                    "Intentos restantes: " + intentosRestantes + "/" + maxIntentos);
+            }
+            
             passwordField.clear();
+            actualizarIntentosRestantes();
             passwordField.requestFocus();
         }
     }

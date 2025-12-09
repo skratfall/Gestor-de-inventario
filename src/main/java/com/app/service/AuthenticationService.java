@@ -16,11 +16,13 @@ public class AuthenticationService {
     private final UsuarioDAOImpl usuarioDAO;
     private final RolDAO rolDAO;
     private final SessionManager sessionManager;
+    private final SeguridadService seguridadService;
 
     private AuthenticationService() {
         this.usuarioDAO = new UsuarioDAOImpl();
         this.rolDAO = new RolDAO();
         this.sessionManager = SessionManager.getInstance();
+        this.seguridadService = SeguridadService.getInstance();
     }
 
     public static AuthenticationService getInstance() {
@@ -41,24 +43,40 @@ public class AuthenticationService {
         }
 
         try {
-            Optional<Usuario> usuarioOpt = usuarioDAO.findByUsername(username.trim());
+            String usernameTrimmed = username.trim();
+            
+            // VALIDACIÓN 1: Verificar si el usuario está bloqueado
+            if (seguridadService.estaUsuarioBloqueado(usernameTrimmed)) {
+                System.err.println("❌ Usuario bloqueado por exceso de intentos: " + usernameTrimmed);
+                return false;
+            }
+            
+            Optional<Usuario> usuarioOpt = usuarioDAO.findByUsername(usernameTrimmed);
 
             if (!usuarioOpt.isPresent()) {
+                // Usuario no existe - registrar intento fallido
+                seguridadService.registrarIntentoFallido(usernameTrimmed);
                 return false;
             }
 
             Usuario usuario = usuarioOpt.get();
 
             if (!usuario.isActivo()) {
+                // Usuario inactivo - registrar intento fallido
+                seguridadService.registrarIntentoFallido(usernameTrimmed);
                 return false;
             }
 
             if (!PasswordEncoder.verifyPassword(password, usuario.getPasswordHash())) {
+                // Contraseña incorrecta - registrar intento fallido
+                seguridadService.registrarIntentoFallido(usernameTrimmed);
                 return false;
             }
 
             Optional<Rol> rolOpt = rolDAO.findById(usuario.getRolId());
             if (!rolOpt.isPresent()) {
+                // Rol no existe - registrar intento fallido
+                seguridadService.registrarIntentoFallido(usernameTrimmed);
                 return false;
             }
 
@@ -66,6 +84,13 @@ public class AuthenticationService {
 
             usuario.setUltimoAcceso(LocalDateTime.now());
             usuarioDAO.updateLastAccess(usuario.getId());
+
+            // ✅ LOGIN EXITOSO - Resetear intentos fallidos
+            seguridadService.restablecerIntentosUsuario(usernameTrimmed);
+            
+            // Registrar login exitoso en auditoría
+            seguridadService.registrarEvento("LOGIN_EXITOSO", 
+                "Login exitoso para usuario: " + usernameTrimmed);
 
             sessionManager.startSession(usuario, rol);
 

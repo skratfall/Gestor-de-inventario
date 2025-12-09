@@ -64,8 +64,8 @@ public class RegisterController implements Initializable {
         javafx.application.Platform.runLater(() -> {
             if (registerButton != null && registerButton.getScene() != null) {
                 Stage stage = (Stage) registerButton.getScene().getWindow();
-                stage.setWidth(500);
-                stage.setHeight(600);
+                stage.setWidth(900);
+                stage.setHeight(800);
                 stage.centerOnScreen();
             }
         });

@@ -67,7 +67,8 @@
                      </children>
                   </VBox>
                   
-                  <!-- Login Button -->
+                  <!-- Intentos Restantes Label -->
+                  <Label fx:id="lblIntentosRestantes" text="" style="-fx-font-size: 12px; -fx-text-fill: #f57c00;" />
                   <VBox spacing="15.0" alignment="CENTER">
                      <children>
                         <Button fx:id="loginButton" onAction="#handleLogin" prefWidth="350.0" prefHeight="50.0" styleClass="login-btn">

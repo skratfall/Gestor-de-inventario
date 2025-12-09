@@ -119,6 +119,19 @@ public class SeguridadController implements Initializable {
         cmbIntentosMaximos.setItems(FXCollections.observableArrayList(
             "3 intentos", "5 intentos", "7 intentos", "10 intentos"
         ));
+        
+        // Agregar listener para cambios en tiempo real del ComboBox de intentos
+        cmbIntentosMaximos.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.isEmpty()) {
+                try {
+                    int intentos = Integer.parseInt(newVal.split(" ")[0]);
+                    seguridadService.setMaxLoginAttempts(intentos);
+                    logger.info("✓ Intentos máximos actualizados a: " + intentos);
+                } catch (Exception e) {
+                    logger.error("Error al actualizar intentos máximos", e);
+                }
+            }
+        });
 
         // Configurar ComboBox de tipo de evento
         cmbTipoEvento.setItems(FXCollections.observableArrayList(
@@ -249,14 +262,14 @@ public class SeguridadController implements Initializable {
         try {
             seguridadService.set2FAEnabled(chk2FA.isSelected());
             seguridadService.setSessionTimeout(convertirTextoAMinutos(cmbTiempoBloqueo.getValue()));
-            seguridadService.setMaxLoginAttempts(
-                Integer.parseInt(cmbIntentosMaximos.getValue().split(" ")[0]));
+            // Nota: setMaxLoginAttempts se guarda automáticamente desde el listener del ComboBox
             seguridadService.setAuditAccess(chkAuditoriaAccesos.isSelected());
             seguridadService.setAuditRoles(chkAuditoriaRoles.isSelected());
             seguridadService.setAuditConfig(chkAuditoriaConfiguracion.isSelected());
 
             mostrarInfo("Configuración guardada", 
-                "Los cambios han sido guardados exitosamente");
+                "Los cambios han sido guardados exitosamente\n\n" +
+                "Máximo de intentos: " + seguridadService.getMaxLoginAttempts());
             cargarEventos();
             
         } catch (Exception e) {

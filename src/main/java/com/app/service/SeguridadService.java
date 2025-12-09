@@ -6,12 +6,14 @@ import com.app.model.Usuario;
 import com.app.security.SessionManager;
 import javafx.scene.control.Alert;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
 public class SeguridadService {
     private static SeguridadService instance;
-    private final EventoSeguridadDAO eventoDAO;
+    private EventoSeguridadDAO eventoDAO; // Cambiar de final a no-final
     private final Preferences preferences;
     private final SessionManager sessionManager;
 
@@ -24,7 +26,12 @@ public class SeguridadService {
     private static final String PREF_INACTIVITY_MONITORING_ENABLED = "inactivity.monitoring.enabled";
 
     private SeguridadService() {
-        this.eventoDAO = new EventoSeguridadDAO();
+        try {
+            this.eventoDAO = new EventoSeguridadDAO();
+        } catch (Exception e) {
+            System.err.println("⚠️ Advertencia: No se pudo inicializar EventoSeguridadDAO. Algunos eventos no se registrarán: " + e.getMessage());
+            this.eventoDAO = null; // Permitir inicialización sin BD
+        }
         this.preferences = Preferences.userNodeForPackage(SeguridadService.class);
         this.sessionManager = SessionManager.getInstance();
     }
@@ -70,6 +77,84 @@ public class SeguridadService {
     public int getMaxLoginAttempts() {
         return preferences.getInt(PREF_MAX_LOGIN_ATTEMPTS, 3); // 3 intentos por defecto
     }
+    
+    // Control de intentos fallidos por usuario
+    public void registrarIntentoFallido(String username) {
+        try {
+            String key = "login.attempts." + username;
+            int currentAttempts = preferences.getInt(key, 0);
+            preferences.putInt(key, currentAttempts + 1);
+            
+            // Registrar en auditoría
+            registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, 
+                "Intento de login fallido para usuario: " + username + 
+                " (Intento " + (currentAttempts + 1) + ")");
+                
+            // Si se alcanzó el límite, bloquear usuario
+            if (currentAttempts + 1 >= getMaxLoginAttempts()) {
+                bloquearUsuario(username);
+                registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, 
+                    "Usuario bloqueado por exceso de intentos fallidos: " + username);
+            }
+        } catch (Exception e) {
+            System.err.println("Error registrando intento fallido: " + e.getMessage());
+        }
+    }
+    
+    public void restablecerIntentosUsuario(String username) {
+        try {
+            String key = "login.attempts." + username;
+            preferences.remove(key);
+            desbloquearUsuarioTemp(username);
+        } catch (Exception e) {
+            System.err.println("Error restableciendo intentos: " + e.getMessage());
+        }
+    }
+    
+    public int obtenerIntentosRestantes(String username) {
+        try {
+            String key = "login.attempts." + username;
+            int currentAttempts = preferences.getInt(key, 0);
+            int maxAttempts = getMaxLoginAttempts();
+            return Math.max(0, maxAttempts - currentAttempts);
+        } catch (Exception e) {
+            return getMaxLoginAttempts();
+        }
+    }
+    
+    public boolean estaUsuarioBloqueado(String username) {
+        try {
+            String key = "blocked." + username;
+            return preferences.getBoolean(key, false);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    private void bloquearUsuario(String username) {
+        try {
+            String key = "blocked." + username;
+            preferences.putBoolean(key, true);
+            
+            // Guardar tiempo de bloqueo para futuras referencias
+            String timeKey = "blocked.time." + username;
+            preferences.putLong(timeKey, System.currentTimeMillis());
+        } catch (Exception e) {
+            System.err.println("Error bloqueando usuario: " + e.getMessage());
+        }
+    }
+    
+    private void desbloquearUsuarioTemp(String username) {
+        try {
+            String key = "blocked." + username;
+            preferences.remove(key);
+            
+            String timeKey = "blocked.time." + username;
+            preferences.remove(timeKey);
+        } catch (Exception e) {
+            System.err.println("Error desbloqueando usuario temporal: " + e.getMessage());
+        }
+    }
 
     // Configuración de auditorías
     public void setAuditAccess(boolean enabled) {
@@ -99,6 +184,10 @@ public class SeguridadService {
     // Gestión de eventos
     public void registrarEvento(String tipo, String descripcion) {
         try {
+            if (eventoDAO == null) {
+                // Base de datos no disponible, pero no mostrar alerta
+                return;
+            }
             Usuario usuarioActual = sessionManager.getCurrentUser();
             EventoSeguridad evento = new EventoSeguridad(
                 LocalDateTime.now(),
@@ -108,25 +197,53 @@ public class SeguridadService {
             );
             eventoDAO.save(evento);
         } catch (Exception e) {
-            mostrarError("Error al registrar evento", e.getMessage());
+            // No mostrar alertas de eventos no registrados durante login
+            System.err.println("⚠️ No se pudo registrar evento: " + e.getMessage());
         }
     }
 
     public List<EventoSeguridad> obtenerEventos() {
+        if (eventoDAO == null) {
+            return new ArrayList<>();
+        }
         return eventoDAO.findAll();
     }
 
     public List<EventoSeguridad> obtenerEventosPorTipo(String tipo) {
+        if (eventoDAO == null) {
+            return new ArrayList<>();
+        }
         return eventoDAO.findByTipo(tipo);
     }
 
     public List<EventoSeguridad> obtenerEventosPorFecha(LocalDateTime desde, LocalDateTime hasta) {
+        if (eventoDAO == null) {
+            return new ArrayList<>();
+        }
         return eventoDAO.findByFechaRange(desde, hasta);
     }
 
     public void desbloquearUsuarios() {
-        // Aquí iría la lógica para desbloquear usuarios bloqueados
-        registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, "Desbloqueo manual de usuarios");
+        try {
+            // Limpiar todos los usuarios bloqueados
+            Arrays.stream(preferences.keys())
+                .filter(key -> key.startsWith("blocked.") && !key.startsWith("blocked.time."))
+                .forEach(preferences::remove);
+            
+            // Limpiar intentos fallidos
+            Arrays.stream(preferences.keys())
+                .filter(key -> key.startsWith("login.attempts."))
+                .forEach(preferences::remove);
+            
+            // Limpiar tiempos de bloqueo
+            Arrays.stream(preferences.keys())
+                .filter(key -> key.startsWith("blocked.time."))
+                .forEach(preferences::remove);
+                
+            registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, "Desbloqueo manual de todos los usuarios");
+        } catch (Exception e) {
+            System.err.println("Error desbloqueando usuarios: " + e.getMessage());
+        }
     }
 
     public void reiniciarConfiguracion() {
@@ -153,10 +270,8 @@ public class SeguridadService {
     }
 
     private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        // No mostrar alertas de error durante la operación
+        // Loguear en consola en su lugar
+        System.err.println("❌ " + titulo + ": " + mensaje);
     }
 }

@@ -413,10 +413,24 @@ public class DashboardController extends BaseController implements Initializable
 
     @FXML
     private void handleConfiguracion(Event event) {
-        if (!AccessControlUtil.checkAndWarn("configuracion", "read", "No tiene permisos para acceder a la Configuración.\nSolo puede usar la sincronización en la nube.")) {
-            return;
-        }
-        navigateToView("/com/app/view/ConfiguracionView.fxml", "Configuración del Sistema", 1000, 800);
+        // Mostrar alerta de desarrollo
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("🔧 Funcionalidad en Desarrollo");
+        alert.setHeaderText("Configuración del Sistema");
+        alert.setContentText("Esta funcionalidad está siendo mejorada para la próxima actualización.\n\n" +
+                           "📋 En desarrollo:\n" +
+                           "  • Sincronización avanzada\n" +
+                           "  • Respaldos automáticos\n" +
+                           "  • Optimización de base de datos\n" +
+                           "  • Configuración de notificaciones\n\n" +
+                           "Disculpe las molestias. Vuelva pronto para esta actualización.");
+        alert.showAndWait();
+        
+        // Comentar la navegación hasta que esté listo
+        // if (!AccessControlUtil.checkAndWarn("configuracion", "read", "No tiene permisos para acceder a la Configuración.\nSolo puede usar la sincronización en la nube.")) {
+        //     return;
+        // }
+        // navigateToView("/com/app/view/ConfiguracionView.fxml", "Configuración del Sistema", 1000, 800);
     }
 
     @FXML
@@ -447,6 +461,8 @@ public class DashboardController extends BaseController implements Initializable
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 stopTimelines();
+                // Desregistrar escena del monitoreo global para evitar que se muestre lock screen
+                InactivityMonitorManager.getInstance().unregisterScene();
                 authService.logout();
 
                 try {

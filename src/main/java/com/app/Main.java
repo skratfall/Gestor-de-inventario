@@ -37,7 +37,7 @@ public class Main extends Application {
             if (!hasActiveUsuarios) {
                 viewPath = "/com/app/view/RegisterView.fxml";
                 title = "Registro Inicial - Sistema de Gestión de Inventario";
-                width = 600;
+                width = 900;
                 height = 800;
             } else {
                 viewPath = "/com/app/view/LoginView.fxml";

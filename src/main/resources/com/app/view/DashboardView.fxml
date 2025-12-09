@@ -21,7 +21,7 @@
             stylesheets="@../styles/application.css"
             prefWidth="1200.0" prefHeight="800.0">
     <stylesheets>
-        <URL value="@/css/ModernStyles.css" />
+        <URL value="@/css/modern-ui.css" />
         <URL value="@/css/theme-light.css" />
     </stylesheets>
 

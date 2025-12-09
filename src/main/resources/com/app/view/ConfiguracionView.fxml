@@ -10,7 +10,7 @@
             fx:controller="com.app.controller.ConfiguracionController"
             prefHeight="700.0" prefWidth="900.0">
     <stylesheets>
-        <URL value="@/css/ModernStyles.css" />
+        <URL value="@/css/modern-ui.css" />
         <URL value="@/css/theme-light.css" />
     </stylesheets>
 

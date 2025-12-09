@@ -21,6 +21,7 @@ public class SeguridadService {
     private static final String PREF_AUDIT_ACCESS = "audit.access";
     private static final String PREF_AUDIT_ROLES = "audit.roles";
     private static final String PREF_AUDIT_CONFIG = "audit.config";
+    private static final String PREF_INACTIVITY_MONITORING_ENABLED = "inactivity.monitoring.enabled";
 
     private SeguridadService() {
         this.eventoDAO = new EventoSeguridadDAO();
@@ -49,6 +50,8 @@ public class SeguridadService {
     // Configuración de bloqueo de sesión
     public void setSessionTimeout(int minutes) {
         preferences.putInt(PREF_SESSION_TIMEOUT, minutes);
+        // Actualizar SessionManager en tiempo real
+        sessionManager.setSessionTimeoutMinutes(minutes);
         registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, 
             "Tiempo de bloqueo de sesión establecido a " + minutes + " minutos");
     }
@@ -136,6 +139,17 @@ public class SeguridadService {
         
         registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, 
             "Configuración de seguridad restablecida a valores predeterminados");
+    }
+
+    // Configuración de monitoreo de inactividad
+    public void setInactivityMonitoringEnabled(boolean enabled) {
+        preferences.putBoolean(PREF_INACTIVITY_MONITORING_ENABLED, enabled);
+        registrarEvento(EventoSeguridad.TIPO_SEGURIDAD, 
+            "Monitoreo de inactividad " + (enabled ? "activado" : "desactivado"));
+    }
+
+    public boolean isInactivityMonitoringEnabled() {
+        return preferences.getBoolean(PREF_INACTIVITY_MONITORING_ENABLED, true); // Habilitado por defecto
     }
 
     private void mostrarError(String titulo, String mensaje) {

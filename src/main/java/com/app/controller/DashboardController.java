@@ -6,6 +6,7 @@ import com.app.dao.UsuarioDAOImpl;
 import com.app.model.Rol;
 import com.app.model.Usuario;
 import com.app.security.SessionManager;
+import com.app.security.InactivityMonitorManager;
 import com.app.service.AuthenticationService;
 import com.app.service.ConfiguracionService;
 import com.app.service.SyncService;
@@ -24,6 +25,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
 import com.app.util.AccessControlUtil;
+import com.app.util.I18nUtil;
+import com.app.security.InactivityMonitor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -86,6 +89,7 @@ public class DashboardController extends BaseController implements Initializable
     private Timeline clockTimeline;
     private Timeline sessionTimeline;
     private LocalDateTime sessionStartTime;
+    private InactivityMonitor inactivityMonitor;
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
@@ -94,40 +98,10 @@ public class DashboardController extends BaseController implements Initializable
     private DateTimeFormatter loginFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        initializeServices();
-        initializeController();
-        loadDashboardData();
-        startClockUpdates();
-        setupPermissions();
-        setupLanguageListener();
-        
-        // Registrar la escena actual con ThemeService cuando se cargue
-        javafx.application.Platform.runLater(() -> {
-            Scene currentScene = welcomeLabel.getScene();
-            if (currentScene != null) {
-                ThemeService.getInstance().registerScene(currentScene);
-            }
-        });
-        
-        // Registrar listener para cambios de idioma
-        LanguageService.getInstance().addLanguageChangeListener(newLanguage -> {
-            System.out.println("✅ Idioma cambiado a: " + newLanguage);
-        });
-    }
-
-    private void initializeServices() {
-        sessionManager = SessionManager.getInstance();
-        authService = AuthenticationService.getInstance();
-        usuarioDAO = new UsuarioDAOImpl();
-        rolDAO = new RolDAO();
-        syncService = SyncService.getInstance();
-        configService = ConfiguracionService.getInstance();
-        sessionStartTime = sessionManager.getLoginTime();
-    }
-
-    @Override
     public void initializeController() {
+        initializeServices();
+        
+        // Cargar datos específicos del dashboard
         LanguageService langService = LanguageService.getInstance();
         Usuario currentUser = sessionManager.getCurrentUser();
         Rol currentRole = sessionManager.getCurrentRole();
@@ -158,6 +132,32 @@ public class DashboardController extends BaseController implements Initializable
 
         updateDateTime();
         loadSystemInfo();
+        
+        // Cargar datos del dashboard
+        loadDashboardData();
+        startClockUpdates();
+        setupPermissions();
+        setupLanguageListener();
+        
+        // Registrar la escena actual con ThemeService cuando se cargue
+        Platform.runLater(() -> {
+            Scene currentScene = welcomeLabel.getScene();
+            if (currentScene != null) {
+                ThemeService.getInstance().registerScene(currentScene);
+                // Registrar con gestor de monitoreo de inactividad
+                setupInactivityMonitoring();
+            }
+        });
+    }
+
+    private void initializeServices() {
+        sessionManager = SessionManager.getInstance();
+        authService = AuthenticationService.getInstance();
+        usuarioDAO = new UsuarioDAOImpl();
+        rolDAO = new RolDAO();
+        syncService = SyncService.getInstance();
+        configService = ConfiguracionService.getInstance();
+        sessionStartTime = sessionManager.getLoginTime();
     }
 
     private void loadDashboardData() {
@@ -379,7 +379,7 @@ public class DashboardController extends BaseController implements Initializable
 
         alert.showAndWait().ifPresent(response -> {
             if (response == btnEnviar || response == btnRecibir) {
-                List<String> tables = List.of("productos", "ventas", "pedidos", "clientes");
+                List<String> tables = List.of("usuarios", "roles", "eventos_seguridad");
 
                 SyncService.SyncResult result;
                 if (response == btnEnviar) {
@@ -495,6 +495,26 @@ public class DashboardController extends BaseController implements Initializable
         }
         if (sessionTimeline != null) {
             sessionTimeline.stop();
+        }
+        if (inactivityMonitor != null) {
+            inactivityMonitor.stopMonitoring();
+        }
+    }
+
+    /**
+     * Configura el monitoreo de inactividad
+     */
+    private void setupInactivityMonitoring() {
+        try {
+            // Obtener la escena y stage
+            Scene scene = welcomeLabel.getScene();
+            Stage stage = (Stage) scene.getWindow();
+            
+            // Registrar con el manager global
+            registerSceneForMonitoring(scene, stage);
+            
+        } catch (Exception e) {
+            logger.error("Error configurando monitoreo de inactividad", e);
         }
     }
 

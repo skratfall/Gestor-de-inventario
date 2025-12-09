@@ -80,10 +80,6 @@ public class SyncService {
             return new SyncResult(false, "No tiene permiso para ejecutar sincronización", 0);
         }
 
-        if (syncEndpointUrl == null || syncEndpointUrl.isEmpty()) {
-            return new SyncResult(false, "URL de sincronización no configurada", 0);
-        }
-
         String syncLogId = createSyncLog("ENVIO", "Múltiples tablas", "INICIADO");
         LocalDateTime startTime = LocalDateTime.now();
         int totalRecords = 0;
@@ -91,13 +87,17 @@ public class SyncService {
 
         try {
             for (String table : tables) {
-                int recordCount = exportTableData(table);
-                totalRecords += recordCount;
-                message.append(table).append(": ").append(recordCount).append(" registros; ");
+                try {
+                    int recordCount = exportAndStoreTableData(table);
+                    totalRecords += recordCount;
+                    message.append(table).append(": ").append(recordCount).append(" registros; ");
+                } catch (Exception e) {
+                    message.append(table).append(": ERROR - ").append(e.getMessage()).append("; ");
+                }
             }
 
             updateSyncLog(syncLogId, "EXITOSO", message.toString(), totalRecords, startTime);
-            return new SyncResult(true, "Sincronización completada exitosamente", totalRecords);
+            return new SyncResult(true, "Sincronización completada exitosamente. " + totalRecords + " registros enviados.", totalRecords);
 
         } catch (Exception e) {
             updateSyncLog(syncLogId, "FALLIDO", "Error: " + e.getMessage(), totalRecords, startTime);
@@ -110,10 +110,6 @@ public class SyncService {
             return new SyncResult(false, "No tiene permiso para ejecutar sincronización", 0);
         }
 
-        if (syncEndpointUrl == null || syncEndpointUrl.isEmpty()) {
-            return new SyncResult(false, "URL de sincronización no configurada", 0);
-        }
-
         String syncLogId = createSyncLog("RECEPCION", "Múltiples tablas", "INICIADO");
         LocalDateTime startTime = LocalDateTime.now();
         int totalRecords = 0;
@@ -121,17 +117,201 @@ public class SyncService {
 
         try {
             for (String table : tables) {
-                int recordCount = importTableData(table);
-                totalRecords += recordCount;
-                message.append(table).append(": ").append(recordCount).append(" registros; ");
+                try {
+                    int recordCount = fetchAndApplyTableData(table);
+                    totalRecords += recordCount;
+                    message.append(table).append(": ").append(recordCount).append(" registros; ");
+                } catch (Exception e) {
+                    message.append(table).append(": ERROR - ").append(e.getMessage()).append("; ");
+                }
             }
 
             updateSyncLog(syncLogId, "EXITOSO", message.toString(), totalRecords, startTime);
-            return new SyncResult(true, "Sincronización completada exitosamente", totalRecords);
+            return new SyncResult(true, "Sincronización completada exitosamente. " + totalRecords + " registros recibidos.", totalRecords);
 
         } catch (Exception e) {
             updateSyncLog(syncLogId, "FALLIDO", "Error: " + e.getMessage(), totalRecords, startTime);
             return new SyncResult(false, "Error en sincronización: " + e.getMessage(), totalRecords);
+        }
+    }
+
+    /**
+     * Exporta datos de tabla local y los almacena en tabla de sincronización de Supabase
+     */
+    private int exportAndStoreTableData(String tableName) throws Exception {
+        List<Map<String, Object>> records = new ArrayList<>();
+
+        // 1. Obtener datos de tabla local
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+            String sql = "SELECT * FROM " + tableName;
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+                
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                while (rs.next()) {
+                    Map<String, Object> record = new HashMap<>();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnName(i);
+                        Object value = rs.getObject(i);
+                        record.put(columnName, value);
+                    }
+                    records.add(record);
+                }
+            }
+        }
+
+        // 2. Guardar en tabla de sincronización
+        if (!records.isEmpty()) {
+            storeSyncRecords(tableName, records, "ENVIO");
+        }
+
+        return records.size();
+    }
+
+    /**
+     * Obtiene datos de tabla de sincronización y los aplica localmente
+     */
+    private int fetchAndApplyTableData(String tableName) throws Exception {
+        // 1. Obtener datos pendientes de sincronizar desde Supabase
+        List<Map<String, Object>> records = retrieveSyncRecords(tableName, "RECEPCION");
+
+        if (records.isEmpty()) {
+            return 0;
+        }
+
+        // 2. Aplicar cambios localmente
+        int appliedCount = applyChangesToLocalDatabase(tableName, records);
+        
+        // 3. Marcar como sincronizados
+        markSyncRecordsAsProcessed(tableName);
+
+        return appliedCount;
+    }
+
+    /**
+     * Almacena registros en tabla de sincronización_pendiente
+     */
+    private void storeSyncRecords(String tableName, List<Map<String, Object>> records, String tipoSync) throws Exception {
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+            String sql = "INSERT INTO sincronizacion_pendiente (tabla_nombre, tipo_sincronizacion, datos, estado) " +
+                         "VALUES (?, ?, ?::jsonb, 'PENDIENTE')";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                for (Map<String, Object> record : records) {
+                    stmt.setString(1, tableName);
+                    stmt.setString(2, tipoSync);
+                    stmt.setString(3, gson.toJson(record));
+                    stmt.addBatch();
+                }
+                stmt.executeBatch();
+            }
+        }
+    }
+
+    /**
+     * Obtiene registros pendientes de sincronización
+     */
+    private List<Map<String, Object>> retrieveSyncRecords(String tableName, String tipoSync) throws Exception {
+        List<Map<String, Object>> records = new ArrayList<>();
+
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+            String sql = "SELECT datos FROM sincronizacion_pendiente " +
+                         "WHERE tabla_nombre = ? AND tipo_sincronizacion = ? AND estado = 'PENDIENTE' " +
+                         "ORDER BY fecha_creacion ASC";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, tableName);
+                stmt.setString(2, tipoSync);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        String jsonData = rs.getString("datos");
+                        Map<String, Object> record = gson.fromJson(jsonData, Map.class);
+                        records.add(record);
+                    }
+                }
+            }
+        }
+
+        return records;
+    }
+
+    /**
+     * Aplica cambios a la BD local (UPSERT)
+     */
+    private int applyChangesToLocalDatabase(String tableName, List<Map<String, Object>> records) throws Exception {
+        int appliedCount = 0;
+
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+            for (Map<String, Object> record : records) {
+                String sql = buildUpsertQuery(tableName, record);
+                
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    int paramIndex = 1;
+                    
+                    // Bind para INSERT
+                    for (Object value : record.values()) {
+                        stmt.setObject(paramIndex++, value);
+                    }
+                    
+                    // Bind para UPDATE (sin ID)
+                    for (Map.Entry<String, Object> entry : record.entrySet()) {
+                        if (!entry.getKey().equals("id")) {
+                            stmt.setObject(paramIndex++, entry.getValue());
+                        }
+                    }
+
+                    int rowsAffected = stmt.executeUpdate();
+                    if (rowsAffected > 0) appliedCount++;
+                }
+            }
+        }
+
+        return appliedCount;
+    }
+
+    /**
+     * Construye query UPSERT dinámicamente
+     */
+    private String buildUpsertQuery(String tableName, Map<String, Object> record) {
+        StringBuilder columns = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        StringBuilder updates = new StringBuilder();
+
+        boolean first = true;
+        for (String key : record.keySet()) {
+            if (!first) {
+                columns.append(", ");
+                values.append(", ");
+            }
+            columns.append(key);
+            values.append("?");
+            
+            if (!key.equals("id")) {
+                if (!updates.isEmpty()) updates.append(", ");
+                updates.append(key).append(" = ?");
+            }
+            first = false;
+        }
+
+        return "INSERT INTO " + tableName + " (" + columns + ") VALUES (" + values + ") " +
+               "ON CONFLICT (id) DO UPDATE SET " + updates;
+    }
+
+    /**
+     * Marca registros como procesados
+     */
+    private void markSyncRecordsAsProcessed(String tableName) throws Exception {
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+            String sql = "UPDATE sincronizacion_pendiente SET estado = 'COMPLETADO', " +
+                         "fecha_procesamiento = NOW() WHERE tabla_nombre = ? AND estado = 'PENDIENTE'";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, tableName);
+                stmt.executeUpdate();
+            }
         }
     }
 
@@ -170,7 +350,58 @@ public class SyncService {
             return 0;
         }
 
-        return records.size();
+        // Insertar o actualizar registros en la BD local
+        return insertOrUpdateRecords(tableName, records);
+    }
+
+    private int insertOrUpdateRecords(String tableName, List<Map<String, Object>> records) throws Exception {
+        int insertedCount = 0;
+
+        try (Connection conn = SupabaseDatabaseConnection.getInstance().getConnection()) {
+            for (Map<String, Object> record : records) {
+                // Construir query INSERT OR UPDATE (UPSERT)
+                StringBuilder columns = new StringBuilder();
+                StringBuilder values = new StringBuilder();
+                StringBuilder updates = new StringBuilder();
+
+                int paramIndex = 1;
+                for (String key : record.keySet()) {
+                    if (paramIndex > 1) {
+                        columns.append(", ");
+                        values.append(", ");
+                    }
+                    columns.append(key);
+                    values.append("?");
+                    if (!key.equals("id")) { // No actualizar el ID
+                        if (!updates.isEmpty()) updates.append(", ");
+                        updates.append(key).append(" = ?");
+                    }
+                    paramIndex++;
+                }
+
+                String sql = "INSERT INTO " + tableName + " (" + columns + ") VALUES (" + values + ")" +
+                             " ON CONFLICT (id) DO UPDATE SET " + updates;
+
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    paramIndex = 1;
+                    // Bind para INSERT
+                    for (Object value : record.values()) {
+                        stmt.setObject(paramIndex++, value);
+                    }
+                    // Bind para UPDATE
+                    for (Object value : record.values()) {
+                        if (!record.keySet().toArray()[record.keySet().toArray().length - 1].equals("id")) {
+                            stmt.setObject(paramIndex++, value);
+                        }
+                    }
+
+                    int rowsAffected = stmt.executeUpdate();
+                    if (rowsAffected > 0) insertedCount++;
+                }
+            }
+        }
+
+        return insertedCount;
     }
 
     private void sendDataToEndpoint(String tableName, List<Map<String, Object>> records) throws Exception {
@@ -198,13 +429,26 @@ public class SyncService {
         List<Map<String, Object>> records = new ArrayList<>();
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet(syncEndpointUrl + "/sync/download?table=" + tableName);
+            HttpGet request = new HttpGet(syncEndpointUrl + "/sync/download?table=" + tableName + "&timestamp=" + LocalDateTime.now().toString());
             request.setHeader("Accept", "application/json");
+            request.setHeader("Authorization", "Bearer " + sessionManager.getCurrentUser().getId());
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 int statusCode = response.getCode();
                 if (statusCode < 200 || statusCode >= 300) {
-                    throw new Exception("HTTP error: " + statusCode);
+                    throw new Exception("HTTP error: " + statusCode + " - " + response.getReasonPhrase());
+                }
+
+                // Extraer JSON de la respuesta
+                String responseBody = new String(response.getEntity().getContent().readAllBytes());
+                JsonObject jsonResponse = gson.fromJson(responseBody, JsonObject.class);
+                
+                if (jsonResponse.has("records")) {
+                    JsonArray recordsArray = jsonResponse.getAsJsonArray("records");
+                    for (int i = 0; i < recordsArray.size(); i++) {
+                        Map<String, Object> record = gson.fromJson(recordsArray.get(i), Map.class);
+                        records.add(record);
+                    }
                 }
             }
         }

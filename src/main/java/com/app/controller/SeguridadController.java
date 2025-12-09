@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.model.EventoSeguridad;
 import com.app.model.Usuario;
+import com.app.security.InactivityMonitorManager;
 import com.app.service.SeguridadService;
 import com.app.service.UsuarioService;
 import com.app.service.LanguageService;
@@ -157,6 +158,13 @@ public class SeguridadController implements Initializable {
         try {
             chk2FA.setSelected(seguridadService.is2FAEnabled());
             
+            // Cargar configuración de monitoreo de inactividad
+            chkBloqueoSesion.setSelected(seguridadService.isInactivityMonitoringEnabled());
+            // Agregar listener al checkbox
+            chkBloqueoSesion.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                handleInactivityMonitoringToggle(newVal);
+            });
+            
             int sessionTimeout = seguridadService.getSessionTimeout();
             cmbTiempoBloqueo.setValue(convertirMinutosATexto(sessionTimeout));
             
@@ -169,6 +177,25 @@ public class SeguridadController implements Initializable {
         } catch (Exception e) {
             logger.error("Error cargando configuración", e);
             mostrarError("Error", "Error al cargar la configuración: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Maneja el cambio de estado del checkbox de bloqueo por inactividad
+     */
+    private void handleInactivityMonitoringToggle(boolean enabled) {
+        try {
+            // Sincronizar con el manager global
+            InactivityMonitorManager.getInstance().setMonitoringEnabled(enabled);
+            
+            if (enabled) {
+                logger.info("✓ Monitoreo de inactividad habilitado desde Seguridad");
+            } else {
+                logger.info("✓ Monitoreo de inactividad deshabilitado desde Seguridad");
+            }
+        } catch (Exception e) {
+            logger.error("Error al cambiar estado de monitoreo", e);
+            mostrarError("Error", "Error al cambiar estado del monitoreo: " + e.getMessage());
         }
     }
 
